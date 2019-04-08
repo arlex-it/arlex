@@ -1,0 +1,7 @@
+{
+  "name": "NFC_test2",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}

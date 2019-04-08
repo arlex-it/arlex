@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-navbar>
+    <button menuToggle ion-button icon-only>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      Arlex -  Informations
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <p>
+    Veuillez approcher un produit.
+  </p>
+  Vitesse du TTS:
+  <ion-item>
+    <ion-range [(ngModel)]="speed" color="danger" min="1" max="30" step=1 pin="true">
+      <ion-label range-left>0.1</ion-label>
+      <ion-label range-right>3</ion-label>
+    </ion-range>
+  </ion-item>
+
+</ion-content>
