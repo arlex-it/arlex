@@ -46,7 +46,7 @@ let userSchema = new mongoose.Schema({
 var users = mongoose.model('users', userSchema);
 
 
-let transporter = nodemailer.createTransport({
+let tranporter = nodemailer.createTransport({
 	service: "Gmail",
 	auth: {
 		user: "arlex.proto@gmail.com",
