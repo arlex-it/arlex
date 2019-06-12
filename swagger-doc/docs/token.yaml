@@ -1,0 +1,78 @@
+path:
+  /token/:
+    get:
+      tags:
+        - Authentication
+      security: []
+      summary: Exchange credentials for an access token
+      description: No description
+      requestBody:
+        description: Credentials
+        content:
+          'application/json':
+            schema:
+              oneOf:
+                - $ref: '#/definitions/ClientCredentialsGrantType'
+                - $ref: '#/definitions/ProSecurityTokenGrantType'
+                - $ref: '#/definitions/PasswordGrantType'
+                - $ref: '#/definitions/TokenGrantType'
+            examples:
+              client_credentials:
+                summary: Client Credentials Grant Type
+                value:
+                  app_id: "YOUR_APP_ID"
+                  app_secret: "YOUR_APP_SECRET"
+                  grant_type: "client_credentials"
+              pro_security_token:
+                summary: Pro Security Token Grant Type
+                value:
+                  app_id: "YOUR_APP_ID"
+                  app_secret: "YOUR_APP_SECRET"
+                  pro_id: "PRO_ID"
+                  pro_secret: "PRO_SECRET"
+                  grant_type: "pro_security_token"
+              password:
+                summary: Pro Security Token Grant Type
+                value:
+                  app_id: "YOUR_APP_ID"
+                  app_secret: "YOUR_APP_SECRET"
+                  username: "apisupport@yper.fr"
+                  password: "YOUR_SECURE_PASSWORD"
+                  grant_type: "password"
+              refresh_token:
+                summary: Pro Security Token Grant Type
+                value:
+                  app_id: "YOUR_APP_ID"
+                  app_secret: "YOUR_APP_SECRET"
+                  refresh_token: "REFRESH_TOKEN"
+                  grant_type: "refresh_token"
+      responses:
+        '200':
+          description: Your access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    $ref: '#/definitions/models/OAuthToken'
+                  status:
+                    type: number
+                    description: Request HTTP status
+        '400':
+          $ref: '#/definitions/400'
+        '401':
+          $ref: '#/definitions/401'
+        '403':
+          $ref: '#/definitions/403'
+        '5XX':
+          $ref: '#/definitions/5XX'
+definitions:
+  '400':
+    description: "bad input parameter"
+  '401':
+    description: "Unauthorized: The server don't know who you are, please double check you properly sent your access token"
+  '403':
+    description: "Unauthorized: The server know who you are, but you are not authorized to access this ressource"
+  '5XX':
+    description: "Unexpected error."

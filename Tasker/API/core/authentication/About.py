@@ -5,7 +5,6 @@ from Tasker.API.core.HTTPReponse import HTTPResponse
 
 
 class APICoreAuthenticationAbout(MethodView):
-    print("oauth")
     #@require_authentication('private')
     def get(self, **kwargs):
         print("tata")

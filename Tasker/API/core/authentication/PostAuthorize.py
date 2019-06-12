@@ -9,8 +9,6 @@ from Tasker.helpers.exceptions import AuthError
 class APICoreAuthentificationPostAuthorize(OAuthRequestAbstract):
 
     def __check_values(self):
-        print(request.form.get('client_id'))
-        print(request.values.get('client_id'))
         if request.form.get('client_id') != request.values.get('client_id'):
             raise AuthError('Client ID was not recognized')
 

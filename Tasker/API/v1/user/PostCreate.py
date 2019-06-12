@@ -22,10 +22,8 @@ class APIV1UserPostCreate(AbstractView):
     """
     API to create a new user.
     """
-    print("postcreate")
     #@require_authentication('private')
     def __init__(self):
-        print("toto")
         self.user_ctrlr = UserController()
 
     @expects_json(SCHEMA)
