@@ -1,0 +1,3 @@
+path:
+  /description/HTTPError/5XX:
+    description: "Unexpected error."

@@ -70,7 +70,7 @@ app.get('/infos', function (req, res) {
 	});
 });
 
-app.get('/infos/:id', function (req, res) {
+app.get('/infos/:id', functiofn (req, res) {
 	let id = req.params.id;
 	console.log("on demande l'id ", id);
 	product.findOne({id: id}, function (err, item) {
