@@ -3,6 +3,7 @@ import yaml
 from mongoengine import connect
 from pymongo.uri_parser import parse_uri
 from Tasker.helpers.AbstractHelper import AbstractHelper
+from flask_assistant import Assistant
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config = yaml.safe_load(open(dir_path + "/../config.yml"))
@@ -12,6 +13,7 @@ MOCKED_DB_NAME = 'mongoenginetest'
 
 
 class CoreHelper(AbstractHelper):
+    assist = None
     @staticmethod
     def mongo_uri():
         """Parse mongo uri."""
@@ -37,3 +39,8 @@ class CoreHelper(AbstractHelper):
             name = f'{name}_test'
 
         return connect(name, host=uri_, alias='default')
+
+    @staticmethod
+    def init_flask_assistant(app):
+        assist = Assistant(app, project_id='test-ipsvsl')
+        return assist

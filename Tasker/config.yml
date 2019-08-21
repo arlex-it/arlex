@@ -7,7 +7,6 @@ oauth:
         - authorization_code
         - password
         - refresh_token
-        - pro_secret_token
     token_ttl: 3600
     refresh_token_ttl: 604800
 mongodb:

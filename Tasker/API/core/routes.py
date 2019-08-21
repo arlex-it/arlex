@@ -7,6 +7,7 @@ from Tasker.API.core.HTTPReponse import HTTPResponse
 from Tasker.helpers.generic import load_config
 from Tasker.API.common.converters import UserConverter, ProductConverter
 from Tasker.API.v1.routes import blueprint_v1
+from Tasker.API.assist_v1.routes import assit_blueprint_v1
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -20,3 +21,5 @@ def register_routes(app):
     app.url_map.converters['product'] = ProductConverter
     app.url_map.converters['user'] = UserConverter
     app.register_blueprint(blueprint_v1)
+    app.register_blueprint(assit_blueprint_v1)
+
