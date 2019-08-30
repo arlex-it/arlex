@@ -10,4 +10,6 @@ oauth:
     token_ttl: 3600
     refresh_token_ttl: 604800
 mongodb:
-  uri: "mongodb://localhost:27017/Arlex"
+    uri: "mongodb://localhost:27017/Arlex"
+mysql:
+    uri: "mysql://2021_arlex:meug0Ail8@db-etud.labeip.local:3306/2021_arlex"

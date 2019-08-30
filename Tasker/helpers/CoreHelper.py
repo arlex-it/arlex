@@ -2,8 +2,12 @@ import os
 import yaml
 from mongoengine import connect
 from pymongo.uri_parser import parse_uri
+import pymysql.cursors
 from Tasker.helpers.AbstractHelper import AbstractHelper
 from flask_assistant import Assistant
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+import pymysql.cursors
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config = yaml.safe_load(open(dir_path + "/../config.yml"))
@@ -39,6 +43,12 @@ class CoreHelper(AbstractHelper):
             name = f'{name}_test'
 
         return connect(name, host=uri_, alias='default')
+
+    @staticmethod
+    def mysql_connect(uri=None):
+        uri_ = uri or config['mysql']['uri']
+        app.config['SQLALCHEMY_DATABASE_URI'] = uri
+        print(mysql_db)
 
     @staticmethod
     def init_flask_assistant(app):
