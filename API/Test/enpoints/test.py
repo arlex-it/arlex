@@ -10,7 +10,7 @@ ns = api.namespace('test', description='Test operations')
 @ns.route('/')
 class TestCollection(Resource):
     @ns.expect(test_input)
-    @ns.response(200, 'res: True')
+    @ns.response(200, '{"res": True}')
     def post(self):
         """
         This is a test route
