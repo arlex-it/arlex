@@ -7,9 +7,6 @@ from mongoengine import StringField
 from Tasker.helpers.generic import load_config
 from Tasker.models.AbstractModel import AbstractModel
 
-config = load_config()
-
-DEFAULT_KMS_NUMBER = 25
 
 class ProductModel(AbstractModel):
     """

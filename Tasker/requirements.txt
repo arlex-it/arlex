@@ -1,3 +1,11 @@
 flask
 flask_expects_json
 flask_assistant
+pyyaml
+mongoengine
+pymysql
+flask_sqlalchemy
+flask_cors
+bcrypt
+arrow
+flask_expects_json
