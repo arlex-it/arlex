@@ -1,6 +1,9 @@
-language: node_js
+language: python
 node_js:
-    - "8.10.0"
+    - "3.7"
+
+install:
+    - pip install requirements.txt
 
 script:
-    - cd api_proto && npm test
+    - python auto_test.py
