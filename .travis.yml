@@ -6,7 +6,11 @@ install:
     - pip install --upgrade pip
     - pip install --upgrade -r requirements.txt
 
-jobs:
-    include:
-        - script: python main.py &
-        - script: python auto_test.py
+script:
+    - echo "Unit Test"
+
+after_script:
+    - python main.py &
+    APP_PID=$!
+    - python auto_test.py
+    - kill $APP_PID

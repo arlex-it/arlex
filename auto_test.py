@@ -1,4 +1,5 @@
 import requests
+from subprocess import call
 
 get_weather_url = "http://127.0.0.1:5000/api/getweather/"
 get_weather_errors = 0
