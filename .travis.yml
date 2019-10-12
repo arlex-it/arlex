@@ -5,6 +5,12 @@ python:
 install:
     - pip install --upgrade pip
     - pip install --upgrade -r requirements.txt
-script:
-    - python main.py &
-    - python auto_test.py
+
+jobs:
+    include:
+        - stage: build
+        - script:
+            - python main.py &
+        - stage: test
+        - script:
+              - python auto_test.py
