@@ -9,5 +9,4 @@ install:
 jobs:
     include:
         - script: python main.py &
-        - stage: "test"
         - script: python auto_test.py
