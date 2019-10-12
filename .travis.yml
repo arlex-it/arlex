@@ -10,5 +10,5 @@ script:
     - |
       python main.py &
       APP_PID=$!
-    - python auto_test.py
+    - python automated_tests/auto_test.py
     - kill $APP_PID
