@@ -6,6 +6,9 @@ install:
     - pip install --upgrade pip
     - pip install --upgrade -r requirements.txt
 
-script:
-    - python main.py
-    - python auto_test.py
+jobs:
+    include:
+        - script:
+            - python main.py
+        - script:
+            - python auto_test.py
