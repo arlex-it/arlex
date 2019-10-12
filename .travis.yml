@@ -13,5 +13,6 @@ after_script:
     - |
       python main.py &
       APP_PID=$!
+    - sleep 5
     - python auto_test.py
     - kill $APP_PID
