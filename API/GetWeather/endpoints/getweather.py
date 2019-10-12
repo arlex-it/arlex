@@ -1,8 +1,8 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.getWeather.business import get_weather
-from API.getWeather.models import getweather_input
+from API.GetWeather.business import get_weather
+from API.GetWeather.models import getweather_input
 
 ns = api.namespace('getweather', description='get the weather')
 

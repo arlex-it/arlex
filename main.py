@@ -5,7 +5,7 @@ from Ressources import settings
 from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
-from API.getWeather.endpoints.getweather import ns as get_weather
+from API.GetWeather.endpoints.getweather import ns as get_weather
 
 app = Flask(__name__)
 
