@@ -1,6 +1,6 @@
 language: python
-node_js:
-    - "3.7"
+python:
+    - "3.7.1"
 
 install:
     - pip install requirements.txt
