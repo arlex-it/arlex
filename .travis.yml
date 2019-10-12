@@ -10,7 +10,8 @@ script:
     - echo "Unit Test"
 
 after_script:
-    - python main.py &
-    APP_PID=$!
+    - |
+      python main.py &
+      APP_PID=$!
     - python auto_test.py
     - kill $APP_PID
