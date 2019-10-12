@@ -12,4 +12,4 @@ jobs:
         - script:
             - python main.py
         - script:
-            python auto_test.py
+            - python auto_test.py
