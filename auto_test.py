@@ -37,6 +37,7 @@ def launcher():
 	errors += get_weather_process()
 	if errors != 0:
 		exit(1)
+	exit(0)
 
 
 if __name__ == '__main__':
