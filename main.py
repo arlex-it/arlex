@@ -5,7 +5,7 @@ from Ressources import settings
 from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
-from API.user.endpoints.user import ns as user
+from API.User.endpoints.user import ns as user
 # Template import marker
 
 app = Flask(__name__)

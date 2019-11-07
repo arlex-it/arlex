@@ -1,18 +1,25 @@
-from flask import request
+from flask import request, make_response
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.RouteTemplateBusiness.business import get_route_template
-from API.RouteTemplateModels.models import route_template_input
-
-ns = api.namespace('template_namespace', description='template_description')
+from API.User.business import get_user, create_user
+from API.User.models import user_input, user_creation
+ns = api.namespace('user', description='Routes to manage users')
 
 
 @ns.route('/')
-class TemplateCollection(Resource):
-    @ns.expect(route_template_input)
-    @ns.response(200, '{"res": True}')
+class UserCollection(Resource):
+    @ns.expect(user_creation)
+    @ns.response(201, '{"id": 0}')
     def post(self):
         """
-        This is a test route
+        Route to create an user
         """
-        return get_route_template(request)
+        return make_response(create_user(request))
+
+    @ns.expect(user_input)
+    @ns.response(200, '{"res": True}')
+    def delete(self):
+        """
+        Route to delete an user
+        """
+        return make_response(get_user(request))
