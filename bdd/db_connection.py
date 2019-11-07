@@ -49,7 +49,12 @@ engine = db.create_engine('mysql+pymysql://corentin_local:corentinlocal@127.0.0.
 
 Session = sessionmaker(bind=engine)
 session = Session()
-print("\033[92mConnected to the Database !\033[0m")
+try:
+    session.query("1").from_statement("SELECT 1").all()
+    print("\033[92mConnected to the Database !\033[0m")
+except:
+    print("\033[91mError with Database!\033[0m")
+    exit(1)
 
 """,
                 Column('id', Integer, primary_key=True),
