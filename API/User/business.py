@@ -28,8 +28,15 @@ def get_user(request):
     }
     return jsonify(j)
 
+def delete_user(request):
+    row = session.query(User)
+    print(row)
+    session.delete(session.query(User))
+    print(User)
+    return jsonify(), 201
 
 def create_user(request):
+    print("ah")
     if not request:
         abort(400)
 
