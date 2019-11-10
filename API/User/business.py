@@ -1,7 +1,7 @@
-from flask import jsonify
 from flask_restplus import abort
 
 from bdd.db_connection import session, User, to_dict
+from API.Utilities.HttpResponse import *
 import datetime
 import re
 import bcrypt
@@ -25,12 +25,12 @@ def get_user(request):
         return jsonify({'error': 'Mail is missing'}), 403
     user = session.query(User).filter(User.mail == request.args['mail']).first()
     if not user:
-        return jsonify({'error': 'No user for this mail'}), 403
+        return HttpResponse(403).error(ErrorCode.USER_NFIND)
 
-    j = {
+    res = {
         'user': to_dict(user)
     }
-    return jsonify(j)
+    return HttpResponse().custom(res)
 
 def delete_user(request, user_id):
     if not request:
@@ -55,16 +55,12 @@ def create_user(request):
         abort(400)
 
     if not re.search(regex_mail, request.json['mail']):
-        return jsonify({
-            'error': 'Addresse email non valide.'
-        }), 403
+        return HttpResponse(403).error(ErrorCode.MAIL_NOK)
 
     existing = session.query(User).filter(User.mail == request.json['mail']).first()
 
     if existing:
-        return jsonify({
-            'error': 'Addresse email déjà en utilisation.'
-        }), 403
+        return HttpResponse(403).error(ErrorCode.MAIL_USED)
 
     hashed = get_hashed_password(request.json['password'])
     new_user = User(
@@ -91,17 +87,9 @@ def create_user(request):
     except Exception as e:
         session.rollback()
         session.flush()
-        error = {
-            'error': 'Ajout dans la base de donnée',
-            'message': e.args
-        }
-        return jsonify(error), 500
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    j = {
-        'id': new_user.id,
-        'user': to_dict(new_user)
-    }
-    return jsonify(j), 201
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'user': to_dict(new_user)})
 
 
 def update_user(request, user_id):
@@ -118,21 +106,16 @@ def update_user(request, user_id):
 
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
-        error = {
-            'error': 'Utilisateur non trouvé'
-        }
-        return jsonify(error), 403
+        return HttpResponse(403).error(ErrorCode.USER_NFIND)
+
     infos = request.json
     if 'mail' in infos:
         if not re.search(regex_mail, request.json['mail']):
-            return jsonify({
-                'error': 'Addresse email non valide.'
-            }), 403
+            return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+
         existing = session.query(User).filter(User.mail == infos['mail']).first()
         if existing:
-            return jsonify({
-                'error': 'Addresse email déjà en utilisation.'
-            }), 403
+            return HttpResponse(403).error(ErrorCode.MAIL_USED)
 
     infos['date_update'] = datetime.datetime.now()
     try:
@@ -141,13 +124,6 @@ def update_user(request, user_id):
     except Exception as e:
         session.rollback()
         session.flush()
-        error = {
-            'error': 'Ajout dans la base de donnée',
-            'message': e.args
-        }
-        return jsonify(error), 500
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    j = {
-        'success': True
-    }
-    return jsonify(j), 202
+    return HttpResponse(202).success(SuccessCode.USER_UPDATED)
