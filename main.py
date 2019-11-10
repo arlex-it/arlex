@@ -9,6 +9,7 @@ from API.User.endpoints.user import ns as user
 # Template import marker
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
