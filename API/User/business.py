@@ -28,10 +28,9 @@ def get_user(request):
     }
     return jsonify(j)
 
-def delete_user(request):
-    row = session.query(User)
-    print(row)
-    session.delete(session.query(User))
+def delete_user(request, user_id):
+    print("bro")
+    session.query().filter(User.id=)
     print(User)
     return jsonify(), 201
 

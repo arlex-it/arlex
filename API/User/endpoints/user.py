@@ -25,11 +25,15 @@ class UserCollection(Resource):
         """
         return make_response(get_user(request))
 
-    @ns.expect(user_input)
-    @ns.response(200, '{"res": True}')
-    def delete(self):
+@ns.route('/<int:user_id>')
+@api.doc(params={'user_id': 'User ID'})
+class UserCollection(Resource):
+    @ns.response(202, '{"res": True}')
+    def delete(self, user_id):
         """
         Route to delete an user
-        :return: json response
+        :param user_id:
+        :return:
         """
-        return make_response(delete_user(request))
+        print("toto")
+        return make_response(delete_user(request, user_id))

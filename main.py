@@ -24,6 +24,7 @@ def initialize_app(flask_app):
 	blueprint = Blueprint('api', __name__, url_prefix='/api')
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
+	print("Ah")
 	api.add_namespace(user)
 	# Template namespace marker
 	flask_app.register_blueprint(blueprint)
