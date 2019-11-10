@@ -1,8 +1,9 @@
 from flask import request, make_response
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.User.business import get_user, create_user, delete_user
-from API.User.models import user_input, user_creation
+from API.User.business import get_user, create_user, update_user, delete_user
+from API.User.models import user_get, user_input, user_creation, user_update, user_update_header
+
 ns = api.namespace('user', description='Routes to manage users')
 
 
@@ -25,9 +26,18 @@ class UserCollection(Resource):
         """
         return make_response(get_user(request))
 
+
 @ns.route('/<int:user_id>')
-@api.doc(params={'user_id': 'User ID'})
+@ns.doc(params={'user_id': 'User ID'})
 class UserCollection(Resource):
+    @ns.expect(user_update, user_update_header)
+    @ns.response(202, '{"res": True}')
+    def put(self, user_id):
+        """
+        Route to update an user
+        """
+        return make_response(update_user(request, user_id))
+
     @ns.response(202, '{"res": True}')
     def delete(self, user_id):
         """
@@ -35,5 +45,4 @@ class UserCollection(Resource):
         :param user_id:
         :return:
         """
-        print("toto")
         return make_response(delete_user(request, user_id))
