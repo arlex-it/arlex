@@ -15,7 +15,6 @@ class UserCollection(Resource):
         """
         Route to create an user
         """
-        print("AH")
         return make_response(create_user(request))
 
     @ns.expect(user_input)

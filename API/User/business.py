@@ -39,24 +39,23 @@ def delete_user(request, user_id):
     :param user_id:
     :return: Httreponse
     """
-    print(user_id)
     if not request:
         abort(400)
-    print("bro")
     user = session.query(User).filter(User.id == user_id).first()
-    print(user)
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     infos = request.json
     infos["date_update"] = datetime.datetime.now()
     try:
-        session.query(User).filter(User.id == user_id).update(infos)
+        session.query(User).filter(User.id == user_id).delete()
         session.commit()
     except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
     return HttpResponse(202).success(SuccessCode.USER_DELETED)
 
 def create_user(request):
-    print("ah")
     if not request:
         abort(400)
 
