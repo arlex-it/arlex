@@ -32,19 +32,13 @@ def get_user(request):
     }
     return HttpResponse().custom(res)
 
-def task_to_check_user():
-    """
-    Test everyday all with users delete date set and if date set < date set + 30 days, user is definitly delete
-
-    :return:
-    """
-    users = session.query(User).filter(User.date_delete != "").all()
-    print(users)
-    for user in users:
-        print(user)
-
-
 def delete_user(request, user_id):
+    """
+    Delete an user
+    :param request:
+    :param user_id:
+    :return: Httreponse
+    """
     print(user_id)
     if not request:
         abort(400)
@@ -54,11 +48,11 @@ def delete_user(request, user_id):
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     infos = request.json
-    # infos["date_delete"] = datetime.datetime.now()
     infos["date_update"] = datetime.datetime.now()
-    # session.query(User).filter(User.id == user_id).delete(infos)
-    session.query(User).filter(User.id == user_id).update(infos)
-    session.commit()
+    try:
+        session.query(User).filter(User.id == user_id).update(infos)
+        session.commit()
+    except Exception as e:
     return HttpResponse(202).success(SuccessCode.USER_DELETED)
 
 def create_user(request):
