@@ -32,22 +32,34 @@ def get_user(request):
     }
     return HttpResponse().custom(res)
 
+def task_to_check_user():
+    """
+    Test everyday all with users delete date set and if date set < date set + 30 days, user is definitly delete
+
+    :return:
+    """
+    users = session.query(User).filter(User.date_delete != "").all()
+    print(users)
+    for user in users:
+        print(user)
+
+
 def delete_user(request, user_id):
+    print(user_id)
     if not request:
         abort(400)
     print("bro")
     user = session.query(User).filter(User.id == user_id).first()
+    print(user)
     if not user:
-        error = {
-            'error': 'Utilisateur non trouvé'
-        }
-        return jsonify(error), 403
-    session.delete(user)
-    print(User)
-    j = {
-        'success': True
-    }
-    return jsonify(j), 202
+        return HttpResponse(403).error(ErrorCode.USER_NFIND)
+    infos = request.json
+    # infos["date_delete"] = datetime.datetime.now()
+    infos["date_update"] = datetime.datetime.now()
+    # session.query(User).filter(User.id == user_id).delete(infos)
+    session.query(User).filter(User.id == user_id).update(infos)
+    session.commit()
+    return HttpResponse(202).success(SuccessCode.USER_DELETED)
 
 def create_user(request):
     print("ah")
