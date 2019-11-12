@@ -9,7 +9,7 @@ class HttpResponse():
 
     def success(self, msg=SuccessCode.UNK, extra=None):
         succ = {
-            'succès': msg.value
+            'success': msg.value
         }
         if extra:
             succ['extra'] = extra

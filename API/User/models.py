@@ -35,8 +35,3 @@ user_update = api.model('User creation', {
     'region': fields.String(example='Hauts de france', description='Nouvelle  Région de l\'utilisateur'),
     'postal_code': fields.Integer(example=123456, description='Nouveau Code postal de l\'utilisateur'),
 })
-
-user_input = api.model('template_input', {
-    'input_1': fields.Integer(example=42, description='Ce paramètre ne sert à rien'),
-    'input_2': fields.String(example='foo', description='celui là non plus'),
-})

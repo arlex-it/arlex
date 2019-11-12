@@ -21,16 +21,21 @@ def get_user(request):
     if not request:
         abort(400)
 
-    if 'mail' not in request.args:
-        return jsonify({'error': 'Mail is missing'}), 403
-    user = session.query(User).filter(User.mail == request.args['mail']).first()
-    if not user:
-        return HttpResponse(403).error(ErrorCode.USER_NFIND)
+    if 'mail' in request.args:
+        user = session.query(User).filter(User.mail == request.args['mail']).first()
+        if not user:
+            return HttpResponse(403).error(ErrorCode.USER_NFIND)
+        res = {
+            'user': to_dict(user)
+        }
+        return HttpResponse().custom(res)
 
+    users = session.query(User).filter()
     res = {
-        'user': to_dict(user)
+        'users': [to_dict(x) for x in users]
     }
     return HttpResponse().custom(res)
+
 
 def delete_user(request, user_id):
     """
@@ -44,8 +49,6 @@ def delete_user(request, user_id):
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
-    infos = request.json
-    infos["date_update"] = datetime.datetime.now()
     try:
         session.query(User).filter(User.id == user_id).delete()
         session.commit()
@@ -54,6 +57,7 @@ def delete_user(request, user_id):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
     return HttpResponse(202).success(SuccessCode.USER_DELETED)
+
 
 def create_user(request):
     if not request:
@@ -94,7 +98,7 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'user': to_dict(new_user)})
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
 
 
 def update_user(request, user_id):
@@ -122,6 +126,9 @@ def update_user(request, user_id):
         if existing:
             return HttpResponse(403).error(ErrorCode.MAIL_USED)
 
+    if 'password' in infos:
+        hashed = get_hashed_password(infos['password'])
+        infos['password'] = hashed
     infos['date_update'] = datetime.datetime.now()
     try:
         session.query(User).filter(User.id == user_id).update(infos)
