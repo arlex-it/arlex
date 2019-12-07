@@ -6,6 +6,7 @@ from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
 from API.Products.endpoints.products import ns as products
+import bdd.db_connection
 # Template import marker
 
 app = Flask(__name__)
