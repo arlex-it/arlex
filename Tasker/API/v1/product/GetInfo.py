@@ -9,5 +9,4 @@ class APIV1ProductGetInfo(AbstractView):
     def dispatch_request(self, **kwargs):
         product_ctrl = ProductController()
         nbrProduct = product_ctrl.CountNbrOfProduct()
-        response = HTTPResponse(200).set_content(nbrProduct)
-        return response.get_response()
+        return HTTPResponse(200, str(nbrProduct)).get_response()
