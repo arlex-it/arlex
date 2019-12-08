@@ -38,7 +38,7 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
-engine = db.create_engine('mysql+pymysql://corentin_local:corentinlocal@127.0.0.1/Arlex', pool_recycle=3600, echo=False)
+engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
