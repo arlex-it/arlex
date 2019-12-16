@@ -7,3 +7,4 @@ class ErrorCode(Enum):
     USER_NFIND = "Utilisateur non trouvé."
     MAIL_NOK = "Addresse email non valide."
     MAIL_USED = "Addresse email déjà en utilisation"
+    BAD_TOKEN = "Le token envoyé est incorrecte"

@@ -1,10 +1,12 @@
 from flask_restplus import abort
 
-from bdd.db_connection import session, User, to_dict
+from bdd.db_connection import session, User, to_dict, Token
 from API.Utilities.HttpResponse import *
+from API.Utilities.CheckAuthToken import *
 import datetime
 import re
 import bcrypt
+from uuid import uuid4
 
 regex_mail = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
 
@@ -98,12 +100,34 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
+    # token generation for new user
+    new_token = Token(
+        date_insert=datetime.datetime.now(),
+        access_token=uuid4().hex[:35],
+        refresh_token=uuid4().hex[:35],
+        id_user=new_user.id
+    )
+    print(new_token)
+    try:
+        session.add(new_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
     return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
 
 
 def update_user(request, user_id):
     if not request:
         abort(400)
+
+    infos = request.json
+    if not CheckAuthToken.check_user(request=request):
+        return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
+    infos.pop('access_token')
+    infos.pop('refresh_token')
 
     """
     if user_connected_with_token != user_id:
@@ -117,7 +141,6 @@ def update_user(request, user_id):
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
 
-    infos = request.json
     if 'mail' in infos:
         if not re.search(regex_mail, request.json['mail']):
             return HttpResponse(403).error(ErrorCode.MAIL_NOK)
