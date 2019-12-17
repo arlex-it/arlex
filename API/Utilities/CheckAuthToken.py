@@ -5,7 +5,7 @@ from uuid import uuid4
 
 class CheckAuthToken:
 
-	def check_user(request=None, id_user=None):
+	def check_user(self, request=None, id_user=None):
 		data = request.json
 		if 'access_token' not in data or 'refresh_token' not in data:
 			return False
