@@ -4,9 +4,9 @@ from sqlalchemy import select
 
 
 class CheckAuthToken:
-
-	def check_user(request=None):
+	def check_user(self, request=None):
 		data = request.json
+		print(data)
 		if 'access_token' not in data or 'refresh_token' not in data:
 			return False
 		check_user = session.query(Token) \

@@ -122,9 +122,9 @@ def create_user(request):
 def update_user(request, user_id):
     if not request:
         abort(400)
-
+    print(request)
     infos = request.json
-    if not CheckAuthToken.check_user(request=request):
+    if not CheckAuthToken().check_user(request=request):
         return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
     infos.pop('access_token')
     infos.pop('refresh_token')
