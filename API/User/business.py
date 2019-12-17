@@ -105,7 +105,8 @@ def create_user(request):
         date_insert=datetime.datetime.now(),
         access_token=uuid4().hex[:35],
         refresh_token=uuid4().hex[:35],
-        id_user=new_user.id
+        id_user=new_user.id,
+        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2)
     )
     print(new_token)
     try:

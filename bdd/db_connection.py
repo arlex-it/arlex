@@ -46,6 +46,7 @@ class Token(Base):
     access_token = Column(String(255), nullable=False, unique=True)
     refresh_token = Column(String(255), nullable=False, unique=True)
     id_user = Column(Integer, nullable=False)
+    expiration_date = Column(DateTime, nullable=False)
 
 
 engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
