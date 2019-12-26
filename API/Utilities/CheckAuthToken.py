@@ -3,7 +3,7 @@ import datetime
 from uuid import uuid4
 
 
-class CheckAuthToken:
+class CheckAuthToken():
 
 	def check_user(self, request=None, id_user=None):
 		data = request.json

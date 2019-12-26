@@ -7,6 +7,7 @@ from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
 from API.User.endpoints.user import ns as user
 import bdd.db_connection
+from API.auth.endpoints.auth import ns as auth
 # Template import marker
 
 app = Flask(__name__)
@@ -27,6 +28,7 @@ def initialize_app(flask_app):
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
 	api.add_namespace(user)
+	api.add_namespace(auth)
 	# Template namespace marker
 	flask_app.register_blueprint(blueprint)
 
