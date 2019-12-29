@@ -1,4 +1,5 @@
 #!env/bin/python
+import os
 
 from flask import Flask, Blueprint, request, jsonify
 from Ressources import settings
@@ -8,9 +9,11 @@ from API.Test.enpoints.test import ns as test_namespace
 from API.User.endpoints.user import ns as user
 import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
-# Template import marker
+from flask_wtf.csrf import CSRFProtect
+# templates import marker
 
-app = Flask(__name__)
+print(os.getcwd())
+app = Flask(__name__, template_folder="API/templates/")
 app.url_map.strict_slashes = False
 
 
@@ -24,21 +27,23 @@ def description():
 
 def initialize_app(flask_app):
 	configure_app(flask_app)
-	blueprint = Blueprint('api', __name__, url_prefix='/api')
+	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
 	api.add_namespace(user)
 	api.add_namespace(auth)
-	# Template namespace marker
+	# templates namespace marker
 	flask_app.register_blueprint(blueprint)
 
 
 def launcher():
 	initialize_app(app)
-	app.run(debug=settings.FLASK_DEBUG, port=5000, host='0.0.0.0')
+	use_reloader=True
+	app.run(debug=settings.FLASK_DEBUG, port=5000, host='0.0.0.0', use_reloader=use_reloader)
 
 
 def wsgi_launcher():
+	CSRFProtect(app)
 	initialize_app(app)
 
 

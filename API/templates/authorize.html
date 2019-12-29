@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>yper | Connexion à Arlex }}</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
+    </head>
+    <body>
+        <form class="form-signin" method="POST" action="{{ url_for(request.endpoint) }}">
+              <p class="title">Connexion Arlex</p>
+
+              <div class="form-group form-inline">
+                <input id="inputUsername" name="username" type="email" class="form-control" placeholder="Adresse mail" required>
+              </div>
+
+              <div class="form-group form-inline">
+                <input id="inputPassword" name="password" type="password" class="form-control" placeholder="Mot de passe" required>
+              </div>
+
+              <a class="form-text forgotten" href="#">Mot de passe oublié ?</a>
+              <button id="submit_button" class="btn">Se connecter</button>
+
+              <input type="hidden" name="state" value="{{ state }}">
+              <input type="hidden" name="client_id" value="{{ client_id }}">
+              <input type="hidden" name="redirect_uri" value="{{ redirect_uri }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <input type="hidden" name="response_type" value="{{ response_type }}"/>
+              <input type="hidden" name="scope" value="{{ scope }}"/>
+        </form>
+     <script language="JavaScript" src="{{ url_for('static', filename='js/authorization.js') }}"></script>
+    </body>
+
+</html>

@@ -4,6 +4,7 @@ Validator for HTTP requests
 """
 from API.Utilities.HttpRequest import HttpRequest
 
+PARAM_NOT_PRESENT='arlex_param_not_present'
 
 class Location(object):
     """Available locations for validator"""
@@ -53,6 +54,34 @@ class HttpRequestValidator(object):
         """
         self.__throw_on_error = enabled
 
+    def __verify_one_param(self, param):
+        """
+        Validate a specific rule.
+
+        :param ValidatorParameter param: a parameter validation configuration
+        :rtype: bool
+        """
+        value = PARAM_NOT_PRESENT
+
+        if param.location == Location.any:
+            value = self.__request.get_param(name=param.name, default=PARAM_NOT_PRESENT)
+        elif param.location == Location.query:
+            value = self.__request.get_query_param(name=param.name, default=PARAM_NOT_PRESENT)
+        elif param.location == Location.form:
+            value = self.__request.get_form_param(name=param.name, default=PARAM_NOT_PRESENT)
+        elif param.location == Location.json:
+            value = self.__request.get_json_param(name=param.name, default=PARAM_NOT_PRESENT)
+        elif param.location == Location.file:
+            value = self.__request.get_file_param(name=param.name, default=PARAM_NOT_PRESENT)
+
+        if param.required:
+            if value == PARAM_NOT_PRESENT:
+                return False
+
+        # TODO : We should check the rules here.
+
+        return True
+
     def __verify(self):
         """
         Verify all declared rules.
@@ -65,6 +94,17 @@ class HttpRequestValidator(object):
                 return param.name
 
         return ''
+
+    def __throw_error(self, target=''):
+        """
+        Raise an error.
+
+        :param str target: name of the failing parameter
+        :raises: InvalidParameter
+        """
+        raise Exception(
+            'Invalid parameters {}. Please refer to this method documentation.'
+            )
 
     def verify(self):
         """
