@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.auth.business import get_auth, post_token
+from API.auth.business import get_auth, post_token, post_auth
 from API.auth.models import auth_input, auth_authorize_param
 
 ns = api.namespace('auth', description='Routes authentifications')

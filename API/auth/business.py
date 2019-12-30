@@ -17,8 +17,6 @@ def get_auth(request):
     print(validator)
     validator.throw_on_error(enabled=False)
     validator.add_param('response_type', location=HttpRequestValidator.Location.query)
-
-    validator.add_param('response_type', location=HttpRequestValidator.Location.query)
     validator.add_param('client_id', location=HttpRequestValidator.Location.query)
     validator.add_param('redirect_uri', location=HttpRequestValidator.Location.query)
     validator.add_param('state', location=HttpRequestValidator.Location.query)
