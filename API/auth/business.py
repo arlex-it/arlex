@@ -1,12 +1,15 @@
 import os
 import arrow
-from flask import jsonify, render_template, make_response
+from flask import jsonify, render_template, make_response, redirect
 from flask_restplus import abort
 
 from API.Utilities import HttpRequestValidator
 from API.Utilities.ErrorEnum import ErrorCode
 from API.Utilities.HttpResponse import HttpResponse
 from API.Utilities.SuccesEnum import SuccessCode
+from API.User.business import check_password
+
+from bdd.db_connection import session, User, Token
 
 
 def get_auth(request):
@@ -48,7 +51,37 @@ def get_auth(request):
 
 
 def post_auth(request):
-    pass
+    # maybe shouldn't put id_project here
+    id_project = "arlex-ccevqe"
+    if id_project != request.form['redirect_uri'].rsplit('/', 1)[-1]:
+        return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
+    if request.form['username']:
+        # should be 'mail' and not 'username'
+        user = session.query(User) \
+            .join(Token, User.id == Token.id_user)\
+            .filter(User.mail == request.form['username'])\
+            .add_columns(User.id, User.password, Token.access_token)\
+            .first()
+        if user is None:
+            # TODO sign-in user
+            # voir si fonction yper recup arg request
+            page = 'signin.html'
+            # TODO how to redirect after signin ? In signin.html ?
+            headers = {'Content-Type': 'text/html'}
+            return make_response(render_template(page,
+                                                 client_id=request.values.get('client_id'),
+                                                 redirect_uri=request.values.get('redirect_uri'),
+                                                 state=request.values.get('state'),
+                                                 response_type=request.values.get('response_type'),
+                                                 scope=request.values.get('scope'),
+                                                 year=arrow.now().format('YYYY')
+                                                 ), 200, headers)
+        elif check_password(request.form['password'], user.password.encode()):
+            uri_contruct = request.form['redirect_uri'] + "#" + 'access_token=' + user.access_token +\
+                           "&token_type=bearer&state=" + request.form['state']
+            return redirect(uri_contruct, code=302)
+        
 
 def post_token(request):
     return HttpResponse(201).success(SuccessCode.USER_CREATED, {"token_type": "Bearer", "access_token": "tokeennnn", "expires_in": "09889786655"})
+

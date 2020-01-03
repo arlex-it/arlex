@@ -15,7 +15,6 @@ class authCollection(Resource):
         """
         This is a to get authorize
         """
-        print("toto")
         return get_auth(request)
 
     def post(self):

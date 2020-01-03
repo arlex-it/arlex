@@ -26,6 +26,7 @@ def description():
 
 
 def initialize_app(flask_app):
+	CSRFProtect(app)
 	configure_app(flask_app)
 	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')
 	api.init_app(blueprint)
@@ -43,7 +44,6 @@ def launcher():
 
 
 def wsgi_launcher():
-	CSRFProtect(app)
 	initialize_app(app)
 
 
