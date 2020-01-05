@@ -1,7 +1,10 @@
 import os
+from urllib.parse import urlencode
+
 import arrow
 from flask import jsonify, render_template, make_response, redirect
 from flask_restplus import abort
+from flask_wtf import csrf
 
 from API.Utilities import HttpRequestValidator
 from API.Utilities.ErrorEnum import ErrorCode
@@ -52,6 +55,7 @@ def get_auth(request):
 
 def post_auth(request):
     # maybe shouldn't put id_project here
+    csrf.validate_csrf(request.form.get('csrf_token'))
     id_project = "arlex-ccevqe"
     if id_project != request.form['redirect_uri'].rsplit('/', 1)[-1]:
         return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
@@ -77,9 +81,16 @@ def post_auth(request):
                                                  year=arrow.now().format('YYYY')
                                                  ), 200, headers)
         elif check_password(request.form['password'], user.password.encode()):
-            uri_contruct = request.form['redirect_uri'] + "#" + 'access_token=' + user.access_token +\
-                           "&token_type=bearer&state=" + request.form['state']
-            return redirect(uri_contruct, code=302)
+            #uri_contruct = request.form['redirect_uri'] + "#" + 'code=' + user.access_token +\
+             #              "&token_type=bearer&state=" + request.form['state']
+            args = {
+                "code": "testt",
+                "state": request.form.get('state')
+            }
+            base_uri = request.form.get('redirect_uri')
+            params = urlencode(args)
+            url = f"{base_uri}?{params}"
+            return redirect(url, code=302)
         
 
 def post_token(request):
