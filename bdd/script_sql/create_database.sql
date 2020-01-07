@@ -1,8 +1,11 @@
+/* Made By Simon Bauchet */
+/* Create the database and user, token, sensor, product and log tables */
+
+
 /* arlex_db database creation */
 CREATE DATABASE arlex_db;
 
 /*user table creation*/
-
 CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
