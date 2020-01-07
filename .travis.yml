@@ -10,7 +10,7 @@ services:
   - mysql
 
 script:
-    - mysql source bdd/script_sql/07-01-2019.sql
+    - mysql -u root < bdd/script_sql/07-01-2019.sql
     - |
       python main.py &
       APP_PID=$!
