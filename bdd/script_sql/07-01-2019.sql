@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /* log table creation*/
-CREATE TABLE TABLE IF NOT EXISTS `arlex_db`.`log` (
+CREATE TABLE IF NOT EXISTS `arlex_db`.`log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `code` int(11) NOT NULL,
