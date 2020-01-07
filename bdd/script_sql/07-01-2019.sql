@@ -1,3 +1,6 @@
+/* arlex_db database creation */
+CREATE DATABASE arlex_db;
+
 /*user table creation*/
 
 CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
