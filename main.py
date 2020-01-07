@@ -5,9 +5,12 @@ from Ressources import settings
 from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
+from API.User.endpoints.user import ns as user
+import bdd.db_connection
 # Template import marker
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 
 @app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
@@ -23,6 +26,7 @@ def initialize_app(flask_app):
 	blueprint = Blueprint('api', __name__, url_prefix='/api')
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
+	api.add_namespace(user)
 	# Template namespace marker
 	flask_app.register_blueprint(blueprint)
 
