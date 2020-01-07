@@ -1,4 +1,4 @@
---user table creation
+/*user table creation*/
 
 CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
   KEY `idx_date_update` (`date_update`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
--- token table creation
+/* token table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`token` (
   UNIQUE KEY `refresh_token_UNIQUE` (`refresh_token`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 
--- sensor table creation
+/* sensor table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`sensor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`sensor` (
   KEY `idx_id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- product table creation
+/* product table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
   KEY `idx_id_ean` (`id_ean`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- log table creation
+/* log table creation*/
 CREATE TABLE TABLE IF NOT EXISTS `arlex_db`.`log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
