@@ -42,11 +42,13 @@ class Token(Base):
     __tablename__ = 'token'
 
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    app_id = Column(String(255), nullable=False)
     date_insert = Column(DateTime, nullable=False)
+    type = Column(String(45), nullable=False)
     access_token = Column(String(255), nullable=False, unique=True)
-    refresh_token = Column(String(255), nullable=False, unique=True)
     id_user = Column(Integer, nullable=False)
     expiration_date = Column(DateTime, nullable=False)
+    refresh_token = Column(String(255), nullable=False)
 
 
 engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)

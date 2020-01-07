@@ -101,16 +101,7 @@ def create_user(request):
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     # token generation for new user
-    new_token = Token(
-        date_insert=datetime.datetime.now(),
-        access_token=uuid4().hex[:35],
-        refresh_token=uuid4().hex[:35],
-        id_user=new_user.id,
-        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2)
-    )
-    print(new_token)
     try:
-        session.add(new_token)
         session.commit()
     except Exception as e:
         session.rollback()

@@ -11,6 +11,7 @@ from API.Utilities.ErrorEnum import ErrorCode
 from API.Utilities.HttpResponse import HttpResponse
 from API.Utilities.SuccesEnum import SuccessCode
 from API.User.business import check_password
+from API.auth import OAuthRequestAbstract
 
 from bdd.db_connection import session, User, Token
 
@@ -55,8 +56,11 @@ def get_auth(request):
 
 def post_auth(request):
     # maybe shouldn't put id_project here
-    csrf.validate_csrf(request.form.get('csrf_token'))
+    #csrf.validate_csrf(request.form.get('csrf_token'))
     id_project = "arlex-ccevqe"
+    # TODO créer une table AuthApp
+    #app = self.get_app_with_client_id(client_id=request.values.get('client_id'))
+    app = "google-assist-id"
     if id_project != request.form['redirect_uri'].rsplit('/', 1)[-1]:
         return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
     if request.form['username']:
@@ -81,8 +85,8 @@ def post_auth(request):
                                                  year=arrow.now().format('YYYY')
                                                  ), 200, headers)
         elif check_password(request.form['password'], user.password.encode()):
-            #uri_contruct = request.form['redirect_uri'] + "#" + 'code=' + user.access_token +\
-             #              "&token_type=bearer&state=" + request.form['state']
+            oauth_abstract = OAuthRequestAbstract.OAuthRequestAbstract()
+            code = oauth_abstract.create_authorization_code(app)
             args = {
                 "code": "testt",
                 "state": request.form.get('state')
@@ -91,8 +95,5 @@ def post_auth(request):
             params = urlencode(args)
             url = f"{base_uri}?{params}"
             return redirect(url, code=302)
-        
 
-def post_token(request):
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {"token_type": "Bearer", "access_token": "tokeennnn", "expires_in": "09889786655"})
 

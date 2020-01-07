@@ -7,9 +7,11 @@ from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
 from API.User.endpoints.user import ns as user
+from API.TestVocaleAssistant.endpoints.test_vocale_assistant import ns as test_vocale_assistant
 import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
 from flask_wtf.csrf import CSRFProtect
+from API.Token.endpoints.token import ns as token
 # templates import marker
 
 print(os.getcwd())
@@ -26,13 +28,15 @@ def description():
 
 
 def initialize_app(flask_app):
-	CSRFProtect(app)
+	#CSRFProtect(app)
 	configure_app(flask_app)
 	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
 	api.add_namespace(user)
 	api.add_namespace(auth)
+	api.add_namespace(token)
+	api.add_namespace(test_vocale_assistant)
 	# templates namespace marker
 	flask_app.register_blueprint(blueprint)
 
