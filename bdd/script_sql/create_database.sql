@@ -1,9 +1,11 @@
 /* Made By Simon Bauchet */
 /* Create the database and user, token, sensor, product and log tables */
 
-
 /* arlex_db database creation */
 CREATE DATABASE arlex_db;
+
+CREATE USER 'unit_test'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON arlex_db.* TO 'unit_test'@'%';
 
 /*user table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
