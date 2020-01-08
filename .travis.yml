@@ -11,9 +11,10 @@ services:
 
 script:
     - mysql -u root < bdd/script_sql/create_database.sql
-    - |
-      python main.py unit_test &
-      APP_PID=$!
+    - python main.py unit_test
+#    - |
+#      python main.py unit_test &
+#      APP_PID=$!
     #- python unit_test/user/launcher.py
     - curl http://127.0.0.1:5000/api/
     - kill $APP_PID
