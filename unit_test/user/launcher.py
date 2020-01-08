@@ -1,8 +1,6 @@
 import unittest
-from bdd.db_connection import session, User, to_dict
 import datetime
 import requests
-import json
 
 
 class UserRoute(unittest.TestCase):
