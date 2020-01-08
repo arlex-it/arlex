@@ -14,5 +14,5 @@ script:
     - |
       python main.py unit_test &
       APP_PID=$!
-    #- python auto_test.py (unitest)
+    - python unit_test/user/launcher.py
     - kill $APP_PID

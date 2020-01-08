@@ -39,7 +39,6 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
-print(len(sys.argv))
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
     engine = db.create_engine('mysql+pymysql://root:root@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
 else:
