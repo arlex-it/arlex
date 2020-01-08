@@ -7,8 +7,8 @@ import json
 
 class UserRoute(unittest.TestCase):
     def testPostRoute(self):
-        new_user = {'date_insert': datetime.datetime.now(),
-                    'date_update': datetime.datetime.now(),
+        new_user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'is_active': 0,
                     'status': 0,
                     'gender': 0,
@@ -23,7 +23,7 @@ class UserRoute(unittest.TestCase):
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
         resp = requests.post('http://127.0.0.1:5000/api/user'.format(),
-                             data=new_user)
+                             json=new_user)
         print(resp.text)
         self.assertEqual(True, True)
 
