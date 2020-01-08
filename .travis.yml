@@ -12,7 +12,7 @@ services:
 script:
     - mysql -u root < bdd/script_sql/create_database.sql
     - |
-      python main.py &
+      python main.py unit_test &
       APP_PID=$!
     #- python auto_test.py (unitest)
     - kill $APP_PID

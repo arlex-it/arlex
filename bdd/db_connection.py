@@ -4,6 +4,7 @@ import sqlalchemy as db
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker
+import sys
 
 
 Base = declarative_base()
@@ -38,7 +39,11 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
-engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
+print(len(sys.argv))
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
+    engine = db.create_engine('mysql+pymysql://root:root@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
+else:
+    engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine)
 session = Session()
