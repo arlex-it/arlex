@@ -15,5 +15,6 @@ script:
       python main.py unit_test &
       APP_PID=$!
     #- python unit_test/user/launcher.py
-    - curl -X POST "http://127.0.0.1:5000/api/user/" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"gender\": 0, \"lastname\": \"Doe\", \"firstname\": \"John\", \"mail\": \"john@doe.com\", \"password\": \"password\", \"country\": \"France\", \"town\": \"Lille\", \"street\": \"rue nationale\", \"street_number\": \"13\", \"region\": \"Hauts de france\", \"postal_code\": \"123456\"}"
+    - chmod 755 test.sh
+    - ./test.sh
     - kill $APP_PID
