@@ -2,11 +2,20 @@ import unittest
 import datetime
 import requests
 from pyngrok import ngrok
+import sqlalchemy as db
 
 
 class UserRoute(unittest.TestCase):
     def testPostRoute(self):
         public_url = ngrok.connect(5000)
+        # engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
+        engine = db.create_engine(
+            'mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db',
+            pool_recycle=3600, echo=False)
+        with engine.connect() as con:
+            rs = con.execute('SELECT * FROM user')
+            for row in rs:
+                print(row)
         new_user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'is_active': 0,
@@ -23,9 +32,12 @@ class UserRoute(unittest.TestCase):
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
         print(public_url)
-        resp = requests.post(public_url+'/api/user'.format(),
-                             json=new_user)
+        resp = requests.post(public_url+'/api/user'.format(), json=new_user)
         print(resp.text)
+        with engine.connect() as con:
+            rs = con.execute('SELECT * FROM user')
+            for row in rs:
+                print(row)
         self.assertEqual(True, True)
 
 
