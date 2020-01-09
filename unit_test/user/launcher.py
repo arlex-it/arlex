@@ -11,8 +11,6 @@ class UserRoute(unittest.TestCase):
         engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
         with engine.connect() as con:
             rs = con.execute("INSERT INTO log (date_insert, code, data) VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla\')")
-            for row in rs:
-                print(row)
         new_user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'is_active': 0,
@@ -32,7 +30,7 @@ class UserRoute(unittest.TestCase):
         resp = requests.post(public_url+'/api/user'.format(), json=new_user)
         print(resp.text)
         with engine.connect() as con:
-            rs = con.execute('SELECT * FROM user')
+            rs = con.execute('SELECT * FROM log')
             for row in rs:
                 print(row)
         self.assertEqual(True, True)
