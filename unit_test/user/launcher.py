@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import requests
+import os
 
 
 class UserRoute(unittest.TestCase):
@@ -20,7 +21,8 @@ class UserRoute(unittest.TestCase):
                     'street_number': '13',
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
-        resp = requests.post('http://127.0.0.1:5000/api/user'.format(),
+        print(os.environ['NGROK_URL'])
+        resp = requests.post(os.environ['NGROK_URL'] + '/api/user'.format(),
                              json=new_user)
         print(resp.text)
         self.assertEqual(True, True)
