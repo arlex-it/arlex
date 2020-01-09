@@ -10,7 +10,7 @@ class UserRoute(unittest.TestCase):
         public_url = ngrok.connect(5000)
         engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
         with engine.connect() as con:
-            rs = con.execute('SELECT * FROM user')
+            rs = con.execute("INSERT INTO log VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla\')")
             for row in rs:
                 print(row)
         new_user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
