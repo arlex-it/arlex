@@ -22,7 +22,7 @@ class UserRoute(unittest.TestCase):
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
         print(os.environ['NGROK_URL'])
-        resp = requests.post(os.environ['NGROK_URL'] + '/api/user'.format(),
+        resp = requests.post('https://arlexunittest.ngrok.io/api/user'.format(),
                              json=new_user)
         print(resp.text)
         self.assertEqual(True, True)
