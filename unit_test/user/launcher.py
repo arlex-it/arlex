@@ -1,7 +1,6 @@
 import unittest
 import datetime
 import requests
-import os
 
 
 class UserRoute(unittest.TestCase):
@@ -21,7 +20,6 @@ class UserRoute(unittest.TestCase):
                     'street_number': '13',
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
-        print(os.environ['NGROK_URL'])
         resp = requests.post('https://arlexunittest.ngrok.io/api/user'.format(),
                              json=new_user)
         print(resp.text)
