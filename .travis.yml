@@ -15,15 +15,6 @@ script:
     - |
       python main.py unit_test &
       APP_PID=$!
-    # download and install ngrok
-    - curl -s https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip > ngrok.zip
-    - unzip ngrok.zip
-    - ./ngrok http -subdomain=arlexunittest 5000 > /dev/null &
-    # sleep to allow ngrok to initialize
-    - sleep 2
-
-    # extract the ngrok url
-    - NGROK_URL=$(curl -s localhost:4040/api/tunnels/command_line | jq --raw-output .public_url)
 
     - python unit_test/user/launcher.py
 #    - curl $NGROK_URL

@@ -1,10 +1,12 @@
 import unittest
 import datetime
 import requests
+from pyngrok import ngrok
 
 
 class UserRoute(unittest.TestCase):
     def testPostRoute(self):
+        public_url = ngrok.connect(5000)
         new_user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     'is_active': 0,
@@ -20,7 +22,8 @@ class UserRoute(unittest.TestCase):
                     'street_number': '13',
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
-        resp = requests.post('https://arlexunittest.ngrok.io/api/user'.format(),
+        print(public_url)
+        resp = requests.post(public_url+'/api/user'.format(),
                              json=new_user)
         print(resp.text)
         self.assertEqual(True, True)
