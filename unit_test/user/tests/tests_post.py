@@ -21,4 +21,4 @@ class UserRoute(unittest.TestCase):
                     'region': 'Hauts de france',
                     'postal_code': '59000'}
         resp = requests.post(public_url + '/api/user'.format(), json=new_user)
-        self.assertEqual(200, resp.status_code)
+        self.assertEqual(201, resp.status_code)
