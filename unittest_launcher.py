@@ -20,6 +20,6 @@ class UnitTestInit():
 
 if __name__ == '__main__':
     init = UnitTestInit()
-    # init.connect_to_db()
-    # init.create_tunnel()
+    init.connect_to_db()
+    init.create_tunnel()
     init.call_user_tests()
