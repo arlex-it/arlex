@@ -16,7 +16,7 @@ script:
       python main.py unit_test &
       APP_PID=$!
 
-    - python unit_test/launcher.py
+    - python unittest_launcher.py
 #    - curl $NGROK_URL
 #    - curl $NGROK_URL/api
 
