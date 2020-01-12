@@ -1,16 +1,23 @@
 import unittest
-import datetime
 import requests
 from unit_test.user.user_model import get_user_model
+from unit_test.user.sql.sql_post import *
 
 
 class UserRoute(unittest.TestCase):
-    def testPostRoute(self, public_url=None):
+    def __init__(self, engine=None, public_url=None):
+        super().__init__()
+        self.engine = engine
+        self.public_url = public_url
+
+    def testPostRoute(self):
         # create user
         new_user = get_user_model()
-        resp = requests.post(public_url + '/api/user'.format(), json=new_user)
+        resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(201, resp.status_code)
 
         # try to create user with existing email
-        resp = requests.post(public_url + '/api/user'.format(), json=new_user)
+        create_user(self.engine)
+        new_user = get_user_model()
+        resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(403, resp.status_code)

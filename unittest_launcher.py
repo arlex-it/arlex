@@ -6,7 +6,6 @@ from unit_test.user.tests import tests_post
 class UnitTestInit():
     public_url = None
     engine = None
-    user_route = tests_post.UserRoute()
 
     def connect_to_db(self):
         self.engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
@@ -15,7 +14,8 @@ class UnitTestInit():
         self.public_url = ngrok.connect(5000)
 
     def call_user_tests(self):
-        self.user_route.testPostRoute(public_url=self.public_url)
+        user_route = tests_post.UserRoute(self.engine, self.public_url)
+        user_route.testPostRoute()
 
 
 if __name__ == '__main__':
