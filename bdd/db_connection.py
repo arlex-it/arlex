@@ -51,7 +51,6 @@ class Product(Base):
     id_ean = Column(Integer, nullable=False)
     position = Column(String(255), nullable=False)
     id_user = Column(Integer, nullable=False)
-    user_id = Column(Integer, nullable=False)
 
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':

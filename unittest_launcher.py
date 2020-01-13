@@ -1,6 +1,7 @@
 import sqlalchemy as db
 from pyngrok import ngrok
 from unit_test.user.tests import tests_post
+from unit_test.product.tests import tests_post
 
 
 class UnitTestInit():

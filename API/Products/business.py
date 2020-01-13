@@ -24,7 +24,6 @@ def create_products(request):
         id_ean=request.json['id_ean'],
         position=request.json['position'],
         id_user=id_user,
-        user_id=user_id
     )
 
     try:
