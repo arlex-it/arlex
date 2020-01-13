@@ -5,12 +5,15 @@ from bdd.db_connection import session, Product, to_dict
 from API.Utilities.HttpResponse import *
 import datetime
 
+urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
+
 
 def create_products(request):
     if not request:
         abort(400)
 
     id_user = 1
+    user_id = 1
 
     new_product = Product(
         date_insert=datetime.datetime.now(),
@@ -20,7 +23,8 @@ def create_products(request):
         id_rfid=request.json['id_rfid'],
         id_ean=request.json['id_ean'],
         position=request.json['position'],
-        id_user=id_user
+        id_user=id_user,
+        user_id=user_id
     )
 
     try:
@@ -39,8 +43,10 @@ def get_products(request, product_id):
         abort(400)
 
     products = session.query(Product).filter(Product.id == product_id).first()
+    if not products:
+        return HttpResponse(403).error(ErrorCode.PRODUCT_NFIND)
 
-    product = requests.get('https://world.openfoodfacts.org/api/v0/product/' + str(products.id_ean) + '.json')
+    product = requests.get(urlopenfoodfact.format(products.id_ean))
     return product.json()
 
 
