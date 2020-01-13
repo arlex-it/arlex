@@ -15,9 +15,11 @@ class UserRoute(unittest.TestCase):
         new_user = get_user_model()
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(201, resp.status_code)
+        # TODO delete user
 
         # try to create user with existing email
         create_user(self.engine)
         new_user = get_user_model()
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(403, resp.status_code)
+        # TODO delete user
