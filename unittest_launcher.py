@@ -1,7 +1,6 @@
 import sqlalchemy as db
 from pyngrok import ngrok
-from unit_test.user.tests import tests_post
-from unit_test.product.tests import tests_post
+from unit_test.product.tests import tests_post as tests_post_product
 
 
 class UnitTestInit():
@@ -15,7 +14,7 @@ class UnitTestInit():
         self.public_url = ngrok.connect(5000)
 
     def call_user_tests(self):
-        user_route = tests_post.UserRoute(self.engine, self.public_url)
+        user_route = tests_post_product.ProductRoute(self.engine, self.public_url)
         user_route.testPostRoute()
 
 

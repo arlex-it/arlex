@@ -12,6 +12,7 @@ def create_products(request):
     if not request:
         abort(400)
 
+    print("coucou")
     id_user = 1
     user_id = 1
 

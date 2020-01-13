@@ -11,7 +11,7 @@ import datetime
 
 def create_product(engine):
     with engine.connect() as con:
-        rs = con.execute("INSERT INTO log (date_insert, code, data) VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla\')")
+        rs = con.execute("INSERT INTO log (date_insert, code, data) VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla 1\')")
 
     with engine.connect() as con:
         rs = con.execute('SELECT * FROM log')
