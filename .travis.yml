@@ -18,7 +18,7 @@ script:
       python main.py unit_test &
       APP_PID=$!
 # TODO trouver comment fonctionne test uni sur pycharm pour pas avoir probleme d'import lors execution travis
-    - python unittest_launcher.py
+    - python unit_test/user/tests/tests_post.py
 #    - curl $NGROK_URL
 #    - curl $NGROK_URL/api
 
