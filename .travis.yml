@@ -11,8 +11,7 @@ services:
 
 script:
     - mysql -u root < bdd/script_sql/create_database.sql
-    - pwd
-    - export PYTHONPATH=$PYTHONPATH:./unit_test
+    - export PYTHONPATH=$PYTHONPATH:$PWD
     # start API
     - |
       python main.py unit_test &
