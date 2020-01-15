@@ -1,20 +1,22 @@
-# with engine.connect() as con:
-#     rs = con.execute("INSERT INTO log (date_insert, code, data) VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla\')")
-
-# with engine.connect() as con:
-#     rs = con.execute('SELECT * FROM log')
-#     for row in rs:
-#         print(row)
-
-import datetime
+from unit_test.user.user_model import user_model_to_sql
 
 
-def create_user(engine):
-    # TODO create user sql (see to do it with object)
-    with engine.connect() as con:
-        rs = con.execute("INSERT INTO log (date_insert, code, data) VALUES (\'"+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\', 1, \'blabla\')")
+class PostSql:
+    def __init__(self, engine=None, session=None):
+        super().__init__()
+        self.engine = engine
+        self.session = session
 
-    with engine.connect() as con:
-        rs = con.execute('SELECT * FROM log')
-        for row in rs:
-            print(row)
+    def create_user(self, user):
+        user = user_model_to_sql(user)
+        self.session.add(user)
+        self.session.commit()
+
+    def delete_user_by_id(self, id_user):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM user WHERE user.id = " + str(id_user))
+
+    def delete_all_user(self):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM user")
+

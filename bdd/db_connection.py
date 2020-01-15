@@ -40,6 +40,7 @@ class User(Base):
 
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
+    print('Connected to unit_test Database')
     engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
 else:
     engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
