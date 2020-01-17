@@ -24,6 +24,8 @@ def get_fuzzing_data_by_input(input_key):
         del fuzzing[5]
         del fuzzing[6]
     elif input_key is 'street_number':
+        del fuzzing[0]
+        del fuzzing[1]
         del fuzzing[7]
     elif input_key is 'postal_code':
         del fuzzing[0]
