@@ -11,6 +11,8 @@ def get_fuzzing_data_by_input(input_key):
     }
     if input_key is 'gender':
         del fuzzing[4]
+        del fuzzing[5]
+        del fuzzing[6]
     elif input_key is 'lastname' or input_key is 'firstname' \
             or input_key is 'country' or input_key is 'town' \
             or input_key is 'street' or input_key is 'region':
