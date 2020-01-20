@@ -1,44 +1,3 @@
-# import unittest
-# import requests
-# from unit_test.product.product_model import get_product_model
-# from unit_test.product.sql.sql_post import *
-# 
-# 
-# class ProductRoute(unittest.TestCase):
-#     def __init__(self, engine=None, public_url=None):
-#         super().__init__()
-#         self.engine = engine
-#         self.public_url = public_url
-# 
-#     def testPostRoute(self):
-#         # create product
-#         delete_all_products(self.engine)
-#         new_product = get_product_model()
-#         resp = requests.post(self.public_url + '/api/productss'.format(), json=new_product)
-#         self.assertEqual(201, resp.status_code)
-# 
-#         # try to create a bad product
-#         new_product = get_product_model()
-#         new_product.pop('id_ean', None)
-#         resp = requests.post(self.public_url + '/api/productss'.format(), json=new_product)
-#         self.assertEqual(400, resp.status_code)
-# 
-#     def testGetRoute(self):
-#         print("~~~~~~ Get Route  ~~~~~~")
-#         delete_all_products(self.engine)
-#         prod_id = create_product(self.engine)
-#         resp = requests.get(self.public_url + '/api/productss/{}'.format(prod_id))
-#         # print(resp.json())
-#         self.assertEqual(200, resp.status_code)
-#         print("Real Product find : OK")
-#         delete_all_products(self.engine)
-#         resp = requests.get(self.public_url + '/api/productss/0'.format())
-#         self.assertEqual(403, resp.status_code)
-#         print("Fake Product failed : OK")
-# 
-#     def testDeleteRoute(self):
-#         return
-
 import unittest
 
 import requests
@@ -66,12 +25,18 @@ class ProductRoutePost(unittest.TestCase):
         new_product = get_product_model()
         resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
         self.assertEqual(201, resp.status_code)
+        time.sleep(0.5)
 
     def test_product_bad(self):
         print(">>> test_product_bad")
         # try to create product with error
+        needed_infos = ["expiration_date",
+                        "id_rfid",
+                        "id_ean",
+                        "position"]
+
         product_model = get_product_model()
-        for key in product_model:
+        for key in needed_infos:
             print("Try with removing : {}".format(key))
             new_product = product_model.copy()
             new_product.pop(key, None)
