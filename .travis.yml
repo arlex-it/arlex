@@ -18,6 +18,10 @@ script:
       python main.py unit_test &
       APP_PID=$!
     - python unit_test/product/tests/tests_post.py
+    - kill $APP_PID
+    - |
+      python main.py unit_test &
+      APP_PID=$!
     - python unit_test/product/tests/tests_get.py
 #    - curl $NGROK_URL
 #    - curl $NGROK_URL/api

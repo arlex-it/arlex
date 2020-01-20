@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
 -- ALTER TABLE `arlex_db`.`token`
 -- CHANGE COLUMN `access_token` `token` VARCHAR(255) NOT NULL , RENAME TO  `arlex_db`.`access_token` ;
 
-CREATE TABLE IF NOT EXISTS `arlex_db`.`access_token` (
+CREATE TABLE IF NOT EXISTS `arlex_db`.  `access_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `token` varchar(255) NOT NULL,
