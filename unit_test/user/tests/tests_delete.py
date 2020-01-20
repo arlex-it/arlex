@@ -5,7 +5,7 @@ from unit_test.user.sql.sql_post import *
 import requests
 
 
-class MyTestCase(unittest.TestCase):
+class UserRouteDelete(unittest.TestCase):
 
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()

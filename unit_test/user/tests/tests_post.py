@@ -10,7 +10,7 @@ from unit_test.user.test_user_utilities import *
 import time
 
 
-class UserRoute(unittest.TestCase):
+class UserRoutePost(unittest.TestCase):
 
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
