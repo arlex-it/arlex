@@ -14,4 +14,5 @@ class ErrorCode(Enum):
     STREET_NOK = "Rue non valide."
     CITY_NOK = "Ville non valide."
     REGION_NOK = "Région non valide."
+    ID_RFID_NOK = "Id_RFID non valide."
     MAIL_USED = "Addresse email déjà en utilisation."
