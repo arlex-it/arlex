@@ -29,23 +29,26 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `idx_date_insert` (`date_insert`),
   KEY `idx_date_update` (`date_update`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 /* token table creation*/
-CREATE TABLE IF NOT EXISTS `arlex_db`.`token` (
+ALTER TABLE `arlex_db`.`token`
+CHANGE COLUMN `access_token` `token` VARCHAR(255) NOT NULL , RENAME TO  `arlex_db`.`access_token` ;
+
+CREATE TABLE `access_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `access_token` varchar(255) NOT NULL,
-  `refresh_token` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `id_user` int(11) NOT NULL,
   `expiration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `app_id` varchar(255) NOT NULL,
   `type` varchar(100) NOT NULL,
+  `is_enable` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
-  UNIQUE KEY `access_token_UNIQUE` (`access_token`),
-  UNIQUE KEY `refresh_token_UNIQUE` (`refresh_token`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+  UNIQUE KEY `access_token_UNIQUE` (`token`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
 
 /* sensor table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`sensor` (
