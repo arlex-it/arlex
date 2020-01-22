@@ -16,13 +16,13 @@ user_creation = api.model('User creation', {
     'street': fields.String(example='rue nationale', description='Rue de l\'utilisateur', required=True),
     'street_number': fields.String(example='13', description='Numéro de rue de l\'utilisateur', required=True),
     'region': fields.String(example='Hauts de france', description='Région de l\'utilisateur', required=True),
-    'postal_code': fields.Integer(example=123456, description='Code postal de l\'utilisateur', required=True),
+    'postal_code': fields.String(example="12345", description='Code postal de l\'utilisateur', required=True),
 })
 
 user_update_header = api.parser()
 user_update_header.add_argument('Authorization', type=str, help="Bearer Token", location='headers', required=True)
 
-user_update = api.model('User creation', {
+user_update = api.model('User update', {
     'gender': fields.Integer(example=0, description='Nouveau Genre de l\'utilisateur'),
     'lastname': fields.String(example='Doe', description='Nouveau Nom de l\'utilisateur'),
     'firstname': fields.String(example='John', description='Nouveau Prenom de l\'utilisateur'),
@@ -33,5 +33,5 @@ user_update = api.model('User creation', {
     'street': fields.String(example='rue nationale', description='Nouvelle Rue de l\'utilisateur'),
     'street_number': fields.String(example='13', description='Nouveau Numéro de rue de l\'utilisateur'),
     'region': fields.String(example='Hauts de france', description='Nouvelle  Région de l\'utilisateur'),
-    'postal_code': fields.Integer(example=123456, description='Nouveau Code postal de l\'utilisateur'),
+    'postal_code': fields.String(example="12345", description='Nouveau Code postal de l\'utilisateur'),
 })
