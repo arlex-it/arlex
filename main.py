@@ -1,5 +1,6 @@
 #!env/bin/python
 import os
+import uuid
 
 from flask import Flask, Blueprint, request, jsonify
 from Ressources import settings
@@ -14,7 +15,6 @@ from flask_wtf.csrf import CSRFProtect
 from API.Token.endpoints.token import ns as token
 # templates import marker
 
-print(os.getcwd())
 app = Flask(__name__, template_folder="API/templates/")
 app.url_map.strict_slashes = False
 
@@ -28,6 +28,7 @@ def description():
 
 
 def initialize_app(flask_app):
+	access_token = uuid.uuid4().hex[:35]
 	#CSRFProtect(app)
 	configure_app(flask_app)
 	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')

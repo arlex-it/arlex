@@ -1,8 +1,8 @@
 from flask_restplus import abort
 
-from bdd.db_connection import session, User, to_dict, Token
+from bdd.db_connection import session, User, to_dict, AccessToken
 from API.Utilities.HttpResponse import *
-from API.Utilities.CheckAuthToken import *
+from API.Utilities.OAuthAuthenticationToken import *
 import datetime
 import re
 import bcrypt
@@ -77,7 +77,7 @@ def create_user(request):
     new_user = User(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
-        is_active=0,
+        is_active=1,
         status=0,
         gender=request.json['gender'],
         lastname=request.json['lastname'],

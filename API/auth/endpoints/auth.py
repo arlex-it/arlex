@@ -1,7 +1,8 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.auth.business import get_auth, post_auth
+from API.auth.GetAuthorizationBuisness import GetAuthorization
+from API.auth.PostAuthorizationBuisness import PostAuthorization
 from API.auth.models import auth_input, auth_authorize_param
 
 ns = api.namespace('auth', description='Routes authentifications')
@@ -15,11 +16,13 @@ class authCollection(Resource):
         """
         This is a to get authorize
         """
-        return get_auth(request)
+        get_auth = GetAuthorization()
+        return get_auth.dispatch_request(request)
 
     def post(self):
         """
         Post authorize (called after get)
         :return:
         """
-        return post_auth(request)
+        post_auth = PostAuthorization()
+        return post_auth.dispatch_request(request)
