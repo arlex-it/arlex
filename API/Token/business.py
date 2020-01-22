@@ -6,6 +6,7 @@ from flask import jsonify
 from flask_restplus import abort
 
 from API.Utilities.HttpRequest import HttpRequest
+from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
 from API.Utilities.HttpResponse import HttpResponse, SuccessCode, ErrorCode
 from bdd.db_connection import AccessToken, session, User, RefreshToken
@@ -66,6 +67,7 @@ class PostToken(OAuthRequestAbstract):
         user = self.__get_user(code.id_user)
         if not user or user.is_active == 0:
             raise Exception('Cannot authorize. Account is disabled.')
+
         access_token = AccessToken(
             app_id=self.application_id,
             type='Bearer',
@@ -82,6 +84,7 @@ class PostToken(OAuthRequestAbstract):
             session.rollback()
             session.flush()
             return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
         refresh_token = RefreshToken(
             app_id=self.application_id,
             date_insert=datetime.datetime.now(),
@@ -98,7 +101,59 @@ class PostToken(OAuthRequestAbstract):
             return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
         return access_token, refresh_token
 
+    def __grant_password(self):
+        validator = HttpRequestValidator()
+        validator.throw_on_error(True)
+        validator.add_param('username', True)
+        validator.add_param('password', True)
 
+        if validator.verify():
+
+            username = self.__request.get_param('username')
+            username = username.lower()
+            user = session.query(User).filter(User.mail == username).first()
+            if user and user.is_active != 0 and user.password:
+                current_pw = user.password
+
+                password = self.__request.get_param('password')
+
+                if PasswordUtilities.check_password(password, current_pw):
+                    access_token=AccessToken(
+                        app_id=self.application_id,
+                        type='authorization_code',
+                        token=uuid.uuid4().hex[:35],
+                        date_insert=datetime.datetime.now(),
+                        id_user=user.id,
+                        expiration_date=arrow.now().shift(hours=+10).datetime,
+                        is_enable=1
+                    )
+                    try:
+                        session.add(access_token)
+                        session.commit()
+                    except Exception as e:
+                        session.rollback()
+                        session.flush()
+                        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+                    refresh_token = RefreshToken(
+                        app_id=self.application_id,
+                        date_insert=datetime.datetime.now(),
+                        token=uuid.uuid4().hex[:35],
+                        is_enable=True,
+                        access_token_id=access_token.id,
+                    )
+                    try:
+                        session.add(refresh_token)
+                        session.commit()
+                    except Exception as e:
+                        session.rollback()
+                        session.flush()
+                        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+                    return (access_token, refresh_token)
+                else:
+                    raise Exception('Invalid username or password')
+            else:
+                raise Exception('Invalid username or password')
 
     def __grant_refresh_token(self):
         validator = HttpRequestValidator()
@@ -167,7 +222,7 @@ class PostToken(OAuthRequestAbstract):
 
     def dispatch_request(self, request):
         self.__request = HttpRequest()
-        self.application_id = self.get_app_with_client_id(client_id=request.values.get('client_id')).id
+        self.application_id = self.get_app_with_client_id(client_id=self.__request.get_param('client_id')).id
         self.application_secret = self.__request.get_param('client_secret')
         self.grant_type = self.__request.get_param('grant_type')
         self.app_id = self.__request.get_param('app_id')
@@ -177,5 +232,7 @@ class PostToken(OAuthRequestAbstract):
             (token, refresh_token) = self.__grant_authorization_code()
         elif self.grant_type == 'refresh_token':
             (token, refresh_token) = self.__grant_refresh_token()
+        elif self.grant_type == 'password':
+            (token, refresh_token) = self.__grant_password()
         context = self.__get_response_dict(token, refresh_token)
         return HttpResponse(200).custom(context)

@@ -43,7 +43,6 @@ class OAuthRequestAbstract(View):
         :rtype: APIOAuthApplicationModel
 
         """
-
         app = session.query(AuthApplication).filter(AuthApplication.client_id == client_id).first()
 
         if not app:

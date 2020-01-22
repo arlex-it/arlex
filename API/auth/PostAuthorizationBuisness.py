@@ -3,7 +3,6 @@ from urllib.parse import urlencode
 import arrow
 from flask import make_response, render_template, redirect, request
 
-from API.User.business import check_password
 from API.Utilities import HttpRequestValidator
 from API.Utilities.HttpResponse import HttpResponse, ErrorCode
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
