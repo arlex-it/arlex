@@ -116,10 +116,6 @@ def update_user(request, user_id):
         abort(400)
 
     infos = request.json
-    if not CheckAuthToken().check_user(request=request, id_user=user_id):
-        return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
-    infos.pop('access_token')
-    infos.pop('refresh_token')
 
     """
     if user_connected_with_token != user_id:
