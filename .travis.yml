@@ -23,6 +23,7 @@ script:
       python main.py unit_test &
       APP_PID=$!
     - python unit_test/product/tests/tests_get.py
+    - kill $APP_PID
     - |
       python main.py unit_test &
       APP_PID=$!
