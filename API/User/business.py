@@ -1,8 +1,10 @@
 from flask_restplus import abort
 
+from API.Utilities.HttpRequest import HttpRequest
 from bdd.db_connection import session, User, to_dict, AccessToken
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
+from API.Utilities.auth import check_user_permission
 import datetime
 import re
 import bcrypt
@@ -72,6 +74,13 @@ def delete_user(request, user_id):
     """
     if not request:
         abort(400)
+
+    if not check_user_permission(user_id):
+        error = {
+            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
+        }
+        return HttpResponse(403).custom(error)
+
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
@@ -140,15 +149,11 @@ def update_user(request, user_id):
     if not request:
         abort(400)
 
-    infos = request.json
-
-    """
-    if user_connected_with_token != user_id:
+    if not check_user_permission(user_id):
         error = {
-            'error': 'Action interdite: Tentative d'action sur un compte non identifié'
+            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
         }
-        return jsonify(error), 403
-    """
+        return HttpResponse(403).custom(error)
 
     user = session.query(User).filter(User.id == user_id).first()
     if not user:

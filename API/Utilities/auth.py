@@ -8,15 +8,42 @@ from werkzeug.exceptions import BadRequest
 
 from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.OAuthAuthenticationToken import OAuthAuthenticationToken
+from bdd.db_connection import session, AccessToken, to_dict
 
 TYPE_PRIVATE = 'private'
 TYPE_PUBLIC = 'public_authenticated'
+
+
+def check_user_permission(user_id):
+    requester = HttpRequest()
+
+    token = requester.get_param('accessToken')
+    timestamp = requester.get_param('oauth_timestamp')
+    header_token = requester.get_header("Authorization")
+
+    if header_token is None:
+        header_token = requester.get_header("X-Authorization")
+
+    if header_token:
+        reg = re.compile('Bearer ([A-Za-z0-9-_=]+)')
+        result = reg.findall(header_token)
+        if result:
+            token = result[0]
+
+    user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+    user_connected = to_dict(user_connected)
+    if int(user_connected['id_user']) != int(user_id):
+        return False
+    return True
+
+
 
 def public_authentication(scopes):
     """
     :rtype: bool
     """
     return True
+
 
 def private_authentication(scopes, kwargs):
     request = HttpRequest()
@@ -53,6 +80,7 @@ def private_authentication(scopes, kwargs):
     #if helper.access():
 
     return helper.get_token_infos()
+
 
 def require_authentication(type_, scopes=[]):
     """
