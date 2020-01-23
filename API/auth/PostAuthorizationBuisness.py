@@ -56,7 +56,6 @@ class PostAuthorization(OAuthRequestAbstract):
 
         if user is None:
             # TODO sign-in user
-            # voir si fonction yper recup arg request
             page = 'signin.html'
             # TODO how to redirect after signin ? In signin.html ?
             headers = {'Content-Type': 'text/html'}
