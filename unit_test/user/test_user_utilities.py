@@ -13,9 +13,7 @@ def get_fuzzing_data_by_input(input_key):
         del fuzzing[4]
         del fuzzing[5]
         del fuzzing[6]
-    elif input_key is 'lastname' or input_key is 'firstname' \
-            or input_key is 'country' or input_key is 'town' \
-            or input_key is 'street' or input_key is 'region':
+    elif input_key is 'lastname' or input_key is 'firstname':
         del fuzzing[0]
         del fuzzing[1]
     elif input_key is 'mail':
@@ -28,8 +26,11 @@ def get_fuzzing_data_by_input(input_key):
     elif input_key is 'street_number':
         del fuzzing[0]
         del fuzzing[1]
+        del fuzzing[2]
         del fuzzing[7]
-    elif input_key is 'postal_code':
+    elif input_key is 'country' or input_key is 'town' \
+            or input_key is 'street' or input_key is 'region' \
+            or input_key is 'postal_code':
         del fuzzing[0]
         del fuzzing[1]
         del fuzzing[7]
