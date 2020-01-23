@@ -120,7 +120,7 @@ class PostToken(OAuthRequestAbstract):
                 if PasswordUtilities.check_password(password, current_pw):
                     access_token=AccessToken(
                         app_id=self.application_id,
-                        type='authorization_code',
+                        type='bearer',
                         token=uuid.uuid4().hex[:35],
                         date_insert=datetime.datetime.now(),
                         id_user=user.id,
@@ -188,7 +188,7 @@ class PostToken(OAuthRequestAbstract):
                 raise Exception('Cannot authorize. Account is disabled.')
             access_token = AccessToken(
                 app_id=self.application_id,
-                type='authorization_code',
+                type='bearer',
                 token=uuid.uuid4().hex[:35],
                 date_insert=datetime.datetime.now(),
                 id_user=user.id,
