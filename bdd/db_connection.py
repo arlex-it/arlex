@@ -39,7 +39,7 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
-if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or sys.argv[0] != 'main.py':
     print('Connected to unit_test Database')
     engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
 else:
