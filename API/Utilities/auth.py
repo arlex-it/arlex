@@ -50,7 +50,7 @@ def private_authentication(scopes, kwargs):
         raise Exception('Invalid access token')
 
     if not helper.validate_user_access(kwargs):
-        raise Exception('Unmatched model entities')
+        raise Exception('Tentative de modification d\'un compte non correctement identifié')
     # TODO SCOPE
     #if not helper.has_scopes(scopes):
     #    raise Exception('Access token has insufficient scope')
