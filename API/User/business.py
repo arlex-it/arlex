@@ -74,13 +74,6 @@ def delete_user(request, user_id):
     """
     if not request:
         abort(400)
-
-    if not check_user_permission(user_id):
-        error = {
-            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
-        }
-        return HttpResponse(403).custom(error)
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
