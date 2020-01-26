@@ -6,14 +6,17 @@ from unit_test.init_unit_test import UnitTestInit
 from unit_test.user.sql.sql_post import *
 from unit_test.user.user_model import get_user_model
 from unit_test.user.test_user_utilities import *
+from bdd.db_connection import engine, session
 
+import main
 import time
+import _thread
 
 
 class UserRoutePost(unittest.TestCase):
 
     unit_test_init = UnitTestInit()
-    engine, session = unit_test_init.connect_to_db()
+    # engine, session = unit_test_init.connect_to_db()
     public_url = unit_test_init.create_tunnel()
     sql = PostSql(engine=engine, session=session)
 
@@ -146,4 +149,6 @@ class UserRoutePost(unittest.TestCase):
 
 
 if __name__ == '__main__':
+    _thread.start_new_thread(unittest.main, ())
+    main.app.run(port=5000, host='0.0.0.0')
     unittest.main()
