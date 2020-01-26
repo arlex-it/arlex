@@ -14,8 +14,7 @@ class UserRoutePost(unittest.TestCase):
 
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
-    # public_url = unit_test_init.create_tunnel()
-    public_url = "http://127.0.0.1:5000"
+    public_url = unit_test_init.create_tunnel()
     sql = PostSql(engine=engine, session=session)
 
     def tearDown(self):
