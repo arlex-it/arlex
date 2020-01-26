@@ -15,6 +15,7 @@ class TestVocaleAssistantCollection(Resource):
     @ns.response(200, '{"res": True}')
     @require_authentication('private')
     def get(self):
+        print("oui")
         """
         This is a test route
         """

@@ -34,13 +34,13 @@ def check_user_infos(infos):
         return ErrorCode.NAME_NOK
     if 'postal_code' in infos and not re.search(regex_postal, infos['postal_code']):
         return ErrorCode.POSTAL_NOK
-    if 'country' in infos and not re.search(regex_address, infos['country']):
+    if 'country' in infos and not re.search(regex_name, infos['country']):
         return ErrorCode.COUNTRY_NOK
     if 'street' in infos and not re.search(regex_address, infos['street']):
         return ErrorCode.STREET_NOK
     if 'town' in infos and not re.search(regex_address, infos['town']):
         return ErrorCode.CITY_NOK
-    if 'region' in infos and not re.search(regex_address, infos['region']):
+    if 'region' in infos and not re.search(regex_name, infos['region']):
         return ErrorCode.REGION_NOK
     return None
 

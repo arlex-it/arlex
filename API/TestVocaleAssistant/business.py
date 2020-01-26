@@ -5,7 +5,9 @@ from API.Utilities.HttpResponse import HttpResponse
 
 
 def get_test_vocale_assistant(request):
+    print("eheh")
     if not request:
+        print("ahah")
         abort(400)
     res = {
         'state': 'Hello, Tout les services arlex sont disponible !'
