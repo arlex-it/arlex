@@ -71,7 +71,6 @@ class UserRoutePost(unittest.TestCase):
             print_arg(fuzzing_data[key])
             new_user = get_user_model({'mail': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
-            print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
             time.sleep(0.5)
 
