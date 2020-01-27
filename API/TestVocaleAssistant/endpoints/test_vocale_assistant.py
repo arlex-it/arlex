@@ -13,7 +13,6 @@ ns = api.namespace('test_vocale_assistant', description='Test if vocale assistan
 class TestVocaleAssistantCollection(Resource):
     @ns.expect(test_vocale_assistant_input)
     @ns.response(200, '{"res": True}')
-    @require_authentication('private')
     def get(self):
         print("oui")
         """

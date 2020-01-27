@@ -14,7 +14,6 @@ ns = api.namespace('auth', description='Routes authentifications')
 class authCollection(Resource):
     @ns.expect(auth_authorize_param)
     @ns.response(200, '{"res": True}')
-    @require_authentication('public')
     def get(self):
         """
         This is a to get authorize
@@ -22,7 +21,6 @@ class authCollection(Resource):
         get_auth = GetAuthorization()
         return get_auth.dispatch_request(request)
 
-    @require_authentication('public')
     def post(self):
         """
         Post authorize (called after get)
