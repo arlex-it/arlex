@@ -11,7 +11,7 @@ class ProductsRouteDelete(unittest.TestCase):
 
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
-    print("url de ngrok = ", unit_test_init.create_tunnel())
+    # print("url de ngrok = ", unit_test_init.create_tunnel())
     sql = PostSql(engine=engine, session=session)
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
