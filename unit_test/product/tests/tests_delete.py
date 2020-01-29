@@ -13,6 +13,11 @@ class ProductsRouteDelete(unittest.TestCase):
     engine, session = unit_test_init.connect_to_db()
     public_url = unit_test_init.create_tunnel()
     sql = PostSql(engine=engine, session=session)
+    import socket
+    hostname = socket.gethostname()
+    IPAddr = socket.gethostbyname(hostname)
+    print("Your Computer Name is:" + hostname)
+    print("Your Computer IP Address is:" + IPAddr)
 
     def tearDown(self):
         self.sql.delete_all_product()

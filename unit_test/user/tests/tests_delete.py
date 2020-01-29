@@ -10,11 +10,6 @@ class MyTestCase(unittest.TestCase):
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
     public_url = unit_test_init.create_tunnel()
-    import socket
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)
-    print("Your Computer Name is:" + hostname)
-    print("Your Computer IP Address is:" + IPAddr)
     sql = PostSql(engine=engine, session=session)
 
     def tearDown(self):
