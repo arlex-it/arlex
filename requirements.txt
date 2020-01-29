@@ -6,4 +6,4 @@ sqlalchemy
 flask_wtf
 pymysql
 arrow
-pyngrok
+pyngrok<=1.4.3
