@@ -19,6 +19,11 @@ class ProductsRouteDelete(unittest.TestCase):
     print("Your Computer Name is:" + hostname)
     print("Your Computer IP Address is:" + IPAddr)
     print("Ip adress : ", socket.getfqdn())
+
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    print("==========  ", s.getsockname()[0])
+    s.close()
     def tearDown(self):
         self.sql.delete_all_product()
 
