@@ -17,7 +17,7 @@ class ProductsRouteDelete(unittest.TestCase):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     print("==========  ", s.getsockname()[0])
-    public_url = "http://" +s.getsockname()[0]
+    public_url = "http://" +s.getsockname()[0] + ":5000"
     s.close()
 
     def tearDown(self):
