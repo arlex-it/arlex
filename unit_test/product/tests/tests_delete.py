@@ -17,9 +17,9 @@ class ProductsRouteDelete(unittest.TestCase):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     print("==========  ", s.getsockname()[0])
-    public_url = s.getsockname()[0]
+    public_url = "localhost"#s.getsockname()[0]
     s.close()
-    
+
     def tearDown(self):
         self.sql.delete_all_product()
 
