@@ -14,16 +14,6 @@ script:
     # export project to pythonpath for module importation
     - export PYTHONPATH=$PYTHONPATH:$PWD
     # start API
-#    - |
-#      python main.py unit_test &
-#      APP_PID=$!
-#    - python unit_test/product/tests/tests_post.py
-#    - kill $APP_PID
-#    - |
-#      python main.py unit_test &
-#      APP_PID=$!
-#    - python unit_test/product/tests/tests_get.py
-#    - kill $APP_PID
     - |
       python main.py unit_test &
       APP_PID=$!
