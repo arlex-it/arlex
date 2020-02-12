@@ -1,10 +1,9 @@
 from flask import request
 from flask_restplus import Resource
 
-from API.Utilities.auth import require_authentication
 from Ressources.swagger_api import api
 from API.Token.business import PostToken
-from API.Token.models import token_input, token_param
+from API.Token.models import token_param
 
 ns = api.namespace('token', description='mange token')
 

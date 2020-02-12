@@ -59,7 +59,13 @@ class OAuthRequestAbstract(View):
         :rtype: UserModel or None
         """
 
-        user = session.query(User).filter(User.mail == username).first()
+        user = session.query(User) \
+            .join(AccessToken, User.id == AccessToken.id_user) \
+            .filter(User.mail == username) \
+            .add_columns(User.id, User.password, AccessToken.token) \
+            .first()
+
+        #user = session.query(User).filter(User.mail == username).first()
 
         if user is not None:
             if check_password(password, user.password.encode()):

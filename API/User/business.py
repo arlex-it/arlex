@@ -1,14 +1,11 @@
 from flask_restplus import abort
 
-from API.Utilities.HttpRequest import HttpRequest
-from bdd.db_connection import session, User, to_dict, AccessToken
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 from API.Utilities.auth import check_user_permission
 import datetime
 import re
 import bcrypt
-from uuid import uuid4
 
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
