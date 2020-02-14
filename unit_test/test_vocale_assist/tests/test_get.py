@@ -17,4 +17,3 @@ class getTestVocaleAssist(unittest.TestCase):
         print(self.public_url + '/api/test_vocale_assistant'.format())
         resp = requests.get(self.public_url + '/api/test_vocale_assistant'.format())
         print(resp)
-
