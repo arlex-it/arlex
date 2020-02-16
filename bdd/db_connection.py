@@ -59,7 +59,7 @@ if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
 else:
     engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, autocommit=True)
 session = Session()
 try:
     session.query("1").all()
