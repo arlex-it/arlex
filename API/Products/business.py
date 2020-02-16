@@ -27,6 +27,19 @@ def create_products(request):
     if request.json['id_rfid'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
 
+    try:
+        datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
+    except ValueError:
+        return HttpResponse(400).custom({
+            "errors": {
+                "expiration_date": "'{}' is not of type 'date'".format(request.json['expiration_date'])
+            },
+            "message": "Input payload validation failed"
+        })
+
+    if request.json['id_rfid'] < 0:
+        return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
+
     new_product = Product(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
