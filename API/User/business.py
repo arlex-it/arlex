@@ -129,15 +129,6 @@ def create_user(request):
 def update_user(request, user_id):
     if not request:
         abort(400)
-
-    """
-    if user_connected_with_token != user_id:
-        error = {
-            'error': 'Action interdite: Tentative d'action sur un compte non identifié'
-        }
-        return jsonify(error), 403
-    """
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
