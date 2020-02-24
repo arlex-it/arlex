@@ -37,13 +37,13 @@ class HttpRequestValidator(object):
     """
     HttpRequestValidator class.
     """
-    __params = []
-    __request = None
+    params = []
+    request = None
     __throw_on_error = False
 
     def __init__(self):
-        self.__params = []
-        self.__request = HttpRequest()
+        self.params = []
+        self.request = HttpRequest()
         self.__throw_on_error = False
 
     def throw_on_error(self, enabled=True):
@@ -64,15 +64,15 @@ class HttpRequestValidator(object):
         value = PARAM_NOT_PRESENT
 
         if param.location == Location.any:
-            value = self.__request.get_param(name=param.name, default=PARAM_NOT_PRESENT)
+            value = self.request.get_param(name=param.name, default=PARAM_NOT_PRESENT)
         elif param.location == Location.query:
-            value = self.__request.get_query_param(name=param.name, default=PARAM_NOT_PRESENT)
+            value = self.request.get_query_param(name=param.name, default=PARAM_NOT_PRESENT)
         elif param.location == Location.form:
-            value = self.__request.get_form_param(name=param.name, default=PARAM_NOT_PRESENT)
+            value = self.request.get_form_param(name=param.name, default=PARAM_NOT_PRESENT)
         elif param.location == Location.json:
-            value = self.__request.get_json_param(name=param.name, default=PARAM_NOT_PRESENT)
+            value = self.request.get_json_param(name=param.name, default=PARAM_NOT_PRESENT)
         elif param.location == Location.file:
-            value = self.__request.get_file_param(name=param.name, default=PARAM_NOT_PRESENT)
+            value = self.request.get_file_param(name=param.name, default=PARAM_NOT_PRESENT)
 
         if param.required:
             if value == PARAM_NOT_PRESENT:
@@ -89,7 +89,7 @@ class HttpRequestValidator(object):
         :returns: the failling parameter name or an empty string
         :rtype: str
         """
-        for param in self.__params:
+        for param in self.params:
             if not self.__verify_one_param(param):
                 return param.name
 
@@ -132,7 +132,7 @@ class HttpRequestValidator(object):
         :param list rules: ! unimplemented !
         :param str location: where does the parameter should be present ? (any, query, form or json)
         """
-        self.__params.append(
+        self.params.append(
             ValidatorParameter(
                 name=name,
                 required=required,

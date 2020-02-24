@@ -7,10 +7,10 @@ from API.Utilities.generic import sub_key
 
 class HttpRequest(object):
 
-    __request = None
+    request = None
 
     def __init__(self):
-        self.__request = request
+        self.request = request
 
     def get_header(self, name, default=None):
         """
@@ -18,8 +18,8 @@ class HttpRequest(object):
 
         :rtype: str or None
         """
-        if self.__request and hasattr(self.__request, 'headers') and self.__request.headers:
-            headers = {k: v for k, v in self.__request.headers.items()}
+        if self.request and hasattr(self.request, 'headers') and self.request.headers:
+            headers = {k: v for k, v in self.request.headers.items()}
             # We convert headers to dict because special values (like X-Request-Timestamp)
             # are not always correctly parsed and cannot be retreived
             # https://mail.python.org/pipermail/flask/2017-July/000888.html
@@ -33,8 +33,8 @@ class HttpRequest(object):
 
         :rtype: ImmutableMultiDict or None
         """
-        if self.__request and hasattr(self.__request, 'args') and self.__request.args:
-            return self.__request.args.get(name, default)
+        if self.request and hasattr(self.request, 'args') and self.request.args:
+            return self.request.args.get(name, default)
 
         return default
 
@@ -44,8 +44,8 @@ class HttpRequest(object):
 
         :rtype: ImmutableMultiDict or None
         """
-        if self.__request and hasattr(self.__request, 'form') and self.__request.form:
-            return self.__request.form.get(name, default)
+        if self.request and hasattr(self.request, 'form') and self.request.form:
+            return self.request.form.get(name, default)
 
         return default
 
@@ -55,10 +55,10 @@ class HttpRequest(object):
 
         :rtype: * or None
         """
-        if self.__request:
+        if self.request:
 
             try:
-                json = self.__request.get_json(silent=True)
+                json = self.request.get_json(silent=True)
             except BadRequest:
                 return default
 
@@ -72,8 +72,8 @@ class HttpRequest(object):
 
         :rtype: str or None
         """
-        if self.__request and hasattr(self.__request, 'files') and self.__request.files:
-            return self.__request.files.get(name, default)
+        if self.request and hasattr(self.request, 'files') and self.request.files:
+            return self.request.files.get(name, default)
 
         return default
 
