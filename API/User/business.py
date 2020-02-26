@@ -33,11 +33,11 @@ def check_user_infos(infos):
         return ErrorCode.POSTAL_NOK
     if 'country' in infos and not re.search(regex_address, infos['country']):
         return ErrorCode.COUNTRY_NOK
-    if 'street' in infos and not re.search(regex_address, infos['street']):
+    if 'street' in infos and not re.search(regex_name, infos['street']):
         return ErrorCode.STREET_NOK
     if 'town' in infos and not re.search(regex_address, infos['town']):
         return ErrorCode.CITY_NOK
-    if 'region' in infos and not re.search(regex_address, infos['region']):
+    if 'region' in infos and not re.search(regex_name, infos['region']):
         return ErrorCode.REGION_NOK
     return None
 
@@ -145,7 +145,6 @@ def create_user(request):
 def update_user(request, user_id):
     if not request:
         abort(400)
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
