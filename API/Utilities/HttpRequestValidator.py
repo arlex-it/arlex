@@ -78,8 +78,6 @@ class HttpRequestValidator(object):
             if value == PARAM_NOT_PRESENT:
                 return False
 
-        # TODO : We should check the rules here.
-
         return True
 
     def __verify(self):

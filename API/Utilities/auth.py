@@ -48,7 +48,6 @@ def public_authentication(scopes):
 def private_authentication(scopes, kwargs):
     request = HttpRequest()
     token = request.get_param('accessToken')
-    timestamp = request.get_param('oauth_timestamp')
     header_token = request.get_header("Authorization")
 
     if header_token is None:
@@ -66,10 +65,6 @@ def private_authentication(scopes, kwargs):
 
     if not token:
         raise Exception('No oauth_access_token or Authorization header found in request')
-
-    #TODO: gérer timestamp !
-    #if not timestamp:
-     #   raise BadRequest('No oauth_timestamp or X-Request-Timestamp found in request')
     helper = OAuthAuthenticationToken(token)
     if not helper.is_valid_token():
         raise Exception('Invalid access token')
