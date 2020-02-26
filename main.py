@@ -11,11 +11,11 @@ from API.User.endpoints.user import ns as user
 from API.TestVocaleAssistant.endpoints.test_vocale_assistant import ns as test_vocale_assistant
 import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
-from flask_wtf.csrf import CSRFProtect
 from API.Token.endpoints.token import ns as token
 # templates import marker
 
 app = Flask(__name__, template_folder="API/templates/")
+# Template import marker
 app.url_map.strict_slashes = False
 
 
@@ -34,7 +34,6 @@ def initialize_app(flask_app):
 	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')
 	api.init_app(blueprint)
 	api.add_namespace(test_namespace)
-	api.add_namespace(user)
 	api.add_namespace(auth)
 	api.add_namespace(token)
 	api.add_namespace(test_vocale_assistant)
