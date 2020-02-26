@@ -53,10 +53,10 @@ def main_modifications():
 	with open("main.py", 'r') as file:
 		filedata = file.read()
 
-	filedata = filedata.replace("# Template import marker",
-								"from API."+dir_name+".endpoints."+endpoint_name+" import ns as "+endpoint_name+"\n# Template import marker")
-	filedata = filedata.replace("# Template namespace marker",
-								"api.add_namespace("+endpoint_name+")\n\t# Template namespace marker")
+	filedata = filedata.replace("# templates import marker",
+								"from API."+dir_name+".endpoints."+endpoint_name+" import ns as "+endpoint_name+"\n# templates import marker")
+	filedata = filedata.replace("# templates namespace marker",
+								"api.add_namespace("+endpoint_name+")\n\t# templates namespace marker")
 
 	with open("main.py", 'w') as file:
 		file.write(filedata)

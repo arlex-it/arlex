@@ -1,6 +1,6 @@
 from API.Utilities.ErrorEnum import *
 from API.Utilities.SuccesEnum import *
-from flask import make_response, jsonify
+from flask import make_response, jsonify, render_template
 
 
 class HttpResponse():
@@ -25,3 +25,4 @@ class HttpResponse():
 
     def custom(self, dict):
         return make_response(jsonify(dict), self.code)
+
