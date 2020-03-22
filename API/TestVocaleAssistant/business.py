@@ -1,10 +1,9 @@
-from flask import jsonify
 from flask_restplus import abort
 
 from API.Utilities.HttpResponse import HttpResponse
 
 
-def get_test_vocale_assistant(request):
+def get_test_vocal_assistant(request):
     if not request:
         abort(400)
     res = {

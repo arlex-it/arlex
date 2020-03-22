@@ -31,8 +31,6 @@ class PostAuthorization(OAuthRequestAbstract):
         return url
 
     def dispatch_request(self, request):
-        # maybe shouldn't put id_project here
-        # csrf.validate_csrf(request.form.get('csrf_token'))
         validator = HttpRequestValidator.HttpRequestValidator()
         validator.throw_on_error(enabled=False)
 
@@ -52,6 +50,8 @@ class PostAuthorization(OAuthRequestAbstract):
 
         username = request.form.get('username')
         password = request.form.get('password')
+        print(username)
+        print(password)
         user = self.user_login(username=username, password=password)
 
         if user is None:

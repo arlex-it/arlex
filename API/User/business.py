@@ -1,12 +1,11 @@
 from flask_restplus import abort
 
-from bdd.db_connection import session, User, to_dict, AccessToken, RefreshToken
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
+from API.Utilities.auth import check_user_permission
 import datetime
 import re
 import bcrypt
-from uuid import uuid4
 
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
@@ -72,6 +71,13 @@ def delete_user(request, user_id):
     """
     if not request:
         abort(400)
+
+    if not check_user_permission(user_id):
+        error = {
+            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
+        }
+        return HttpResponse(403).custom(error)
+
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
@@ -136,7 +142,7 @@ def create_user(request):
         id_user=new_user.id,
         expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
         is_enable=1,
-        scopes=""
+        scopes="user"
     )
 
     try:
@@ -170,15 +176,6 @@ def create_user(request):
 def update_user(request, user_id):
     if not request:
         abort(400)
-
-    """
-    if user_connected_with_token != user_id:
-        error = {
-            'error': 'Action interdite: Tentative d'action sur un compte non identifié'
-        }
-        return jsonify(error), 403
-    """
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)

@@ -1,15 +1,12 @@
 import arrow
 
-from bdd.db_connection import session, User, AccessToken
-import datetime
-from uuid import uuid4
+from bdd.db_connection import session, AccessToken, to_dict
 
 
 class OAuthAuthenticationToken(object):
 	"""
 	Helper for OAuth authentification.
 	"""
-
 	def __init__(self, token):
 		"""
 		:param str token:
@@ -49,6 +46,13 @@ class OAuthAuthenticationToken(object):
 				'token': self._model.token,
 				'expiration_date': arrow.get(self._model.expiration_date).isoformat()
 			}
+
+	def validate_user_access(self, kwargs):
+		user_connected = session.query(AccessToken).filter(AccessToken.token == self.token).first()
+		user_connected = to_dict(user_connected)
+		if int(user_connected['id_user']) != int(kwargs['user_id']):
+			return False
+		return True
 
 	def has_scopes(self, required_scopes=[]):
 		"""

@@ -66,6 +66,8 @@ class OAuthRequestAbstract(View):
             .add_columns(User.id, User.password, AccessToken.token) \
             .first()
 
+        #user = session.query(User).filter(User.mail == username).first()
+
         if user is not None:
             if check_password(password, user.password.encode()):
                 return user

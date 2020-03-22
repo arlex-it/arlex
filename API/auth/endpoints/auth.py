@@ -1,5 +1,7 @@
 from flask import request
 from flask_restplus import Resource
+
+from API.Utilities.auth import require_authentication
 from Ressources.swagger_api import api
 from API.auth.GetAuthorizationBuisness import GetAuthorization
 from API.auth.PostAuthorizationBuisness import PostAuthorization

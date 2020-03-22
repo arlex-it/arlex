@@ -18,7 +18,7 @@ class GetAuthorization(OAuthRequestAbstract):
         validator.add_param('redirect_uri', location=HttpRequestValidator.Location.query)
         validator.add_param('state', location=HttpRequestValidator.Location.query)
         if not validator.verify():
-            return HttpResponse().error(ErrorCode.UNK)
+            return HttpResponse(500).error(ErrorCode.UNK)
 
         response_type = request.values.get('response_type')
 

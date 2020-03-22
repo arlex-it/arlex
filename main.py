@@ -11,7 +11,6 @@ from API.User.endpoints.user import ns as user
 from API.TestVocaleAssistant.endpoints.test_vocale_assistant import ns as test_vocale_assistant
 import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
-from flask_wtf.csrf import CSRFProtect
 from API.Token.endpoints.token import ns as token
 # templates import marker
 
@@ -29,7 +28,6 @@ def description():
 
 def initialize_app(flask_app):
 	access_token = uuid.uuid4().hex[:35]
-	#CSRFProtect(app)
 	configure_app(flask_app)
 	blueprint = Blueprint('api', __name__, url_prefix='/api', template_folder='API/templates/')
 	api.init_app(blueprint)

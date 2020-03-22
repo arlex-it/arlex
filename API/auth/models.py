@@ -6,8 +6,7 @@ auth_authorize_param.add_argument('redirect_uri', location='path')
 auth_authorize_param.add_argument('response_type', location='path')
 auth_authorize_param.add_argument('state', location='path')
 auth_authorize_param.add_argument('user_locale', location='path')
-
-
+auth_authorize_param.add_argument('client_id', location='path')
 
 auth_input = api.model('template_input', {
     'input_1': fields.Integer(example=42, description='Ce paramètre ne sert à rien'),
