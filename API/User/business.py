@@ -1,6 +1,6 @@
 from flask_restplus import abort
 
-from bdd.db_connection import session, User, to_dict, AccessToken
+from bdd.db_connection import session, User, to_dict, AccessToken, RefreshToken
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 import datetime
@@ -76,6 +76,7 @@ def delete_user(request, user_id):
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).delete()
         session.commit()
     except Exception as e:
@@ -118,7 +119,45 @@ def create_user(request):
     )
 
     try:
+        session.begin()
         session.add(new_user)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    import uuid
+    access_token = AccessToken(
+        app_id="arlex-ccevqe",
+        type='bearer',
+        token=uuid.uuid4().hex[:35],
+        date_insert=datetime.datetime.now(),
+        id_user=new_user.id,
+        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
+        is_enable=1,
+        scopes=""
+    )
+
+    try:
+        session.begin()
+        session.add(access_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    refresh_token = RefreshToken(
+        app_id="arlex-ccevqe",
+        date_insert=datetime.datetime.now(),
+        token=uuid.uuid4().hex[:35],
+        is_enable=True,
+        access_token_id=access_token.id,
+    )
+    try:
+        session.begin()
+        session.add(refresh_token)
         session.commit()
     except Exception as e:
         session.rollback()
@@ -159,6 +198,7 @@ def update_user(request, user_id):
         infos['password'] = hashed
     infos['date_update'] = datetime.datetime.now()
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).update(infos)
         session.commit()
     except Exception as e:

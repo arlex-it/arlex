@@ -55,6 +55,7 @@ class PostToken(OAuthRequestAbstract):
         }
 
         try:
+            session.begin()
             session.query(AccessToken).filter(AccessToken.id == code.id).update(info)
             session.commit()
         except Exception as e:
@@ -78,6 +79,7 @@ class PostToken(OAuthRequestAbstract):
             is_enable=1
         )
         try:
+            session.begin()
             session.add(access_token)
             session.commit()
         except Exception as e:
@@ -93,6 +95,7 @@ class PostToken(OAuthRequestAbstract):
             access_token_id=access_token.id,
         )
         try:
+            session.begin()
             session.add(refresh_token)
             session.commit()
         except Exception as e:
@@ -128,6 +131,7 @@ class PostToken(OAuthRequestAbstract):
                         is_enable=1
                     )
                     try:
+                        session.begin()
                         session.add(access_token)
                         session.commit()
                     except Exception as e:
@@ -143,6 +147,7 @@ class PostToken(OAuthRequestAbstract):
                         access_token_id=access_token.id,
                     )
                     try:
+                        session.begin()
                         session.add(refresh_token)
                         session.commit()
                     except Exception as e:
@@ -177,6 +182,7 @@ class PostToken(OAuthRequestAbstract):
                 "is_enable": 0
             }
             try:
+                session.begin()
                 session.query(AccessToken).filter(AccessToken.id == old_token.id).update(info)
                 session.commit()
             except Exception as e:
@@ -196,6 +202,7 @@ class PostToken(OAuthRequestAbstract):
                 is_enable=1
             )
             try:
+                session.begin()
                 session.add(access_token)
                 session.commit()
             except Exception as e:
@@ -211,6 +218,7 @@ class PostToken(OAuthRequestAbstract):
                 access_token_id=access_token.id,
             )
             try:
+                session.begin()
                 session.add(refresh_token)
                 session.commit()
             except Exception as e:

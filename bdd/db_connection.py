@@ -38,12 +38,6 @@ class User(Base):
     region = Column(String(45), nullable=False)
     postal_code = Column(String(45), nullable=False)
 
-
-if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or sys.argv[0] != 'main.py':
-    print('Connected to unit_test Database')
-    engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
-else:
-    engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 class AccessToken(Base):
     __tablename__ = 'access_token'
 
@@ -55,6 +49,7 @@ class AccessToken(Base):
     id_user = Column(Integer, nullable=False)
     expiration_date = Column(DateTime, nullable=False)
     is_enable = Column(Integer, nullable=False)
+    scopes = Column(String(45), nullable=False)
 
 
 class AuthApplication(Base):
@@ -75,10 +70,13 @@ class RefreshToken(Base):
     is_enable = Column(Integer, nullable=False)
     access_token_id = Column(Integer, unique=True, nullable=False)
 
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or sys.argv[0] != 'main.py':
+    print('Connected to unit_test Database')
+    engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
+else:
+    engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
-engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
-
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, autocommit=True)
 session = Session()
 try:
     session.query("1").all()

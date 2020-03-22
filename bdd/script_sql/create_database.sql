@@ -94,3 +94,12 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`log` (
   KEY `idx_date_insert` (`date_insert`),
   KEY `idx_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `arlex_db`.`auth_application` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_name` varchar(45) NOT NULL,
+  `client_id` varchar(100) NOT NULL,
+  `project_id` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

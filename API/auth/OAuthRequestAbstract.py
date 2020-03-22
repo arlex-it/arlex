@@ -27,6 +27,7 @@ class OAuthRequestAbstract(View):
             is_enable=1
         )
         try:
+            session.begin()
             session.add(code)
             session.commit()
         except Exception as e:
