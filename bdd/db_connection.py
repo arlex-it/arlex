@@ -49,6 +49,7 @@ class AccessToken(Base):
     id_user = Column(Integer, nullable=False)
     expiration_date = Column(DateTime, nullable=False)
     is_enable = Column(Integer, nullable=False)
+    scopes = Column(String(45), nullable=False)
 
 
 class AuthApplication(Base):

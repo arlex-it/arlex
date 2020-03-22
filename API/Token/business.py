@@ -107,6 +107,7 @@ class PostToken(OAuthRequestAbstract):
         return access_token, refresh_token
 
     def grant_password(self):
+        print("eheh")
         validator = HttpRequestValidator()
         validator.throw_on_error(True)
         validator.add_param('username', True)
@@ -115,22 +116,26 @@ class PostToken(OAuthRequestAbstract):
         if validator.verify():
 
             username = self.__request.get_param('username')
+            print(username)
             username = username.lower()
             user = session.query(User).filter(User.mail == username).first()
             if user and user.is_active != 0 and user.password:
                 current_pw = user.password
 
                 password = self.__request.get_param('password')
+                print(password)
 
                 if PasswordUtilities.check_password(password, current_pw):
-                    access_token=AccessToken(
+                    scope = "user"
+                    access_token = AccessToken(
                         app_id=self.application_id,
                         type='bearer',
                         token=uuid.uuid4().hex[:35],
                         date_insert=datetime.datetime.now(),
                         id_user=user.id,
                         expiration_date=arrow.now().shift(hours=+10).datetime,
-                        is_enable=1
+                        is_enable=1,
+                        scopes='user'
                     )
                     try:
                         session.add(access_token)
@@ -154,7 +159,7 @@ class PostToken(OAuthRequestAbstract):
                         session.rollback()
                         session.flush()
                         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
-                    return (access_token, refresh_token)
+                    return access_token, refresh_token
                 else:
                     raise Exception('Invalid username or password')
             else:
