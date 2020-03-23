@@ -3,6 +3,7 @@ from flask_restplus import abort
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 from API.Utilities.auth import check_user_permission
+from bdd.db_connection import User
 import datetime
 import re
 import bcrypt
