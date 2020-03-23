@@ -69,5 +69,6 @@ class PostAuthorization(OAuthRequestAbstract):
                                                  ), 200, headers)
         else:
             code = self.create_authorization_code(app, user)
+            print(code)
             redirect_uri = self.__build_redirect_uri(code)
             return redirect(redirect_uri, code=302)

@@ -7,6 +7,8 @@ import datetime
 import re
 import bcrypt
 
+from bdd.db_connection import User, RefreshToken, AuthApplication
+
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
 regex_postal = '^\d{2}[ ]?\d{3}$'
@@ -134,8 +136,9 @@ def create_user(request):
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     import uuid
+    app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
     access_token = AccessToken(
-        app_id="arlex-ccevqe",
+        app_id=app_id,
         type='bearer',
         token=uuid.uuid4().hex[:35],
         date_insert=datetime.datetime.now(),
@@ -155,7 +158,7 @@ def create_user(request):
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     refresh_token = RefreshToken(
-        app_id="arlex-ccevqe",
+        app_id=app_id,
         date_insert=datetime.datetime.now(),
         token=uuid.uuid4().hex[:35],
         is_enable=True,
@@ -170,7 +173,7 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token, 'refresh_token': refresh_token.token})
 
 
 def update_user(request, user_id):

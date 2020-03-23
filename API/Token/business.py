@@ -7,7 +7,7 @@ from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
 from API.Utilities.HttpResponse import HttpResponse, ErrorCode
-from bdd.db_connection import AccessToken, session, User, RefreshToken
+from bdd.db_connection import AccessToken, session, User, RefreshToken, to_dict
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
 
 
@@ -58,7 +58,6 @@ class PostToken(OAuthRequestAbstract):
         info = {
             "is_enable": 0
         }
-
         try:
             session.begin()
             session.query(AccessToken).filter(AccessToken.id == code.id).update(info)
@@ -81,7 +80,8 @@ class PostToken(OAuthRequestAbstract):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=arrow.now().shift(hours=+10).datetime,
-            is_enable=1
+            is_enable=1,
+            scopes="user"
         )
         try:
             session.begin()
@@ -182,12 +182,13 @@ class PostToken(OAuthRequestAbstract):
             
             if not refresh_token.is_enable:
                 raise Exception('Refresh token is invalid.')
-            
+            print(self.app_id)
+            print(refresh_token.app_id)
             if str(refresh_token.app_id) != str(self.application_id):
                 raise Exception('Code does not match your app_id.')
 
             old_token = session.query(AccessToken).filter(
-                AccessToken.token == RefreshToken.access_token_id).first()
+                AccessToken.id == refresh_token.access_token_id).first()
             info = {
                 "is_enable": 0
             }
@@ -209,7 +210,8 @@ class PostToken(OAuthRequestAbstract):
                 date_insert=datetime.datetime.now(),
                 id_user=user.id,
                 expiration_date=arrow.now().shift(hours=+10).datetime,
-                is_enable=1
+                is_enable=1,
+                scopes="user"
             )
             try:
                 session.begin()
