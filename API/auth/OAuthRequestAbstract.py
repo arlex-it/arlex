@@ -65,6 +65,7 @@ class OAuthRequestAbstract(View):
             .filter(User.mail == username) \
             .add_columns(User.id, User.password, AccessToken.token) \
             .first()
+        print(user)
 
         #user = session.query(User).filter(User.mail == username).first()
 

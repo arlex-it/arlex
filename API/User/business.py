@@ -1,9 +1,11 @@
+import uuid
+
 from flask_restplus import abort
 
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 from API.Utilities.auth import check_user_permission
-from bdd.db_connection import User
+from bdd.db_connection import User, AccessToken, RefreshToken
 import datetime
 import re
 import bcrypt
@@ -134,6 +136,39 @@ def create_user(request):
 
     # token generation for new user
     try:
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    access_token = AccessToken(
+        app_id="arlex-ccevqe",
+        type='bearer',
+        token=uuid.uuid4().hex[:35],
+        date_insert=datetime.datetime.now(),
+        id_user=new_user.id,
+        expiration_date=arrow.now().shift(hours=+10).datetime,
+        is_enable=1,
+        scopes="user"
+    )
+    try:
+        session.add(access_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    refresh_token = RefreshToken(
+        app_id="arlex-ccevqe",
+        date_insert=datetime.datetime.now(),
+        token=uuid.uuid4().hex[:35],
+        is_enable=True,
+        access_token_id=access_token.id,
+    )
+    try:
+        session.add(refresh_token)
         session.commit()
     except Exception as e:
         session.rollback()

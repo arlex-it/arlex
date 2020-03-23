@@ -13,7 +13,7 @@ ns = api.namespace('test_vocale_assistant', description='Test if vocale assistan
 class TestVocalAssistantCollection(Resource):
     @ns.expect(test_vocale_assistant_input)
     @ns.response(200, '{"res": True}')
-    @require_authentication('private')
+    @require_authentication('private', 'user')
     def get(self):
         """
         This is a test route

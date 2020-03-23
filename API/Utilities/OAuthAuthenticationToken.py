@@ -1,3 +1,5 @@
+import re
+
 import arrow
 
 from bdd.db_connection import session, AccessToken, to_dict
@@ -50,9 +52,19 @@ class OAuthAuthenticationToken(object):
 	def validate_user_access(self, kwargs):
 		user_connected = session.query(AccessToken).filter(AccessToken.token == self.token).first()
 		user_connected = to_dict(user_connected)
+		print(user_connected['id_user'])
 		if int(user_connected['id_user']) != int(kwargs['user_id']):
 			return False
 		return True
+
+	def token_has_scope(self, scope):
+		"""
+		:rtype: bool
+		"""
+		if hasattr(self, 'scope'):
+			if scope != self._model.scope:
+				raise ValueError(f'Insufisent permission')
+		return False
 
 	def has_scopes(self, required_scopes=[]):
 		"""
@@ -62,7 +74,7 @@ class OAuthAuthenticationToken(object):
 			return True
 
 		for scope in required_scopes:
-			if not self._model.has_scope(scope):
+			if not self.token_has_scope(scope):
 				return False
 
 		return True
