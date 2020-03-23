@@ -80,7 +80,8 @@ class PostToken(OAuthRequestAbstract):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=arrow.now().shift(hours=+10).datetime,
-            is_enable=1
+            is_enable=1,
+            scopes=code.scopes
         )
         try:
             session.add(access_token)
@@ -126,7 +127,6 @@ class PostToken(OAuthRequestAbstract):
                 print(password)
 
                 if PasswordUtilities.check_password(password, current_pw):
-                    scope = "user"
                     access_token = AccessToken(
                         app_id=self.application_id,
                         type='bearer',
@@ -203,7 +203,8 @@ class PostToken(OAuthRequestAbstract):
                 date_insert=datetime.datetime.now(),
                 id_user=user.id,
                 expiration_date=arrow.now().shift(hours=+10).datetime,
-                is_enable=1
+                is_enable=1,
+                scopes=old_token.scopes
             )
             try:
                 session.add(access_token)

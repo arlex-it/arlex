@@ -9,7 +9,7 @@ from API.User.business import check_password
 
 
 class OAuthRequestAbstract(View):
-    def create_authorization_code(self, application, user):
+    def create_authorization_code(self, application, user, scope):
         """
         Generate an authorization code for this application, entity, scope
 
@@ -24,7 +24,8 @@ class OAuthRequestAbstract(View):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
-            is_enable=1
+            is_enable=1,
+            scopes=scope
         )
         try:
             session.add(code)
