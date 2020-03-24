@@ -7,3 +7,4 @@ flask_wtf
 pymysql
 arrow
 pyngrok
+Werkzeug==0.16.1
