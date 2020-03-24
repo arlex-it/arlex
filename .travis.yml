@@ -17,6 +17,7 @@ script:
     - |
       python main.py unit_test &
       APP_PID=$!
+    - sleep 2
     - python unit_test/oauth/tests/test_token.py
 #    - curl $NGROK_URL
 #    - curl $NGROK_URL/api
