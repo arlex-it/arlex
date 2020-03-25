@@ -34,6 +34,9 @@ class PostAuthorization(OAuthRequestAbstract):
         validator = HttpRequestValidator.HttpRequestValidator()
         validator.throw_on_error(enabled=False)
 
+        print("Url = ", request.url)
+        print("Values = ", request.values)
+        print("Form = ", request.form)
         validator.add_param('response_type', location=HttpRequestValidator.Location.query)
         validator.add_param('client_id', location=HttpRequestValidator.Location.query)
         validator.add_param('redirect_uri', location=HttpRequestValidator.Location.query)
@@ -47,7 +50,6 @@ class PostAuthorization(OAuthRequestAbstract):
 
         if app.project_id != request.form['redirect_uri'].rsplit('/', 1)[-1]:
             return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
-
         username = request.form.get('username')
         password = request.form.get('password')
         print(username)

@@ -214,6 +214,63 @@ class OauthRouteDelete(unittest.TestCase):
 
 </html>""".format("/api/auth/authorize", state, client_id, redirect_uri, response_type, scope), resp.content.decode())
 
+    def test_post_authorize_route(self):
+        print(">>> test_post_authorize_route")
+        state = "AMXHz3TJp9asTcwX21jl2YfbTE7i3Ou0m--bj4QylQ-wRm6llYEmP12v7vH5T0Z1burSoWW6gszPTsfhDdSG_0t9RmRF0msF1w6jnKl4lLRHYerPZh_VBjm0h9aEJsUbglgGsQBSdTqUJB0RjJgXG1zXma_I3oomoSZQlo1pZWTtMsOLNLtkNU-Dqr_10m4GF7NPIu6XYj7ZReFyUpSleOeKn__vB8mnmYcCyWw1YcpGMHIZ9PHgVgF5Fm04SvAnZIxGEaMscF1mQdRZv6YTr0PZurzvdMcJVBIUshjVrQLasfCMzrMuekHFHfaSKHPQepL1tuSgws8blDXKGs4oCJxoENlKZpn7yZVc_59DnSu_8dwLbIcrW1GfqRujw87kJERa0jxJEAb99-4YK7Vxahjlfq5PYf_kfkq5-CiGs2m2a7LwP3p4Ljg7uDiB4ND1bEpKVm_2R1GYEOn540GOBsyUKZcgTIqb0M7spOXGxdVMYdLLqv9waOzHNM8kCJbMM2tWIzhGAflfJV2tVW7AGuULzKVMkTnQv6hGOc13-9w0J3taX-hZJDo"
+        client_id = "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com"
+        response_type = "code"
+        redirect_uri = "https://oauth-redirect.googleusercontent.com/r/arlex-ccevqe"
+        scope = ""
+        new_user = get_user_model()
+        resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
+        print("         >> create_user")
+        self.assertEqual(201, resp.status_code)
+
+        form = {
+            'state': state,
+            'client_id': client_id,
+            'response_type': response_type,
+            'redirect_uri': redirect_uri,
+            'scope': scope,
+            'username': new_user['mail'],
+            'password': new_user['password']
+        }
+        print("         >> connect_user_oauth")
+        resp = requests.post(self.public_url + '/api/auth/authorize', data=form)
+        self.assertEqual(200, resp.status_code)
+        it = resp.url.find("https://oauth-redirect.googleusercontent.com/")
+        self.assertNotEqual(-1, it)
+
+    def test_invalid_post_authorize_route(self):
+        print(">>> test_invalid_post_authorize_route")
+        state = "AMXHz3TJp9asTcwX21jl2YfbTE7i3Ou0m--bj4QylQ-wRm6llYEmP12v7vH5T0Z1burSoWW6gszPTsfhDdSG_0t9RmRF0msF1w6jnKl4lLRHYerPZh_VBjm0h9aEJsUbglgGsQBSdTqUJB0RjJgXG1zXma_I3oomoSZQlo1pZWTtMsOLNLtkNU-Dqr_10m4GF7NPIu6XYj7ZReFyUpSleOeKn__vB8mnmYcCyWw1YcpGMHIZ9PHgVgF5Fm04SvAnZIxGEaMscF1mQdRZv6YTr0PZurzvdMcJVBIUshjVrQLasfCMzrMuekHFHfaSKHPQepL1tuSgws8blDXKGs4oCJxoENlKZpn7yZVc_59DnSu_8dwLbIcrW1GfqRujw87kJERa0jxJEAb99-4YK7Vxahjlfq5PYf_kfkq5-CiGs2m2a7LwP3p4Ljg7uDiB4ND1bEpKVm_2R1GYEOn540GOBsyUKZcgTIqb0M7spOXGxdVMYdLLqv9waOzHNM8kCJbMM2tWIzhGAflfJV2tVW7AGuULzKVMkTnQv6hGOc13-9w0J3taX-hZJDo"
+        client_id = "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com"
+        response_type = "code"
+        redirect_uri = "https://oauth-redirect.googleusercontent.com/r/arlex-ccevqe"
+        scope = ""
+        new_user = get_user_model()
+        resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
+        print("         >> create_user")
+        self.assertEqual(201, resp.status_code)
+
+        for bad in ['state', 'client_id', 'response_type', 'redirect_uri', 'username', 'password']:
+            form = {
+                'state': state,
+                'client_id': client_id,
+                'response_type': response_type,
+                'redirect_uri': redirect_uri,
+                'scope': scope,
+                'username': new_user['mail'],
+                'password': new_user['password'],
+                bad: 'bad'
+            }
+            print("         >> invalid_" + bad + "_user_oauth")
+            resp = requests.post(self.public_url + '/api/auth/authorize', data=form)
+            if resp.status_code == 200:
+                it = resp.text.find("<title>Arlex inscription</title>")
+                self.assertNotEqual(it, -1)
+            else:
+                self.assertNotEqual(200, resp.status_code)
 
 if __name__ == '__main__':
     unittest.main()
