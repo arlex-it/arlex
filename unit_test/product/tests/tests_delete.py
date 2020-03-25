@@ -31,13 +31,13 @@ class ProductsRouteDelete(unittest.TestCase):
         self.assertEqual(resp.status_code, 202)
         product = self.sql.get_product_by_id(product_id)
         self.assertEqual(product, None)
-        time.sleep(0.5)
+        
 
     def test_delete_wrong_product(self):
         print(">>> test_delete_wrong_product")
         resp = requests.delete(self.public_url + '/api/products/{}'.format(1000))
         self.assertEqual(resp.status_code, 403)
-        time.sleep(0.5)
+        
 
 
 if __name__ == '__main__':

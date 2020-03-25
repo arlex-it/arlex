@@ -13,7 +13,6 @@ import time
 class ProductRoutePost(unittest.TestCase):
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
-    # print("url de ngrok = ", unit_test_init.create_tunnel())
     sql = PostSql(engine=engine, session=session)
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -29,7 +28,7 @@ class ProductRoutePost(unittest.TestCase):
         new_product = get_product_model()
         resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
         self.assertEqual(201, resp.status_code)
-        time.sleep(0.5)
+        
 
     def test_product_bad(self):
         print(">>> test_product_bad")
@@ -46,7 +45,7 @@ class ProductRoutePost(unittest.TestCase):
             new_product.pop(key, None)
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            time.sleep(0.5)
+            
 
     def test_expiration_wrong_info(self):
         print(">>> test_expiration_date_wrong_info")
@@ -56,7 +55,7 @@ class ProductRoutePost(unittest.TestCase):
             new_product = get_product_model({'expiration_date': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            time.sleep(0.5)
+            
 
     def test_id_rfid_wrong_info(self):
         print(">>> test_id_rfid_wrong_info")
@@ -66,7 +65,7 @@ class ProductRoutePost(unittest.TestCase):
             new_product = get_product_model({'id_rfid': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            time.sleep(0.5)
+            
 
     def test_id_ean_wrong_info(self):
         print(">>> test_id_ean_wrong_info")
@@ -76,7 +75,7 @@ class ProductRoutePost(unittest.TestCase):
             new_product = get_product_model({'id_ean': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            time.sleep(0.5)
+            
 
     def test_position_wrong_info(self):
         print(">>> test_position_wrong_info")
@@ -86,7 +85,7 @@ class ProductRoutePost(unittest.TestCase):
             new_product = get_product_model({'position': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            time.sleep(0.5)
+            
 
 
 if __name__ == '__main__':

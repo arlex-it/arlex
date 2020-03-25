@@ -32,13 +32,13 @@ class ProductsRouteGet(unittest.TestCase):
         self.assertEqual(product['expiration_date'].strftime("%Y-%m-%d"), new_product['expiration_date'])
         self.assertEqual(product['id_ean'], new_product['id_ean'])
         self.assertEqual(product['position'], new_product['position'])
-        time.sleep(0.5)
+        
 
     def test_get_wrong_product(self):
         print(">>> test_get_wrong_product")
         resp = requests.get(self.public_url + '/api/products/{}'.format(1000))
         self.assertEqual(resp.status_code, 403)
-        time.sleep(0.5)
+        
 
 
 if __name__ == '__main__':
