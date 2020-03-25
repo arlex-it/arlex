@@ -6,6 +6,7 @@ class ErrorCode(Enum):
     DB_ERROR = "Erreur avec la base de donnée."
     USER_NFIND = "Utilisateur non trouvé."
     MAIL_NOK = "Addresse email non valide."
+    PRODUCT_NFIND = "Produit non trouvé"
     GENDER_NOK = "Genre non valide."
     NAME_NOK = "Nom et/ou prénom non valide."
     POSTAL_NOK = "Code postal non valide."
@@ -13,4 +14,5 @@ class ErrorCode(Enum):
     STREET_NOK = "Rue non valide."
     CITY_NOK = "Ville non valide."
     REGION_NOK = "Région non valide."
+    ID_RFID_NOK = "Id_RFID non valide."
     MAIL_USED = "Addresse email déjà en utilisation."

@@ -30,13 +30,13 @@ def check_user_infos(infos):
         return ErrorCode.NAME_NOK
     if 'postal_code' in infos and not re.search(regex_postal, infos['postal_code']):
         return ErrorCode.POSTAL_NOK
-    if 'country' in infos and not re.search(regex_name, infos['country']):
+    if 'country' in infos and not re.search(regex_address, infos['country']):
         return ErrorCode.COUNTRY_NOK
     if 'street' in infos and not re.search(regex_address, infos['street']):
         return ErrorCode.STREET_NOK
     if 'town' in infos and not re.search(regex_address, infos['town']):
         return ErrorCode.CITY_NOK
-    if 'region' in infos and not re.search(regex_name, infos['region']):
+    if 'region' in infos and not re.search(regex_address, infos['region']):
         return ErrorCode.REGION_NOK
     return None
 
@@ -143,11 +143,10 @@ def update_user(request, user_id):
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
 
     infos = request.json
-    verification = check_user_infos(infos)
-    if verification is not None:
-        return HttpResponse(403).error(verification)
-
     if 'mail' in infos:
+        if not re.search(regex_mail, request.json['mail']):
+            return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+
         existing = session.query(User).filter(User.mail == infos['mail']).first()
         if existing:
             return HttpResponse(403).error(ErrorCode.MAIL_USED)

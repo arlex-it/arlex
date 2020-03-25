@@ -4,8 +4,8 @@
 /* arlex_db database creation */
 CREATE DATABASE arlex_db;
 
-CREATE USER 'unit_test'@'127.0.0.1' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON arlex_db.* TO 'unit_test'@'127.0.0.1';
+CREATE USER 'unit_test'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON arlex_db.* TO 'unit_test'@'localhost';
 
 /*user table creation*/
 CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 /* token table creation*/
-CREATE TABLE IF NOT EXISTS `arlex_db`.`token` (
+CREATE TABLE IF NOT EXISTS `arlex_db`.`access_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `token` varchar(255) NOT NULL,
