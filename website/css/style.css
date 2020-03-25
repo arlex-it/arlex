@@ -1,0 +1,100 @@
+/* Logo Side */
+html, body {
+    height: 100%;
+}
+
+.logo-side {
+    background-color: #033F63;
+    color: white;
+    height: 100vh;
+    border-radius: 0 20px 20px 0;
+}
+
+@media (max-width: 500px) {
+
+    .logo-side {
+        display: none;
+    }
+}
+
+#logo {
+    text-align: center;
+    padding-top: 70px;
+    margin: auto;
+    width: 50%;
+}
+
+.logo-title {
+    font-size: 5em;
+}
+
+.kitchen-svg {
+    align-content: center;
+    margin: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+/* Form Side */
+
+
+.form-side {
+    /*
+    position: relative;
+    */
+}
+
+#form-login {
+    min-width: 50%;
+    max-width: 60%;
+}
+
+#register-here {
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: right;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+.title {
+    color: #0000008f;
+    font-weight: 300;
+    font-size: 2em;
+}
+
+.subtitle {
+    font-weight: 400;
+    font-size: 2em;
+}
+#form-login form {
+    padding-top: 15px;
+}
+
+#form-login form input {
+    border-radius: 50px;
+    background-color: #00000021;
+    border: none;
+    color: #000000;
+}
+
+#form-login form .form-group label {
+    padding-left: 15px;
+    font-weight: 500;
+}
+
+#form-login form .form-check {
+    padding-left: 2.5rem;
+}
+
+.btn-login {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.btn-login .btn {
+    background-color: #033F63;
+}
