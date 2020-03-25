@@ -1,16 +1,19 @@
 import unittest
+import requests
 from unit_test.user.user_model import get_user_model
 from unit_test.init_unit_test import UnitTestInit
 from unit_test.user.sql.sql_post import *
-import requests
+import socket
 
 
 class UserRouteDelete(unittest.TestCase):
-
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
-    public_url = unit_test_init.create_tunnel()
     sql = PostSql(engine=engine, session=session)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    public_url = "http://" + "localhost" + ":5000"
+    s.close()
 
     def tearDown(self):
         self.sql.delete_all_user()

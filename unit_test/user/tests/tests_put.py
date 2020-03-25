@@ -1,23 +1,20 @@
 import unittest
+import requests
 from unit_test.user.user_model import get_user_model
 from unit_test.init_unit_test import UnitTestInit
 from unit_test.user.sql.sql_post import *
 from unit_test.user.test_user_utilities import *
-import requests
-import time
-from bdd.db_connection import engine, session
-
-import _thread
-import main
-import logging
+import socket
 
 
 class MyTestCase(unittest.TestCase):
-
     unit_test_init = UnitTestInit()
-    #engine, session = unit_test_init.connect_to_db()
-    public_url = unit_test_init.create_tunnel()
+    engine, session = unit_test_init.connect_to_db()
     sql = PostSql(engine=engine, session=session)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    public_url = "http://" + "localhost" + ":5000"
+    s.close()
 
     def tearDown(self):
         self.sql.delete_all_user()
@@ -41,7 +38,6 @@ class MyTestCase(unittest.TestCase):
         }
         resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
         self.assertEqual(202, resp.status_code)
-        time.sleep(5)
 
     def test_update_mail_already_exist(self):
         print("#################################")
@@ -67,7 +63,6 @@ class MyTestCase(unittest.TestCase):
         update_user = {"mail": "jane@does.com"}
         resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
         self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-        time.sleep(5)
 
     def test_update_password_wrong_info(self):
         print("#################################")
@@ -83,7 +78,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_lastname_wrong_info(self):
         print("#################################")
@@ -99,7 +93,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_udapte_firstname_wrong_info(self):
         print("#################################")
@@ -115,7 +108,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_mail_wrong_info(self):
         print("#################################")
@@ -131,7 +123,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_gender_wrong_info(self):
         print("#################################")
@@ -147,7 +138,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_country_wrong_info(self):
         print("#################################")
@@ -163,7 +153,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_town_wrong_info(self):
         print("#################################")
@@ -179,7 +168,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_street_wrong_info(self):
         print("#################################")
@@ -195,7 +183,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_street_number_wrong_info(self):
         print("#################################")
@@ -211,7 +198,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_region_wrong_info(self):
         print("#################################")
@@ -227,7 +213,6 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
 
     def test_update_postal_code_wrong_info(self):
         print("#################################")
@@ -243,13 +228,7 @@ class MyTestCase(unittest.TestCase):
             resp = requests.put(self.public_url + '/api/user/{}'.format(user_id), json=update_user)
             print(resp.text)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403")
-            time.sleep(5)
-
+            
 
 if __name__ == '__main__':
-
-    _thread.start_new_thread(unittest.main, ())
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
-    main.app.run(port=5000, host='0.0.0.0')
-    #unittest.main()
+    unittest.main()
