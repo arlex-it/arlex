@@ -18,7 +18,6 @@ class ProductRoutePost(unittest.TestCase):
     import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
-    print("==========  ", s.getsockname()[0])
     public_url = "http://" + "localhost" + ":5000"
     s.close()
 
