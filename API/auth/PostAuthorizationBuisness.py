@@ -34,9 +34,6 @@ class PostAuthorization(OAuthRequestAbstract):
         validator = HttpRequestValidator.HttpRequestValidator()
         validator.throw_on_error(enabled=False)
 
-        print("Url = ", request.url)
-        print("Values = ", request.values)
-        print("Form = ", request.form)
         validator.add_param('response_type', location=HttpRequestValidator.Location.query)
         validator.add_param('client_id', location=HttpRequestValidator.Location.query)
         validator.add_param('redirect_uri', location=HttpRequestValidator.Location.query)
