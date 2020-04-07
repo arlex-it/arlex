@@ -1,7 +1,6 @@
 package com.example.barcodereader.ui.home;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.NetworkInfo;
@@ -24,6 +23,7 @@ import com.example.barcodereader.helpers.constant.PreferenceKey;
 import com.example.barcodereader.helpers.util.PermissionUtil;
 import com.example.barcodereader.helpers.util.SharedPrefUtil;
 import com.example.barcodereader.ui.generate.GenerateFragment;
+import com.example.barcodereader.ui.history.HistoryFragment;
 import com.example.barcodereader.ui.scan.ScanFragment;
 import com.example.barcodereader.ui.settings.SettingsActivity;
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
@@ -38,6 +38,7 @@ import io.reactivex.schedulers.Schedulers;
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityMainBinding _binding;
+    //private ActivityHomeBinding _binding;
     private Menu _toolbarMenu;
 
     public Menu getToolbarMenu() {
@@ -102,7 +103,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initializeToolbar() {
-        setSupportActionBar(_binding.toolbar);
+        //setSupportActionBar(_binding.toolbar);
     }
 
     @Override

@@ -456,6 +456,7 @@ public class GeneratedCodeActivity extends AppCompatActivity implements View.OnC
         for (int i = 0; i < permissions.length; i++) {
             if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                 isValid = false;
+                break;
             }
         }
 

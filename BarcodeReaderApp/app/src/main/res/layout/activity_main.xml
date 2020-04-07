@@ -5,10 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".ui.home.HomeActivity">
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
@@ -176,6 +175,28 @@
             app:layout_constraintStart_toStartOf="@+id/constraint_layout_history_container"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout_history_container"
             ads:layout_constraintVertical_chainStyle="packed" />
+
+        <com.example.barcodereader.helpers.widget.BaseStatusBar
+            android:id="@+id/status_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_title_bar_primary_color_and_accent_color"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_title_bar_primary_color_and_accent_color"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:contentInsetStartWithNavigation="@dimen/margin_0"
+            app:layout_constraintBottom_toTopOf="@+id/coordinator_layout_fragment_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/status_bar" />it ad
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:id="@+id/coordinator_layout_fragment_container"

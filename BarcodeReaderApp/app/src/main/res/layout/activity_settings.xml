@@ -6,12 +6,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.example.barcodereader.helpers.widget.BaseStatusBar
             android:id="@+id/status_bar"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/gradient_title_bar_primary_color_and_accent_color"
-            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -29,7 +29,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/status_bar"
             app:title="@string/settings" />
-        <!-- app:layout_constraintTop_toBottomOf="@+id/status_bar" -->
 
         <TextView
             android:id="@+id/text_view_play_sound"
@@ -194,8 +193,7 @@
             app:layout_constraintBottom_toTopOf="@+id/text_view_about_us"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_copy_to_clipboard"
-            android:focusable="true" />
+            app:layout_constraintTop_toBottomOf="@+id/text_view_copy_to_clipboard" />
 
         <TextView
             android:id="@+id/text_view_about_us"
@@ -214,8 +212,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view_separator_copy_to_clipboard"
-            android:focusable="true" />
+            app:layout_constraintTop_toBottomOf="@+id/view_separator_copy_to_clipboard" />
 
         <View
             android:id="@+id/view_separator_about_us"
@@ -228,8 +225,7 @@
             android:background="@color/sectionSeparator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_about_us"
-            android:focusable="true" />
+            app:layout_constraintTop_toBottomOf="@+id/text_view_about_us" />
 
         <TextView
             android:id="@+id/text_view_privacy_policy"
@@ -251,8 +247,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_separator_about_us"
             app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed"
-            android:focusable="true" />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <View
             android:id="@+id/view_separator_privacy_policy"
@@ -267,8 +262,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_view_privacy_policy"
-            app:layout_constraintVertical_bias="0.0"
-            android:focusable="true" />
+            app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

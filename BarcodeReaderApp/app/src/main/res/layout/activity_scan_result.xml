@@ -8,16 +8,17 @@
         android:layout_height="match_parent"
         android:background="@color/background">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.example.barcodereader.helpers.widget.BaseStatusBar
             android:id="@+id/status_bar"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/gradient_title_bar_primary_color_and_accent_color"
-            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -44,14 +45,13 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint_layout_body_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="80dp">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/image_view_scanned_code"
                     android:layout_width="@dimen/width_250"
                     android:layout_height="@dimen/height_250"
-                   android:layout_marginTop="@dimen/margin_32"
+                    android:layout_marginTop="@dimen/margin_32"
                     android:layout_marginEnd="@dimen/margin_32"
                     android:layout_marginStart="@dimen/margin_32"
                     android:layout_marginBottom="@dimen/margin_16"

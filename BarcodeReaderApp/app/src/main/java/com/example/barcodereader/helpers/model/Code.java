@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 
 import com.example.barcodereader.helpers.constant.TableNames;
 import com.example.barcodereader.helpers.util.database.BaseEntity;
@@ -33,17 +34,20 @@ public class Code extends BaseEntity {
 
     public Code() {}
 
+    @Ignore
     public Code(String content, int type) {
         this._content = content;
         this._type = type;
     }
 
+    @Ignore
     public Code(String content, int type, long timestamp) {
         this._content = content;
         this._type = type;
         this._timestamp = timestamp;
     }
 
+    @Ignore
     public Code(String content, int type, String imagePath, long timestamp) {
         this._content = content;
         this._type = type;
@@ -51,11 +55,12 @@ public class Code extends BaseEntity {
         this._imagePath = imagePath;
     }
 
+    @Ignore
     public Code(Parcel source) {
-        /*this.mContent = getmContent();
-        this.mType = getmType();
-        this.mTimeStamp = getmTimeStamp();
-        this.mCodeImagePath = getmCodeImagePath();*/
+        this._content = source.readString();
+        this._type = source.readInt();
+        this._timestamp = source.readLong();
+        this._imagePath = source.readString();
     }
 
 

@@ -25,8 +25,6 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
-import org.jetbrains.annotations.NotNull;
-
 public class GenerateFragment extends androidx.fragment.app.Fragment implements View.OnClickListener {
 
     private FragmentGenerateBinding _binding;
@@ -40,7 +38,7 @@ public class GenerateFragment extends androidx.fragment.app.Fragment implements 
     }
 
     @Override
-    public void onAttach(@NotNull Context context) {
+    public void onAttach(Context context) {
         super.onAttach(context);
         _context = context;
     }
@@ -87,6 +85,9 @@ public class GenerateFragment extends androidx.fragment.app.Fragment implements 
             public void onAdLoaded() {}
 
             @Override
+            public void onAdFailedToLoad(int errorCode) {}
+
+            @Override
             public void onAdOpened() {}
 
             @Override
@@ -129,14 +130,26 @@ public class GenerateFragment extends androidx.fragment.app.Fragment implements 
 
             if (!TextUtils.isEmpty(content) && type != 0) {
                 boolean isValid = true;
-                if (type == Code.BAR_CODE) {
-                    if (content.length() > 80) {
-                        Toast.makeText(_context, getString(R.string.error_qrcode_content_limit),
-                                Toast.LENGTH_SHORT).show();
-                        isValid = false;
-                    }
-                } else {
-                    isValid = false;
+
+                switch (type) {
+                    case Code.BAR_CODE:
+                        if (content.length() > 80) {
+                            Toast.makeText(_context, getString(R.string.error_barcode_content_limit),
+                                    Toast.LENGTH_SHORT).show();
+                            isValid = false;
+                        }
+                        break;
+
+                    case Code.QR_CODE:
+                        if (content.length() > 1000) {
+                            Toast.makeText(_context, getString(R.string.error_qrcode_content_limit),
+                                    Toast.LENGTH_SHORT).show();
+                            isValid = false;
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
 
                 if (isValid) {
