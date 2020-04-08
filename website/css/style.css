@@ -48,6 +48,7 @@ html, body {
 
 #form-login {
     min-width: 50%;
+    padding-top: 60px;
     max-width: 60%;
 }
 
@@ -71,7 +72,6 @@ html, body {
     font-size: 2em;
 }
 #form-login form {
-    padding-top: 15px;
 }
 
 #form-login form input {
