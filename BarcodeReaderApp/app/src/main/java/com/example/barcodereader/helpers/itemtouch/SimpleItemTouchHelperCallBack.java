@@ -13,43 +13,43 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SimpleItemTouchHelperCallBack extends ItemTouchHelper.Callback {
 
-    public static final float ALPHA_FULL = 1.0f;
     private final ItemTouchHelperAdapter _adapter;
+    public float ALPHA = 1.0f;
 
     public SimpleItemTouchHelperCallBack(ItemTouchHelperAdapter adapter) { _adapter = adapter; }
 
     @Override
-    public boolean isLongPressDragEnabled() {
-        return true;
-    }
+    public boolean isLongPressDragEnabled() { return true; }
 
     @Override
-    public boolean isItemViewSwipeEnabled() {
-        return true;
-    }
+    public boolean isItemViewSwipeEnabled() { return true; }
 
     @Override
-    public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+    public int getMovementFlags(@NonNull RecyclerView recyclerView,
+                                @NonNull RecyclerView.ViewHolder viewHolder) {
+        int drag, swipe;
+
         if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
-            final int drag = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-            final int swipe = 0;
-            return makeMovementFlags(drag, swipe);
+            drag = ItemTouchHelper.UP | ItemTouchHelper.DOWN| ItemTouchHelper.LEFT |
+                    ItemTouchHelper.RIGHT;
+            swipe = 0;
         } else {
-            final int drag = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            final int swipe = ItemTouchHelper.START | ItemTouchHelper.END;
-            return makeMovementFlags(drag, swipe);
+            drag = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            swipe = ItemTouchHelper.START | ItemTouchHelper.END;
         }
+        return makeMovementFlags(drag, swipe);
     }
 
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView,
-                          @NonNull RecyclerView.ViewHolder viewHolder,
-                          @NonNull RecyclerView.ViewHolder target) {
-        if (viewHolder.getItemViewType() != target.getItemViewType()) {
+                          @NonNull RecyclerView.ViewHolder vhSource,
+                          @NonNull RecyclerView.ViewHolder vhTarget) {
+        if (vhSource.getItemViewType() != vhTarget.getItemViewType()) {
             return false;
+        } else {
+            _adapter.onItemMove(vhSource.getAdapterPosition(), vhTarget.getAdapterPosition());
+            return true;
         }
-        _adapter.onItemMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-        return true;
     }
 
     @Override
@@ -58,13 +58,13 @@ public class SimpleItemTouchHelperCallBack extends ItemTouchHelper.Callback {
     }
 
     @Override
-    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
+    public void onChildDraw(@NonNull Canvas canvas, @NonNull RecyclerView recyclerView,
                             @NonNull RecyclerView.ViewHolder viewHolder,
-                            float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                            float dX, float dY, int state, boolean isActive) {
         Paint paint = new Paint();
 
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            final float alpha = ALPHA_FULL - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
+        if (state == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            float alpha = ALPHA - Math.abs(dX) / (float) viewHolder.itemView.getWidth();
             viewHolder.itemView.setAlpha(alpha);
             viewHolder.itemView.setTranslationX(dX);
             if (viewHolder.getAdapterPosition() == -1)
@@ -77,34 +77,35 @@ public class SimpleItemTouchHelperCallBack extends ItemTouchHelper.Callback {
 
             View itemView = viewHolder.itemView;
             String inbox = "Delete";
-            c.drawText(inbox, itemView.getRight() - 200,
-                    itemView.getTop() + (float)itemView.getHeight() / 2, paint);
+            float x = itemView.getRight() - 200,
+                    y = itemView.getTop() + (float)itemView.getHeight() / 2;
 
+            canvas.drawText(inbox, x, y, paint);
         } else {
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            super.onChildDraw(canvas, recyclerView, viewHolder, dX, dY, state, isActive);
         }
     }
 
     @Override
-    public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int actionState) {
-        if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
-            if (viewHolder instanceof ItemTouchHelperViewHolder) {
-                ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
-                itemViewHolder.onItemSelected();
-            }
+    public void onSelectedChanged(@Nullable RecyclerView.ViewHolder viewHolder, int state) {
+        if (state != ItemTouchHelper.ACTION_STATE_IDLE &&
+                viewHolder instanceof ItemTouchHelperViewHolder) {
+            ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
+            itemViewHolder.onItemSelected();
         }
-        super.onSelectedChanged(viewHolder, actionState);
+        super.onSelectedChanged(viewHolder, state);
     }
 
     @Override
-    public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+    public void clearView(@NonNull RecyclerView recyclerView,
+                          @NonNull RecyclerView.ViewHolder viewHolder) {
         super.clearView(recyclerView, viewHolder);
-
-        viewHolder.itemView.setAlpha(ALPHA_FULL);
+        viewHolder.itemView.setAlpha(ALPHA);
 
         if (viewHolder instanceof ItemTouchHelperViewHolder) {
             ItemTouchHelperViewHolder itemViewHolder = (ItemTouchHelperViewHolder) viewHolder;
             itemViewHolder.onItemClear();
         }
     }
+
 }

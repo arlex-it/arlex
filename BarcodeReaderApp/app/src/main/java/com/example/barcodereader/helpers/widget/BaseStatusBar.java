@@ -8,17 +8,15 @@ import android.view.View;
 import android.view.WindowInsets;
 
 public class BaseStatusBar extends View {
+
     private int _statusBarHeight;
 
-    public BaseStatusBar(Context context) {
-        this(context, null);
-    }
+    public BaseStatusBar(Context context) { this(context, null); }
 
     public BaseStatusBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
     }
 
     @Override
@@ -39,4 +37,5 @@ public class BaseStatusBar extends View {
         float density = Resources.getSystem().getDisplayMetrics().density;
         return Math.round((float) 24.0 * density);
     }
+
 }

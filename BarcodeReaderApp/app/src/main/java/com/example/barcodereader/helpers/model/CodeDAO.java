@@ -12,6 +12,8 @@ import io.reactivex.Flowable;
 
 @Dao
 public interface CodeDAO extends BaseDao<Code> {
+
     @Query("SELECT * FROM " + TableNames.CODES)
     Flowable<List<Code>> getAllFlowableCodes();
+
 }

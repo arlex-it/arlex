@@ -145,6 +145,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        // should delete item if it moves
         return false;
     }
 

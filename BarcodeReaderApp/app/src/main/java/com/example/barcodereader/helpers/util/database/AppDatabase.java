@@ -12,14 +12,15 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 public abstract class AppDatabase extends RoomDatabase {
-    protected static <T extends RoomDatabase> T createDb(Context context, String dbName,
-                                                         Class<T> dbService,
-                                                         String... migrationScripts) {
-        RoomDatabase.Builder<T> builder = Room.databaseBuilder(context, dbService, dbName);
 
-        for (Migration migration : getMigrations(migrationScripts)) {
+    protected static <T extends RoomDatabase> T createDb(Context context, String name,
+                                                         String... migrationScripts) {
+        RoomDatabase.Builder<T> builder = Room.databaseBuilder(
+                context, (Class<T>) DatabaseLocal.class, name
+        );
+
+        for (Migration migration : getMigrations(migrationScripts))
             builder.addMigrations(migration);
-        }
 
         return builder.build();
     }
@@ -27,8 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static List<Migration> getMigrations(String... migrationScripts) {
         List<Migration> migrationList = new ArrayList<>();
 
-        int startVersion = 1;
-        int endVersion = 2;
+        int startVersion = 1, endVersion = 2;
         Migration migration;
 
         for (final String migrationSchema : migrationScripts) {
@@ -44,4 +44,5 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         return migrationList;
     }
+
 }

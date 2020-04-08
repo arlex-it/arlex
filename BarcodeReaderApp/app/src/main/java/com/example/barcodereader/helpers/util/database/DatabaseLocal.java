@@ -9,19 +9,20 @@ import com.example.barcodereader.helpers.model.Code;
 import com.example.barcodereader.helpers.model.CodeDAO;
 
 @Database(entities = {Code.class}, version = 1, exportSchema = false)
-public abstract class QrDatabase extends AppDatabase {
+public abstract class DatabaseLocal extends AppDatabase {
 
-    private static volatile QrDatabase _instance;
+    private static volatile DatabaseLocal _instance;
 
-    public static synchronized QrDatabase on() { return _instance; }
+    public static synchronized DatabaseLocal on() { return _instance; }
 
     public static synchronized void init(Context context) {
         if (_instance == null) {
-            synchronized (QrDatabase.class) {
-                _instance = createDb(context, context.getString(R.string.app_name), QrDatabase.class);
+            synchronized (DatabaseLocal.class) {
+                _instance = createDb(context, context.getString(R.string.app_name));
             }
         }
     }
 
     public abstract CodeDAO codeDao();
+
 }

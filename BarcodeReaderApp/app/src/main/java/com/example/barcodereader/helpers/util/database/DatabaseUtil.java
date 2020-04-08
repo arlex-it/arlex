@@ -11,23 +11,22 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 public class DatabaseUtil {
+
     private static DatabaseUtil _instance;
     private CodeDAO _codeDAO;
 
-    private DatabaseUtil() { setCodeDao(QrDatabase.on().codeDao()); }
+    private DatabaseUtil() { setCodeDao(DatabaseLocal.on().codeDao()); }
 
     public static void init(Context context) {
-        QrDatabase.init(context);
+        DatabaseLocal.init(context);
 
-        if (_instance == null) {
+        if (_instance == null)
             _instance = new DatabaseUtil();
-        }
     }
 
     public static DatabaseUtil on() {
-        if (_instance == null) {
+        if (_instance == null)
             _instance = new DatabaseUtil();
-        }
         return _instance;
     }
 
@@ -37,6 +36,8 @@ public class DatabaseUtil {
 
     public Completable insertCode(Code code) { return getCodeDao().insert(code); }
 
-    public Flowable<List<Code>> getAllCodes() { return getCodeDao().getAllFlowableCodes(); }
     public int deleteEntity(Code code) { return getCodeDao().delete(code); }
+
+    public Flowable<List<Code>> getAllCodes() { return getCodeDao().getAllFlowableCodes(); }
+
 }

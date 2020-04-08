@@ -19,9 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.barcodereader.R;
 import com.example.barcodereader.databinding.ActivityMainBinding;
-import com.example.barcodereader.helpers.constant.PreferenceKey;
 import com.example.barcodereader.helpers.util.PermissionUtil;
-import com.example.barcodereader.helpers.util.SharedPrefUtil;
 import com.example.barcodereader.ui.generate.GenerateFragment;
 import com.example.barcodereader.ui.history.HistoryFragment;
 import com.example.barcodereader.ui.scan.ScanFragment;
@@ -29,7 +27,6 @@ import com.example.barcodereader.ui.settings.SettingsActivity;
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -243,7 +240,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PermissionUtil.REQUEST_CODE_PERMISSION_DEFAULT) {
+        if (requestCode == PermissionUtil.DEFAULT_PERM) {
             boolean isAllowed = true;
 
             for (int i = 0; i < permissions.length; i++) {

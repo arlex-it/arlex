@@ -8,17 +8,15 @@ import android.view.LayoutInflater;
 import com.example.barcodereader.databinding.ProgressDialogLayoutBinding;
 
 public class ProgressDialogUtil {
+
     private static ProgressDialogUtil _instance;
     private AlertDialog _alertBox;
 
-    private ProgressDialogUtil() {
-
-    }
+    private ProgressDialogUtil() {}
 
     public static ProgressDialogUtil on() {
-        if (_instance == null) {
+        if (_instance == null)
             _instance = new ProgressDialogUtil();
-        }
         return _instance;
     }
 
@@ -40,4 +38,5 @@ public class ProgressDialogUtil {
             _alertBox = null;
         }
     }
+
 }

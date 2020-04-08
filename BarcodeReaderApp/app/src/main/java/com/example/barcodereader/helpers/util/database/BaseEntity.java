@@ -12,10 +12,8 @@ public abstract class BaseEntity implements Parcelable {
 
     @PrimaryKey (autoGenerate = true)
     @ColumnInfo (name = ColumnNames.ID)
-    @NonNull
     public long _id;
 
-    public long getId() {
-        return _id;
-    }
+    public long getId() { return _id; }
+
 }

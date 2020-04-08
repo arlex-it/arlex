@@ -28,4 +28,5 @@ public interface BaseDao<T> {
 
     @Delete
     int delete(T entity);
+
 }

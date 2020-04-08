@@ -17,20 +17,15 @@ public class Code extends BaseEntity {
 
     public static final Parcelable.Creator<Code> CREATOR = new Parcelable.Creator<Code>() {
         @Override
-        public Code createFromParcel(Parcel source) {
-            return new Code(source);
-        }
+        public Code createFromParcel(Parcel source) { return new Code(source); }
 
         @Override
-        public Code[] newArray(int size) {
-            return new Code[size];
-        }
+        public Code[] newArray(int size) { return new Code[size]; }
     };
 
-    private String _content;
-    private String _imagePath;
-    private long _timestamp;
+    private String _content, _imagePath;
     private int _type;
+    private long _timestamp;
 
     public Code() {}
 
@@ -64,42 +59,24 @@ public class Code extends BaseEntity {
     }
 
 
-    public String getContent() {
-        return _content;
-    }
+    public String getContent() { return _content; }
 
-    public void setContent(String content) {
-        this._content = content;
-    }
+    public void setContent(String content) { this._content = content; }
 
-    public int getType() {
-        return _type;
-    }
+    public String getImagePath() { return _imagePath; }
 
-    public void setType(int type) {
-        this._type = type;
-    }
+    public void setImagePath(String imagePath) { this._imagePath = imagePath; }
 
-    public String getImagePath() {
-        return _imagePath;
-    }
+    public int getType() { return _type; }
 
-    public void setImagePath(String imagePath) {
-        this._imagePath = imagePath;
-    }
+    public void setType(int type) { this._type = type; }
 
-    public long getTimestamp() {
-        return _timestamp;
-    }
+    public long getTimestamp() { return _timestamp; }
 
-    public void setTimestamp(long timestamp) {
-        this._timestamp = timestamp;
-    }
+    public void setTimestamp(long timestamp) { this._timestamp = timestamp; }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
+    public int describeContents() { return 0; }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -108,4 +85,5 @@ public class Code extends BaseEntity {
         dest.writeLong(this._timestamp);
         dest.writeString(this._imagePath);
     }
+
 }
