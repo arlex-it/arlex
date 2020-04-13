@@ -61,7 +61,7 @@ def get_products(request, product_id):
 
     product = requests.get(urlopenfoodfact.format(products.id_ean))
     return HttpResponse(200).custom({
-        'succès': 'On a retrouvé le produit.',
+        'success': 'On a retrouvé le produit.',
         'position': products.position,
         'expiration_date': products.expiration_date,
         'id_ean': products.id_ean,
