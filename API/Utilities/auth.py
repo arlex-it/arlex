@@ -67,21 +67,12 @@ def private_authentication(scopes, kwargs):
     if not token:
         raise Exception('No oauth_access_token or Authorization header found in request')
 
-    #TODO: gérer timestamp !
-    #if not timestamp:
-     #   raise BadRequest('No oauth_timestamp or X-Request-Timestamp found in request')
     helper = OAuthAuthenticationToken(token)
     if not helper.is_valid_token():
         raise Exception('Invalid access token')
 
     if not helper.validate_user_access(kwargs):
         raise Exception('Tentative de modification d\'un compte non correctement identifié')
-    # TODO SCOPE
-    #if not helper.has_scopes(scopes):
-    #    raise Exception('Access token has insufficient scope')
-    # TODO CKECK ACCESS RESSOURCE
-    #if helper.access():
-
     return helper.get_token_infos()
 
 

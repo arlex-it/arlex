@@ -14,7 +14,6 @@ class TestVocaleAssistantCollection(Resource):
     @ns.expect(test_vocale_assistant_input)
     @ns.response(200, '{"res": True}')
     def get(self):
-        print("oui")
         """
         This is a test route
         """
