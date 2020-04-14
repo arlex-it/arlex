@@ -74,6 +74,7 @@ def delete_user(request, user_id):
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).delete()
         session.commit()
     except Exception as e:
@@ -116,6 +117,7 @@ def create_user(request):
     )
 
     try:
+        session.begin()
         session.add(new_user)
         session.commit()
     except Exception as e:
@@ -156,6 +158,7 @@ def update_user(request, user_id):
         infos['password'] = hashed
     infos['date_update'] = datetime.datetime.now()
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).update(infos)
         session.commit()
     except Exception as e:
