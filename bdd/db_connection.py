@@ -39,6 +39,21 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
+class Product(Base):
+    __tablename__ = 'product'
+
+    id = Column(Integer, primary_key=True, unique=True)
+    date_insert = Column(DateTime, nullable=False)
+    date_update = Column(DateTime, nullable=False)
+    expiration_date = Column(DateTime, nullable=False)
+    status = Column(Integer, nullable=False)
+    id_rfid = Column(Integer, nullable=False)
+    id_ean = Column(Integer, nullable=False)
+    position = Column(String(255), nullable=False)
+    id_user = Column(Integer, nullable=False)
+    user_id = Column(Integer, nullable=False)
+
+
 class AccessToken(Base):
     __tablename__ = 'access_token'
 
@@ -70,20 +85,6 @@ class RefreshToken(Base):
     token = Column(String(255), nullable=False)
     is_enable = Column(Integer, nullable=False)
     access_token_id = Column(Integer, unique=True, nullable=False)
-
-
-class Product(Base):
-    __tablename__ = 'product'
-
-    id = Column(Integer, primary_key=True, unique=True)
-    date_insert = Column(DateTime, nullable=False)
-    date_update = Column(DateTime, nullable=False)
-    expiration_date = Column(DateTime, nullable=False)
-    status = Column(Integer, nullable=False)
-    id_rfid = Column(Integer, nullable=False)
-    id_ean = Column(Integer, nullable=False)
-    position = Column(String(255), nullable=False)
-    id_user = Column(Integer, nullable=False)
 
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':

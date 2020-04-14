@@ -7,8 +7,8 @@ from Ressources import settings
 from Ressources.config import configure_app
 from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
-from API.Products.endpoints.products import ns as products
 from API.User.endpoints.user import ns as user
+from API.Products.endpoints.products import ns as products
 from API.TestVocaleAssistant.endpoints.test_vocale_assistant import ns as test_vocale_assistant
 import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
@@ -35,7 +35,7 @@ def initialize_app(flask_app):
 	api.add_namespace(test_namespace)
 	api.add_namespace(user)
 	api.add_namespace(products)
-	api.add_namespace(auth)
+  api.add_namespace(auth)
 	api.add_namespace(token)
 	api.add_namespace(test_vocale_assistant)
 	# templates namespace marker

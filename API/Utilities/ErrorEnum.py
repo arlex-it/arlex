@@ -7,6 +7,7 @@ class ErrorCode(Enum):
     USER_NFIND = "Utilisateur non trouvé."
     MAIL_NOK = "Addresse email non valide."
     PRODUCT_NFIND = "Produit non trouvé"
+    ID_RFID_NOK = "Id_RFID non valide."
     MAIL_USED = "Addresse email déjà en utilisation"
     BAD_TOKEN = "Le token envoyé est incorrecte"
     GENDER_NOK = "Genre non valide."
@@ -16,4 +17,3 @@ class ErrorCode(Enum):
     STREET_NOK = "Rue non valide."
     CITY_NOK = "Ville non valide."
     REGION_NOK = "Région non valide."
-    ID_RFID_NOK = "Id_RFID non valide."
