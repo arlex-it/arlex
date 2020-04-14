@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
   `id_ean` varchar(130) NOT NULL,
   `position` varchar(255) NOT NULL,
   `id_user` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `idx_date_insert` (`date_insert`),
