@@ -8,6 +8,7 @@ def get_product_model(param=None):
         'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'status': 0,
         'id_user': 1,
+        'user_id': 1,
         "expiration_date": "2019-11-30",
         "id_rfid": 123,
         "id_ean": "3017620424403",
@@ -38,6 +39,8 @@ def product_model_to_sql(product):
         if key is 'position':
             new_product_object.position = product[key]
         if key is 'id_user':
+            new_product_object.id_user = product[key]
+        if key is 'user_id':
             new_product_object.id_user = product[key]
 
     return new_product_object
