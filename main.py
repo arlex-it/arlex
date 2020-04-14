@@ -35,7 +35,7 @@ def initialize_app(flask_app):
 	api.add_namespace(test_namespace)
 	api.add_namespace(user)
 	api.add_namespace(products)
-  api.add_namespace(auth)
+	api.add_namespace(auth)
 	api.add_namespace(token)
 	api.add_namespace(test_vocale_assistant)
 	# templates namespace marker
