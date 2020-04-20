@@ -14,7 +14,7 @@ from API.auth.endpoints.auth import ns as auth
 from API.Token.endpoints.token import ns as token
 # templates import marker
 
-app = Flask(__name__, template_folder="API/templates/")
+app = Flask(__name__, static_folder="API/static", template_folder="API/templates/")
 app.url_map.strict_slashes = False
 
 
