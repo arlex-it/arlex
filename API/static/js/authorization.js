@@ -4,8 +4,6 @@ $(document).ready(function() {
         // $.post($('.form-login')[0].action, $('.form-login').serialize());
     });
 
-    console.log("Le JavaScript est actif !!!");
-    $("#form-login .dis").html("Augustin la pute");
     function getFormData($form){
         var unindexed_array = $form.serializeArray();
         var indexed_array = {};
