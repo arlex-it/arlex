@@ -5,9 +5,5 @@ bcrypt
 sqlalchemy
 flask_wtf
 pymysql
-<<<<<<< HEAD
-arrow
-=======
 arrow
 pyngrok
->>>>>>> 1d69c69b0eae37c468d1ff8872bf618775552546
