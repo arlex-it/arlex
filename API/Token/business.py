@@ -231,6 +231,7 @@ class PostToken(OAuthRequestAbstract):
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':
+
             (token, refresh_token) = self.grant_refresh_token()
         elif self.grant_type == 'password':
             (token, refresh_token) = self.grant_password()
