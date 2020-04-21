@@ -58,6 +58,7 @@ class PostToken(OAuthRequestAbstract):
         info = {
             "is_enable": 0
         }
+
         try:
             session.begin()
             session.query(AccessToken).filter(AccessToken.id == code.id).update(info)
@@ -182,8 +183,7 @@ class PostToken(OAuthRequestAbstract):
             
             if not refresh_token.is_enable:
                 raise Exception('Refresh token is invalid.')
-            print(self.app_id)
-            print(refresh_token.app_id)
+            
             if str(refresh_token.app_id) != str(self.application_id):
                 raise Exception('Code does not match your app_id.')
 
