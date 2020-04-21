@@ -39,6 +39,40 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
+class AccessToken(Base):
+    __tablename__ = 'access_token'
+
+    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    app_id = Column(String(255), nullable=False)
+    date_insert = Column(DateTime, nullable=False)
+    type = Column(String(45), nullable=False)
+    token = Column(String(255), nullable=False)
+    id_user = Column(Integer, nullable=False)
+    expiration_date = Column(DateTime, nullable=False)
+    is_enable = Column(Integer, nullable=False)
+    scopes = Column(String(45), nullable=False)
+
+
+class AuthApplication(Base):
+    __tablename__ = 'auth_application'
+
+    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    app_name = Column(String(45), nullable=False)
+    client_id = Column(String(100), nullable=False)
+    project_id = Column(String(45), nullable=False)
+
+class RefreshToken(Base):
+    __tablename__ = 'refresh_token'
+
+    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    app_id = Column(String(255), nullable=False)
+    date_insert = Column(DateTime, nullable=False)
+    token = Column(String(255), nullable=False)
+    is_enable = Column(Integer, nullable=False)
+    access_token_id = Column(Integer, unique=True, nullable=False)
+
+
+engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 class Product(Base):
     __tablename__ = 'product'
 

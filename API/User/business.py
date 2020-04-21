@@ -2,6 +2,9 @@ from flask_restplus import abort
 
 from bdd.db_connection import session, User, to_dict
 from API.Utilities.HttpResponse import *
+from API.Utilities.OAuthAuthenticationToken import *
+from API.Utilities.auth import check_user_permission
+from bdd.db_connection import User
 import datetime
 import re
 import bcrypt
@@ -70,6 +73,13 @@ def delete_user(request, user_id):
     """
     if not request:
         abort(400)
+
+    if not check_user_permission(user_id):
+        error = {
+            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
+        }
+        return HttpResponse(403).custom(error)
+
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
@@ -100,7 +110,7 @@ def create_user(request):
     new_user = User(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
-        is_active=0,
+        is_active=1,
         status=0,
         gender=request.json['gender'],
         lastname=request.json['lastname'],
@@ -123,30 +133,30 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
+    # token generation for new user
+    try:
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
     return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
 
 
 def update_user(request, user_id):
     if not request:
         abort(400)
-
-    """
-    if user_connected_with_token != user_id:
-        error = {
-            'error': 'Action interdite: Tentative d'action sur un compte non identifié'
-        }
-        return jsonify(error), 403
-    """
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
 
     infos = request.json
-    if 'mail' in infos:
-        if not re.search(regex_mail, request.json['mail']):
-            return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+    verification = check_user_infos(infos)
+    if verification is not None:
+        return HttpResponse(403).error(verification)
 
+    if 'mail' in infos:
         existing = session.query(User).filter(User.mail == infos['mail']).first()
         if existing:
             return HttpResponse(403).error(ErrorCode.MAIL_USED)
