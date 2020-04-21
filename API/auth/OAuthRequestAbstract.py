@@ -24,9 +24,11 @@ class OAuthRequestAbstract(View):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
-            is_enable=1
+            is_enable=1,
+            scopes="user"
         )
         try:
+            session.begin()
             session.add(code)
             session.commit()
         except Exception as e:

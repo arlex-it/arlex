@@ -7,7 +7,7 @@ from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
 from API.Utilities.HttpResponse import HttpResponse, ErrorCode
-from bdd.db_connection import AccessToken, session, User, RefreshToken
+from bdd.db_connection import AccessToken, session, User, RefreshToken, to_dict
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
 
 
@@ -60,6 +60,7 @@ class PostToken(OAuthRequestAbstract):
         }
 
         try:
+            session.begin()
             session.query(AccessToken).filter(AccessToken.id == code.id).update(info)
             session.commit()
         except Exception as e:
@@ -80,9 +81,11 @@ class PostToken(OAuthRequestAbstract):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=arrow.now().shift(hours=+10).datetime,
-            is_enable=1
+            is_enable=1,
+            scopes="user"
         )
         try:
+            session.begin()
             session.add(access_token)
             session.commit()
         except Exception as e:
@@ -98,6 +101,7 @@ class PostToken(OAuthRequestAbstract):
             access_token_id=access_token.id,
         )
         try:
+            session.begin()
             session.add(refresh_token)
             session.commit()
         except Exception as e:
@@ -138,6 +142,7 @@ class PostToken(OAuthRequestAbstract):
                         scopes='user'
                     )
                     try:
+                        session.begin()
                         session.add(access_token)
                         session.commit()
                     except Exception as e:
@@ -153,6 +158,7 @@ class PostToken(OAuthRequestAbstract):
                         access_token_id=access_token.id,
                     )
                     try:
+                        session.begin()
                         session.add(refresh_token)
                         session.commit()
                     except Exception as e:
@@ -182,11 +188,12 @@ class PostToken(OAuthRequestAbstract):
                 raise Exception('Code does not match your app_id.')
 
             old_token = session.query(AccessToken).filter(
-                AccessToken.token == RefreshToken.access_token_id).first()
+                AccessToken.id == refresh_token.access_token_id).first()
             info = {
                 "is_enable": 0
             }
             try:
+                session.begin()
                 session.query(AccessToken).filter(AccessToken.id == old_token.id).update(info)
                 session.commit()
             except Exception as e:
@@ -203,9 +210,11 @@ class PostToken(OAuthRequestAbstract):
                 date_insert=datetime.datetime.now(),
                 id_user=user.id,
                 expiration_date=arrow.now().shift(hours=+10).datetime,
-                is_enable=1
+                is_enable=1,
+                scopes="user"
             )
             try:
+                session.begin()
                 session.add(access_token)
                 session.commit()
             except Exception as e:
@@ -221,6 +230,7 @@ class PostToken(OAuthRequestAbstract):
                 access_token_id=access_token.id,
             )
             try:
+                session.begin()
                 session.add(refresh_token)
                 session.commit()
             except Exception as e:

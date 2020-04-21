@@ -39,6 +39,13 @@ class User(Base):
     postal_code = Column(String(45), nullable=False)
 
 
+<<<<<<<<< Temporary merge branch 1
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or sys.argv[0] != 'main.py':
+    print('Connected to unit_test Database')
+    engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
+else:
+    engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
+=========
 class AccessToken(Base):
     __tablename__ = 'access_token'
 
@@ -71,8 +78,6 @@ class RefreshToken(Base):
     is_enable = Column(Integer, nullable=False)
     access_token_id = Column(Integer, unique=True, nullable=False)
 
-
-engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 class Product(Base):
     __tablename__ = 'product'
 
@@ -86,8 +91,7 @@ class Product(Base):
     position = Column(String(255), nullable=False)
     id_user = Column(Integer, nullable=False)
 
-
-if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or sys.argv[0] != 'main.py':
     print('Connected to unit_test Database')
     engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
 else:
