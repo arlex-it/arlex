@@ -38,11 +38,6 @@ def check_user_infos(infos):
     if 'country' in infos and not re.search(regex_address, infos['country']):
         return ErrorCode.COUNTRY_NOK
     if 'street' in infos and not re.search(regex_address, infos['street']):
-=========
-    if 'country' in infos and not re.search(regex_address, infos['country']):
-        return ErrorCode.COUNTRY_NOK
-    if 'street' in infos and not re.search(regex_name, infos['street']):
->>>>>>>>> Temporary merge branch 2
         return ErrorCode.STREET_NOK
     if 'town' in infos and not re.search(regex_address, infos['town']):
         return ErrorCode.CITY_NOK
