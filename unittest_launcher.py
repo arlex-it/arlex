@@ -1,5 +1,4 @@
 import sqlalchemy as db
-from pyngrok import ngrok
 from unit_test.product.tests import tests_post as tests_post_product
 import main
 from Ressources import settings

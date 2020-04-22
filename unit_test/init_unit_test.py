@@ -1,6 +1,5 @@
 import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
-from pyngrok import ngrok
 
 
 class UnitTestInit():
