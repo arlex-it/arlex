@@ -11,7 +11,7 @@ def get_user_model(param=None):
             'lastname': 'Doe',
             'firstname': 'John',
             'mail': 'john@doe.com',
-            'password': '$2y$12$Egy/Ye1Ikuy4oueV9ja7T.o3eDUvGFGO4ZgdQ2VSnbjvFOz29d7zK',
+            'password': 'password',
             'country': 'France',
             'town': 'Lille',
             'street': 'rue nationale',

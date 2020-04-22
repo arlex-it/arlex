@@ -20,6 +20,7 @@ script:
     - |
       python main.py unit_test &
       APP_PID=$!
+    - sleep 2
 
     # Test product route
     - python unit_test/product/tests/tests_post.py
@@ -30,5 +31,7 @@ script:
     - python unit_test/user/tests/tests_post.py
     - python unit_test/user/tests/tests_delete.py
     - python unit_test/user/tests/tests_put.py
+
+    - python unit_test/oauth/tests/test_token.py
 
     - kill $APP_PID

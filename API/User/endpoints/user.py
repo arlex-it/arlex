@@ -1,5 +1,7 @@
 from flask import request
 from flask_restplus import Resource
+
+from API.Utilities.auth import require_authentication
 from Ressources.swagger_api import api
 from API.User.business import get_user, create_user, update_user, delete_user
 from API.User.models import user_get, user_creation, user_update, user_update_header
@@ -29,8 +31,9 @@ class UserCollection(Resource):
 @ns.route('/<int:user_id>')
 @ns.doc(params={'user_id': 'User ID'})
 class UpdateUserCollection(Resource):
-    @ns.expect(user_update) #, user_update_header)
+    @ns.expect(user_update, user_update_header)
     @ns.response(200, '{"success": "Utilisateur modifié avec succès."}')
+    @require_authentication('private')
     def put(self, user_id):
         """
         Route to update an user
@@ -38,6 +41,7 @@ class UpdateUserCollection(Resource):
         return update_user(request, user_id)
 
     @ns.response(202, '{"success": "Utilisateur supprimé avec succès."}')
+    @require_authentication('private')
     def delete(self, user_id):
         """
         Route to delete an user

@@ -94,3 +94,37 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`log` (
   KEY `idx_date_insert` (`date_insert`),
   KEY `idx_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `arlex_db`.`auth_application` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `app_name` varchar(45) NOT NULL,
+  `client_id` varchar(100) NOT NULL,
+  `project_id` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `arlex_db`.`access_token` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `token` varchar(255) NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `expiration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `app_id` varchar(255) NOT NULL,
+  `type` varchar(100) NOT NULL,
+  `is_enable` int(4) NOT NULL,
+  `scopes` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `arlex_db`.`refresh_token` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `token` varchar(255) NOT NULL,
+  `app_id` varchar(255) NOT NULL,
+  `is_enable` int(4) NOT NULL,
+  `access_token_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

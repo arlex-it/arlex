@@ -1,10 +1,13 @@
 from flask_restplus import abort
 
-from bdd.db_connection import session, User, to_dict
 from API.Utilities.HttpResponse import *
+from API.Utilities.OAuthAuthenticationToken import *
+from API.Utilities.auth import check_user_permission
 import datetime
 import re
 import bcrypt
+
+from bdd.db_connection import User, RefreshToken, AuthApplication, session, to_dict
 
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
@@ -70,10 +73,18 @@ def delete_user(request, user_id):
     """
     if not request:
         abort(400)
+
+    if not check_user_permission(user_id):
+        error = {
+            'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
+        }
+        return HttpResponse(403).custom(error)
+
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).delete()
         session.commit()
     except Exception as e:
@@ -100,7 +111,7 @@ def create_user(request):
     new_user = User(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
-        is_active=0,
+        is_active=1,
         status=0,
         gender=request.json['gender'],
         lastname=request.json['lastname'],
@@ -116,6 +127,7 @@ def create_user(request):
     )
 
     try:
+        session.begin()
         session.add(new_user)
         session.commit()
     except Exception as e:
@@ -123,30 +135,60 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
+    import uuid
+    app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
+    access_token = AccessToken(
+        app_id=app_id,
+        type='bearer',
+        token=uuid.uuid4().hex[:35],
+        date_insert=datetime.datetime.now(),
+        id_user=new_user.id,
+        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
+        is_enable=1,
+        scopes="user"
+    )
+
+    try:
+        session.begin()
+        session.add(access_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    refresh_token = RefreshToken(
+        app_id=app_id,
+        date_insert=datetime.datetime.now(),
+        token=uuid.uuid4().hex[:35],
+        is_enable=True,
+        access_token_id=access_token.id,
+    )
+    try:
+        session.begin()
+        session.add(refresh_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token, 'refresh_token': refresh_token.token})
 
 
 def update_user(request, user_id):
     if not request:
         abort(400)
-
-    """
-    if user_connected_with_token != user_id:
-        error = {
-            'error': 'Action interdite: Tentative d'action sur un compte non identifié'
-        }
-        return jsonify(error), 403
-    """
-
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
 
     infos = request.json
-    if 'mail' in infos:
-        if not re.search(regex_mail, request.json['mail']):
-            return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+    verification = check_user_infos(infos)
+    if verification is not None:
+        return HttpResponse(403).error(verification)
 
+    if 'mail' in infos:
         existing = session.query(User).filter(User.mail == infos['mail']).first()
         if existing:
             return HttpResponse(403).error(ErrorCode.MAIL_USED)
@@ -156,6 +198,7 @@ def update_user(request, user_id):
         infos['password'] = hashed
     infos['date_update'] = datetime.datetime.now()
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).update(infos)
         session.commit()
     except Exception as e:
