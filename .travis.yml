@@ -22,16 +22,17 @@ script:
       APP_PID=$!
     - sleep 2
 
-    # Test product route
-    - python unit_test/product/tests/tests_post.py
-    - python unit_test/product/tests/tests_get.py
-    - python unit_test/product/tests/tests_delete.py
-
     # Test user route
     - python unit_test/user/tests/tests_post.py
     - python unit_test/user/tests/tests_delete.py
     - python unit_test/user/tests/tests_put.py
 
+    # Test product route
+    - python unit_test/product/tests/tests_post.py
+    - python unit_test/product/tests/tests_get.py
+    - python unit_test/product/tests/tests_delete.py
+
+    # Test token
     - python unit_test/oauth/tests/test_token.py
 
     - kill $APP_PID
