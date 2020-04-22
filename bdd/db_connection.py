@@ -4,6 +4,7 @@ import sqlalchemy as db
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker
+import sys
 
 
 Base = declarative_base()
@@ -36,6 +37,7 @@ class User(Base):
     street_number = Column(String(45), nullable=False)
     region = Column(String(45), nullable=False)
     postal_code = Column(String(45), nullable=False)
+
 
 class Product(Base):
     __tablename__ = 'product'
@@ -85,9 +87,13 @@ class RefreshToken(Base):
     access_token_id = Column(Integer, unique=True, nullable=False)
 
 
-engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
+    print('Connected to unit_test Database')
+    engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
+else:
+    engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
-Session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine, autocommit=True)
 session = Session()
 try:
     session.query("1").all()
