@@ -13,7 +13,7 @@ class UtilityOauthSQL:
     def get_token_template(self):
         return {'token': uuid.uuid4().hex[:35],
                  'id_user': 0,
-                 'expiration_date': arrow.now().shift(days=+1).datetime,
+                 'expiration_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                  'app_id': 1,
                  'type': 'bearer',
                  'is_enable': 1,

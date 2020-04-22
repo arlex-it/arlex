@@ -27,6 +27,7 @@ class UserRouteDelete(unittest.TestCase):
 
         # create user token
         token = self.oauth_sql.create_default_access_token(id_user=id_user)
+        print(token)
 
         resp = requests.delete(self.public_url + '/api/user/{}'.format(id_user), headers={'Authorization': 'Bearer ' + token['token']})
         self.assertEqual(resp.status_code, 202)
