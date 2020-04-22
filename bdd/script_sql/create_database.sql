@@ -116,5 +116,4 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`refresh_token` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-source 08_01_2020.sql
-source 22_04_2020.sql
+

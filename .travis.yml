@@ -12,6 +12,8 @@ services:
 script:
     # create database
     - mysql -u root < bdd/script_sql/create_database.sql
+    - mysql -u root < bdd/script_sql/08_01_2020.sql
+    - mysql -u root < bdd/script_sql/22_04_2020.sql
 
     # export project to pythonpath for module importation
     - export PYTHONPATH=$PYTHONPATH:$PWD
