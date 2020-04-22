@@ -26,6 +26,5 @@ class authCollection(Resource):
         Post authorize (called after get)
         :return:
         """
-        print("POST =============================")
         post_auth = PostAuthorization()
         return post_auth.dispatch_request(request)

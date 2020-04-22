@@ -25,4 +25,3 @@ class HttpResponse():
 
     def custom(self, dict):
         return make_response(jsonify(dict), self.code)
-
