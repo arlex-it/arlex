@@ -76,7 +76,6 @@ class ProductRoutePost(unittest.TestCase):
             new_product = get_product_model({'position': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-            
 
 if __name__ == '__main__':
     unittest.main()

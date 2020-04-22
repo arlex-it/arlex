@@ -33,7 +33,6 @@ class ProductsRouteGet(unittest.TestCase):
         print(">>> test_get_wrong_product")
         resp = requests.get(self.public_url + '/api/products/{}'.format(1000))
         self.assertEqual(resp.status_code, 403)
-        
 
 if __name__ == '__main__':
     unittest.main()
