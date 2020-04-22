@@ -41,6 +41,7 @@ def create_products(request):
     )
 
     try:
+        session.begin()
         session.add(new_product)
         session.commit()
     except Exception as e:
@@ -83,6 +84,7 @@ def delete_products(request, product_id):
     if not product:
         return HttpResponse(403).error(ErrorCode.PRODUCT_NFIND)
     try:
+        session.begin()
         session.query(Product).filter(Product.id == product_id).delete()
         session.commit()
     except Exception as e:

@@ -38,6 +38,7 @@ class User(Base):
     region = Column(String(45), nullable=False)
     postal_code = Column(String(45), nullable=False)
 
+
 class Product(Base):
     __tablename__ = 'product'
 
