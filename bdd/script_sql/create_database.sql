@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`access_token` (
   `app_id` varchar(255) NOT NULL,
   `type` varchar(100) NOT NULL,
   `is_enable` tinyint(4) NOT NULL,
+  `scopes` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `access_token_UNIQUE` (`token`)
@@ -104,20 +105,6 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`auth_application` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE IF NOT EXISTS `arlex_db`.`access_token` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `token` varchar(255) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `expiration_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `app_id` varchar(255) NOT NULL,
-  `type` varchar(100) NOT NULL,
-  `is_enable` int(4) NOT NULL,
-  `scopes` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
 CREATE TABLE IF NOT EXISTS `arlex_db`.`refresh_token` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date_insert` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -128,3 +115,5 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`refresh_token` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+source 08_01_2020.sql
