@@ -7,14 +7,13 @@ from unit_test.oauth.user_model import get_user_model
 from unit_test.init_unit_test import UnitTestInit
 from unit_test.oauth.sql.sql_post import *
 import requests
+import socket
 
 
 class OauthRouteDelete(unittest.TestCase):
-
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
     sql = PostSql(engine=engine, session=session)
-    import socket
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     public_url = "http://" + "localhost" + ":5000"
