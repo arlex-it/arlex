@@ -32,7 +32,6 @@ class ProductsRouteDelete(unittest.TestCase):
         print(">>> test_delete_wrong_product")
         resp = requests.delete(self.public_url + '/api/products/{}'.format(1000))
         self.assertEqual(resp.status_code, 403)
-        
 
 if __name__ == '__main__':
     unittest.main()
