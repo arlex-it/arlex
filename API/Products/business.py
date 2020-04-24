@@ -14,6 +14,7 @@ def create_products(request):
 
     id_user = 1
     user_id = 1
+
     try:
         datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
     except ValueError:
@@ -36,6 +37,7 @@ def create_products(request):
         id_ean=request.json['id_ean'],
         position=request.json['position'],
         id_user=id_user,
+        user_id=user_id
     )
 
     try:
