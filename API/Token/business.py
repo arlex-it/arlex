@@ -7,7 +7,7 @@ from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
 from API.Utilities.HttpResponse import HttpResponse, ErrorCode
-from bdd.db_connection import AccessToken, session, User, RefreshToken
+from bdd.db_connection import AccessToken, session, User, RefreshToken, to_dict
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
 
 
@@ -60,6 +60,7 @@ class PostToken(OAuthRequestAbstract):
         }
 
         try:
+            session.begin()
             session.query(AccessToken).filter(AccessToken.id == code.id).update(info)
             session.commit()
         except Exception as e:
@@ -80,9 +81,11 @@ class PostToken(OAuthRequestAbstract):
             date_insert=datetime.datetime.now(),
             id_user=user.id,
             expiration_date=arrow.now().shift(hours=+10).datetime,
-            is_enable=1
+            is_enable=1,
+            scopes="user"
         )
         try:
+            session.begin()
             session.add(access_token)
             session.commit()
         except Exception as e:
@@ -98,6 +101,7 @@ class PostToken(OAuthRequestAbstract):
             access_token_id=access_token.id,
         )
         try:
+            session.begin()
             session.add(refresh_token)
             session.commit()
         except Exception as e:
@@ -107,6 +111,7 @@ class PostToken(OAuthRequestAbstract):
         return access_token, refresh_token
 
     def grant_password(self):
+        print("eheh")
         validator = HttpRequestValidator()
         validator.throw_on_error(True)
         validator.add_param('username', True)
@@ -115,24 +120,29 @@ class PostToken(OAuthRequestAbstract):
         if validator.verify():
 
             username = self.__request.get_param('username')
+            print(username)
             username = username.lower()
             user = session.query(User).filter(User.mail == username).first()
             if user and user.is_active != 0 and user.password:
                 current_pw = user.password
 
                 password = self.__request.get_param('password')
+                print(password)
 
                 if PasswordUtilities.check_password(password, current_pw):
-                    access_token=AccessToken(
+                    scope = "user"
+                    access_token = AccessToken(
                         app_id=self.application_id,
                         type='bearer',
                         token=uuid.uuid4().hex[:35],
                         date_insert=datetime.datetime.now(),
                         id_user=user.id,
                         expiration_date=arrow.now().shift(hours=+10).datetime,
-                        is_enable=1
+                        is_enable=1,
+                        scopes='user'
                     )
                     try:
+                        session.begin()
                         session.add(access_token)
                         session.commit()
                     except Exception as e:
@@ -148,13 +158,14 @@ class PostToken(OAuthRequestAbstract):
                         access_token_id=access_token.id,
                     )
                     try:
+                        session.begin()
                         session.add(refresh_token)
                         session.commit()
                     except Exception as e:
                         session.rollback()
                         session.flush()
                         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
-                    return (access_token, refresh_token)
+                    return access_token, refresh_token
                 else:
                     raise Exception('Invalid username or password')
             else:
@@ -177,11 +188,12 @@ class PostToken(OAuthRequestAbstract):
                 raise Exception('Code does not match your app_id.')
 
             old_token = session.query(AccessToken).filter(
-                AccessToken.token == RefreshToken.access_token_id).first()
+                AccessToken.id == refresh_token.access_token_id).first()
             info = {
                 "is_enable": 0
             }
             try:
+                session.begin()
                 session.query(AccessToken).filter(AccessToken.id == old_token.id).update(info)
                 session.commit()
             except Exception as e:
@@ -198,9 +210,11 @@ class PostToken(OAuthRequestAbstract):
                 date_insert=datetime.datetime.now(),
                 id_user=user.id,
                 expiration_date=arrow.now().shift(hours=+10).datetime,
-                is_enable=1
+                is_enable=1,
+                scopes="user"
             )
             try:
+                session.begin()
                 session.add(access_token)
                 session.commit()
             except Exception as e:
@@ -216,6 +230,7 @@ class PostToken(OAuthRequestAbstract):
                 access_token_id=access_token.id,
             )
             try:
+                session.begin()
                 session.add(refresh_token)
                 session.commit()
             except Exception as e:
