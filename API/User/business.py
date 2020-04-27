@@ -1,5 +1,6 @@
 from flask_restplus import abort
 
+from bdd.db_connection import session, User, to_dict
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 from API.Utilities.auth import check_user_permission
