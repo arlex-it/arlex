@@ -58,11 +58,11 @@
                 <div id="register-here">
                     <small>Vous n'avez pas encore de compte ?</small>
                     <br />
-                    <small><a href="#">Inscrivez vous ici</a></small>
+                    <small><a class="register-link" href="#">Inscrivez vous ici</a></small>
                 </div>
                 <p class="title dis">Vous avez déjà un compte ?</p>
                 <p class="subtitle">Connectez vous ici</p>
-                <form class="form-signin" method="POST" action="{{ url_for(request.endpoint) }}">
+                <form class="form-login" method="POST" action="{{ url_for(request.endpoint) }}">
                     <div class="form-group">
                         <label for="username">Adresse mail</label>
                         <input type="email" class="form-control" id="username" name="username" aria-describedby="emailHelp" placeholder="Entrer l'adresse mail" required>
