@@ -173,39 +173,17 @@ class OauthRouteDelete(unittest.TestCase):
                                               '&state=' + state +
                                               '&response_type=' + response_type +
                                               '&redirect_uri=' + redirect_uri.format())
-        self.assertEqual("""<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Connexion à Arlex</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
-    </head>
-    <body>
-        <form class="form-signin" method="POST" action="{}">
-              <p class="title">Connexion Arlex</p>
 
-              <div class="form-group form-inline">
-                <input id="inputUsername" name="username" type="email" class="form-control" placeholder="Adresse mail" required>
-              </div>
+        find = [resp.content.decode().find("""<input type="hidden" name="state" value="{}">""".format(state)),
+                resp.content.decode().find(
+                    """<input type="hidden" name="client_id" value="{}">""".format(client_id)),
+                resp.content.decode().find(
+                    """<input type="hidden" name="redirect_uri" value="{}">""".format(redirect_uri)),
+                resp.content.decode().find(
+                    """<input type="hidden" name="response_type" value="{}"/>""".format(response_type)),
+                resp.content.decode().find("""<input type="hidden" name="scope" value="{}"/>""".format(scope))]
 
-              <div class="form-group form-inline">
-                <input id="inputPassword" name="password" type="password" class="form-control" placeholder="Mot de passe" required>
-              </div>
-
-              <a class="form-text forgotten" href="#">Mot de passe oublié ?</a>
-              <button id="submit_button" class="btn">Se connecter</button>
-
-              <input type="hidden" name="state" value="{}">
-              <input type="hidden" name="client_id" value="{}">
-              <input type="hidden" name="redirect_uri" value="{}">
-              <input type="hidden" name="response_type" value="{}"/>
-              <input type="hidden" name="scope" value="{}"/>
-        </form>
-     <script language="JavaScript" src="/static/js/authorization.js"></script>
-    </body>
-
-</html>""".format("/api/auth/authorize", state, client_id, redirect_uri, response_type, scope), resp.content.decode())
+        self.assertEqual(False, -1 in find)
 
     def test_post_authorize_route(self):
         print(">>> test_post_authorize_route")
