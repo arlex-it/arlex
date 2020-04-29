@@ -9,6 +9,7 @@ from Ressources.swagger_api import api
 from API.Test.enpoints.test import ns as test_namespace
 from API.OpenRequestCache.enpoints.open_request_cache import ns as open_request_cache_namespace
 from API.Products.endpoints.products import ns as products
+from API.ListProducts.enpoints.list_products import ns as list_products
 from API.User.endpoints.user import ns as user
 from API.TestVocaleAssistant.endpoints.test_vocale_assistant import ns as test_vocale_assistant
 import bdd.db_connection
@@ -37,6 +38,7 @@ def initialize_app(flask_app):
 	api.add_namespace(test_namespace)
 	api.add_namespace(open_request_cache_namespace)
 	api.add_namespace(products)
+	api.add_namespace(list_products)
 	api.add_namespace(user)
 	api.add_namespace(auth)
 	api.add_namespace(token)
