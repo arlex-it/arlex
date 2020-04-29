@@ -13,7 +13,7 @@ class SensorCollection(Resource):
     # @ns.expect(sensor_input)
     # @ns.response(201, '{"success": "Produit ajouté avec succès", "extra":{"id":1}}')
     def get(self):
-        return SensorBusiness().get_list_of_product(HttpRequest().get_header("Authorization"))
+        return SensorBusiness(HttpRequest().get_header("Authorization")).get_list_of_product(request)
 
     def post(self):
-        return SensorBusiness.post_products(HttpRequest().get_header("Authorization"))
+        return SensorBusiness(HttpRequest().get_header("Authorization")).post_products(request)
