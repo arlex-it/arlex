@@ -9,4 +9,6 @@ def get_list_of_product(request):
     res = {
         'state': 'Dev dans cette fonction !!'
     }
+    header_token = request.get_header("Authorization")
+    print(header_token)
     return HttpResponse(200).custom(res)
