@@ -1,11 +1,9 @@
 import unittest
 
-from flask import url_for
-
-from bdd.db_connection import to_dict
 from unit_test.oauth.user_model import get_user_model
 from unit_test.init_unit_test import UnitTestInit
 from unit_test.oauth.sql.sql_post import *
+from unit_test.oauth.test_token_utilities import get_token_template, get_form_template
 import requests
 import socket
 
@@ -33,14 +31,7 @@ class OauthRouteDelete(unittest.TestCase):
         new_user = get_user_model()
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(201, resp.status_code)
-        token = {
-            "client_id": "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-            "client_secret": "test",
-            "grant_type": "password",
-            "app_id": "arlex-ccevqe",
-            "username": "john@doe.com",
-            "password": "password"
-        }
+        token = get_token_template()
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         self.assertEqual(200, resp.status_code)
 
@@ -54,18 +45,15 @@ class OauthRouteDelete(unittest.TestCase):
 
         for invalid in ['password', 'username']:
             print("         >> test_invalid_", invalid)
-
-            token = {"client_id"    : "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-                     "client_secret": "test", "grant_type": "password", "app_id": "arlex-ccevqe",
-                     "username"     : "john@doe.com", "password": "password", invalid: "bad"}
+            token = get_token_template()
+            token[invalid] = "bad"
             resp = requests.post(self.public_url + '/api/token'.format(), json=token)
             find = resp.content.decode().title().casefold().find("<Title>Exception: Invalid Username Or Password".casefold())
             self.assertNotEqual(-1, find)
 
         print("         >> test_invalid_client_id")
-        token = {"client_id"    : "bad",
-                 "client_secret": "test", "grant_type": "password", "app_id": "arlex-ccevqe",
-                 "username"     : "john@doe.com", "password": "password"}
+        token = get_token_template()
+        token['client_id'] = "bad"
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         find = resp.content.decode().title().casefold().find("<Title>Exception: Invalid application : app_id.".casefold())
         self.assertNotEqual(-1, find)
@@ -79,15 +67,9 @@ class OauthRouteDelete(unittest.TestCase):
         refresh_token = resp.json()['extra']['refresh_token']
         self.assertEqual(201, resp.status_code)
 
-        token = {
-            "client_id": "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-            "client_secret": "test",
-            "grant_type": "refresh_token",
-            "app_id": "arlex-ccevqe",
-            "username": "john@doe.com",
-            "password": "password",
-            "refresh_token": refresh_token
-        }
+        token = get_token_template()
+        token['grant_type'] = "refresh_token"
+        token['refresh_token'] = refresh_token
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         self.assertEqual(200, resp.status_code)
 
@@ -100,18 +82,16 @@ class OauthRouteDelete(unittest.TestCase):
         self.assertEqual(201, resp.status_code)
 
         print("         >> test_invalid_refresh_token")
-
-        token = {"client_id"    : "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-                 "client_secret": "test", "grant_type": "refresh_token", "app_id": "arlex-ccevqe",
-                 "username"     : "john@doe.com", "password": "password", "refresh_token": "bad"}
+        token = get_token_template()
+        token["grant_type"] = "refresh_token"
+        token['refresh_token'] = "bad"
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         find = resp.content.decode().title().casefold().find("<Title>Exception: Refresh token not found.".casefold())
         self.assertNotEqual(-1, find)
 
         print("         >> test_invalid_client_id")
-        token = {"client_id"    : "bad",
-                 "client_secret": "test", "grant_type": "password", "app_id": "arlex-ccevqe",
-                 "username"     : "john@doe.com", "password": "password"}
+        token = get_token_template()
+        token['client_id'] = "bad"
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         find = resp.content.decode().title().casefold().find("<Title>Exception: Invalid application : app_id.".casefold())
         self.assertNotEqual(-1, find)
@@ -123,16 +103,12 @@ class OauthRouteDelete(unittest.TestCase):
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         self.assertEqual(201, resp.status_code)
         code = resp.json()['extra']['access_token']
-        token = {
-            "client_id": "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-            "client_secret": "test",
-            "grant_type": "authorization_code",
-            "app_id": "arlex-ccevqe",
-            "username": "john@doe.com",
-            "password": "authorization_code",
-            "code": code,
-            "redirect_uri": ""
-        }
+
+        token = get_token_template()
+        token["grant_type"] = "authorization_code"
+        token["password"] = "authorization_code"
+        token["code"] = code
+        token["redirect_uri"] = ""
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         self.assertEqual(200, resp.status_code)
 
@@ -145,18 +121,17 @@ class OauthRouteDelete(unittest.TestCase):
         self.assertEqual(201, resp.status_code)
 
         print("         >> test_invalid_authorization_code")
-
-        token = {"client_id"    : "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com",
-                 "client_secret": "test", "grant_type": "authorization_code", "app_id": "arlex-ccevqe",
-                 "username"     : "john@doe.com", "password": "password", "code": "bad", "redirect_uri": ""}
+        token = get_token_template()
+        token['grant_type'] = "authorization_code"
+        token['code'] = "bad"
+        token['redirect_uri'] = ""
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         find = resp.content.decode().title().casefold().find("<Title>Exception: Missing valid code".casefold())
         self.assertNotEqual(-1, find)
 
         print("         >> test_invalid_client_id")
-        token = {"client_id"    : "bad",
-                 "client_secret": "test", "grant_type": "password", "app_id": "arlex-ccevqe",
-                 "username"     : "john@doe.com", "password": "password"}
+        token = get_token_template()
+        token['client_id'] = "bad"
         resp = requests.post(self.public_url + '/api/token'.format(), json=token)
         find = resp.content.decode().title().casefold().find("<Title>Exception: Invalid application : app_id.".casefold())
         self.assertNotEqual(-1, find)
@@ -187,25 +162,11 @@ class OauthRouteDelete(unittest.TestCase):
 
     def test_post_authorize_route(self):
         print(">>> test_post_authorize_route")
-        state = "AMXHz3TJp9asTcwX21jl2YfbTE7i3Ou0m--bj4QylQ-wRm6llYEmP12v7vH5T0Z1burSoWW6gszPTsfhDdSG_0t9RmRF0msF1w6jnKl4lLRHYerPZh_VBjm0h9aEJsUbglgGsQBSdTqUJB0RjJgXG1zXma_I3oomoSZQlo1pZWTtMsOLNLtkNU-Dqr_10m4GF7NPIu6XYj7ZReFyUpSleOeKn__vB8mnmYcCyWw1YcpGMHIZ9PHgVgF5Fm04SvAnZIxGEaMscF1mQdRZv6YTr0PZurzvdMcJVBIUshjVrQLasfCMzrMuekHFHfaSKHPQepL1tuSgws8blDXKGs4oCJxoENlKZpn7yZVc_59DnSu_8dwLbIcrW1GfqRujw87kJERa0jxJEAb99-4YK7Vxahjlfq5PYf_kfkq5-CiGs2m2a7LwP3p4Ljg7uDiB4ND1bEpKVm_2R1GYEOn540GOBsyUKZcgTIqb0M7spOXGxdVMYdLLqv9waOzHNM8kCJbMM2tWIzhGAflfJV2tVW7AGuULzKVMkTnQv6hGOc13-9w0J3taX-hZJDo"
-        client_id = "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com"
-        response_type = "code"
-        redirect_uri = "https://oauth-redirect.googleusercontent.com/r/arlex-ccevqe"
-        scope = ""
         new_user = get_user_model()
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         print("         >> create_user")
         self.assertEqual(201, resp.status_code)
-
-        form = {
-            'state': state,
-            'client_id': client_id,
-            'response_type': response_type,
-            'redirect_uri': redirect_uri,
-            'scope': scope,
-            'username': new_user['mail'],
-            'password': new_user['password']
-        }
+        form = get_form_template(new_user)
         print("         >> connect_user_oauth")
         resp = requests.post(self.public_url + '/api/auth/authorize', data=form)
         self.assertEqual(200, resp.status_code)
@@ -214,27 +175,14 @@ class OauthRouteDelete(unittest.TestCase):
 
     def test_invalid_post_authorize_route(self):
         print(">>> test_invalid_post_authorize_route")
-        state = "AMXHz3TJp9asTcwX21jl2YfbTE7i3Ou0m--bj4QylQ-wRm6llYEmP12v7vH5T0Z1burSoWW6gszPTsfhDdSG_0t9RmRF0msF1w6jnKl4lLRHYerPZh_VBjm0h9aEJsUbglgGsQBSdTqUJB0RjJgXG1zXma_I3oomoSZQlo1pZWTtMsOLNLtkNU-Dqr_10m4GF7NPIu6XYj7ZReFyUpSleOeKn__vB8mnmYcCyWw1YcpGMHIZ9PHgVgF5Fm04SvAnZIxGEaMscF1mQdRZv6YTr0PZurzvdMcJVBIUshjVrQLasfCMzrMuekHFHfaSKHPQepL1tuSgws8blDXKGs4oCJxoENlKZpn7yZVc_59DnSu_8dwLbIcrW1GfqRujw87kJERa0jxJEAb99-4YK7Vxahjlfq5PYf_kfkq5-CiGs2m2a7LwP3p4Ljg7uDiB4ND1bEpKVm_2R1GYEOn540GOBsyUKZcgTIqb0M7spOXGxdVMYdLLqv9waOzHNM8kCJbMM2tWIzhGAflfJV2tVW7AGuULzKVMkTnQv6hGOc13-9w0J3taX-hZJDo"
-        client_id = "12151855473-vq1t07i4mg3m05jq7av9j6fh53e3eoc1.apps.googleusercontent.com"
-        response_type = "code"
-        redirect_uri = "https://oauth-redirect.googleusercontent.com/r/arlex-ccevqe"
-        scope = ""
         new_user = get_user_model()
         resp = requests.post(self.public_url + '/api/user'.format(), json=new_user)
         print("         >> create_user")
         self.assertEqual(201, resp.status_code)
 
         for bad in ['state', 'client_id', 'response_type', 'redirect_uri', 'username', 'password']:
-            form = {
-                'state': state,
-                'client_id': client_id,
-                'response_type': response_type,
-                'redirect_uri': redirect_uri,
-                'scope': scope,
-                'username': new_user['mail'],
-                'password': new_user['password'],
-                bad: 'bad'
-            }
+            form = get_form_template(new_user)
+            form[bad] = "bad"
             print("         >> invalid_" + bad + "_user_oauth")
             resp = requests.post(self.public_url + '/api/auth/authorize', data=form)
             if resp.status_code == 200:
@@ -242,6 +190,7 @@ class OauthRouteDelete(unittest.TestCase):
                 self.assertNotEqual(it, -1)
             else:
                 self.assertNotEqual(200, resp.status_code)
+
 
 if __name__ == '__main__':
     unittest.main()
