@@ -1,6 +1,5 @@
 import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
-from pyngrok import ngrok
 
 
 class UnitTestInit():
@@ -19,7 +18,4 @@ class UnitTestInit():
             exit(1)
         return self.engine, self.session
 
-    def create_tunnel(self):
-        self.public_url = ngrok.connect(5000)
-        return self.public_url
 

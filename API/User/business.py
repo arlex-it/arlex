@@ -1,12 +1,14 @@
 from flask_restplus import abort
 
+from bdd.db_connection import session, User, to_dict
 from API.Utilities.HttpResponse import *
 from API.Utilities.OAuthAuthenticationToken import *
 from API.Utilities.auth import check_user_permission
-from bdd.db_connection import User
 import datetime
 import re
 import bcrypt
+
+from bdd.db_connection import User, RefreshToken, AuthApplication, session, to_dict
 
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
@@ -34,11 +36,11 @@ def check_user_infos(infos):
         return ErrorCode.POSTAL_NOK
     if 'country' in infos and not re.search(regex_address, infos['country']):
         return ErrorCode.COUNTRY_NOK
-    if 'street' in infos and not re.search(regex_name, infos['street']):
+    if 'street' in infos and not re.search(regex_address, infos['street']):
         return ErrorCode.STREET_NOK
     if 'town' in infos and not re.search(regex_address, infos['town']):
         return ErrorCode.CITY_NOK
-    if 'region' in infos and not re.search(regex_name, infos['region']):
+    if 'region' in infos and not re.search(regex_address, infos['region']):
         return ErrorCode.REGION_NOK
     return None
 
@@ -83,6 +85,7 @@ def delete_user(request, user_id):
     if not user:
         return HttpResponse(403).error(ErrorCode.USER_NFIND)
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).delete()
         session.commit()
     except Exception as e:
@@ -125,6 +128,7 @@ def create_user(request):
     )
 
     try:
+        session.begin()
         session.add(new_user)
         session.commit()
     except Exception as e:
@@ -132,15 +136,45 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    # token generation for new user
+    import uuid
+    app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
+    access_token = AccessToken(
+        app_id=app_id,
+        type='bearer',
+        token=uuid.uuid4().hex[:35],
+        date_insert=datetime.datetime.now(),
+        id_user=new_user.id,
+        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
+        is_enable=1,
+        scopes="user"
+    )
+
     try:
+        session.begin()
+        session.add(access_token)
         session.commit()
     except Exception as e:
         session.rollback()
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id})
+    refresh_token = RefreshToken(
+        app_id=app_id,
+        date_insert=datetime.datetime.now(),
+        token=uuid.uuid4().hex[:35],
+        is_enable=True,
+        access_token_id=access_token.id,
+    )
+    try:
+        session.begin()
+        session.add(refresh_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token, 'refresh_token': refresh_token.token})
 
 
 def update_user(request, user_id):
@@ -165,6 +199,7 @@ def update_user(request, user_id):
         infos['password'] = hashed
     infos['date_update'] = datetime.datetime.now()
     try:
+        session.begin()
         session.query(User).filter(User.id == user_id).update(infos)
         session.commit()
     except Exception as e:

@@ -38,22 +38,6 @@ class User(Base):
     region = Column(String(45), nullable=False)
     postal_code = Column(String(45), nullable=False)
 
-
-class Product(Base):
-    __tablename__ = 'product'
-
-    id = Column(Integer, primary_key=True, unique=True)
-    date_insert = Column(DateTime, nullable=False)
-    date_update = Column(DateTime, nullable=False)
-    expiration_date = Column(DateTime, nullable=False)
-    status = Column(Integer, nullable=False)
-    id_rfid = Column(Integer, nullable=False)
-    id_ean = Column(Integer, nullable=False)
-    position = Column(String(255), nullable=False)
-    id_user = Column(Integer, nullable=False)
-    user_id = Column(Integer, nullable=False)
-
-
 class AccessToken(Base):
     __tablename__ = 'access_token'
 
@@ -86,11 +70,24 @@ class RefreshToken(Base):
     is_enable = Column(Integer, nullable=False)
     access_token_id = Column(Integer, unique=True, nullable=False)
 
+class Product(Base):
+    __tablename__ = 'product'
 
-if len(sys.argv) == 2 and sys.argv[1] == 'unit_test':
-    print('Connected to unit_test Database')
+    id = Column(Integer, primary_key=True, unique=True)
+    date_insert = Column(DateTime, nullable=False)
+    date_update = Column(DateTime, nullable=False)
+    expiration_date = Column(DateTime, nullable=False)
+    status = Column(Integer, nullable=False)
+    id_rfid = Column(Integer, nullable=False)
+    id_ean = Column(Integer, nullable=False)
+    position = Column(String(255), nullable=False)
+    id_user = Column(Integer, nullable=False)
+
+if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:
+    print('Connected to unit_test Database(', sys.argv, ')')
     engine = db.create_engine('mysql+pymysql://unit_test:password@127.0.0.1/arlex_db', pool_recycle=3600, echo=False)
 else:
+    print('Connected to normal Database')
     engine = db.create_engine('mysql+pymysql://root:blind@x2021arlex2995326557000.northeurope.cloudapp.azure.com/arlex_db', pool_recycle=3600, echo=False)
 
 Session = sessionmaker(bind=engine, autocommit=True)
