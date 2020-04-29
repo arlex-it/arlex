@@ -38,7 +38,6 @@ def initialize_app(flask_app):
 	api.add_namespace(test_namespace)
 	api.add_namespace(open_request_cache_namespace)
 	api.add_namespace(products)
-	api.add_namespace(list_products)
 	api.add_namespace(user)
 	api.add_namespace(auth)
 	api.add_namespace(token)
