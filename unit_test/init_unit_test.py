@@ -18,7 +18,4 @@ class UnitTestInit():
             exit(1)
         return self.engine, self.session
 
-    def create_tunnel(self):
-        self.public_url = ngrok.connect(5000)
-        return self.public_url
 
