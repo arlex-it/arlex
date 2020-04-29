@@ -1,7 +1,7 @@
 from flask import jsonify
 from flask_restplus import abort
 from API.Utilities.HttpResponse import HttpResponse
-
+from API.Utilities.HttpRequest import HttpRequest
 
 def get_list_of_product(request):
     if not request:
@@ -9,6 +9,7 @@ def get_list_of_product(request):
     res = {
         'state': 'Dev dans cette fonction !!'
     }
-    header_token = request.get_header("Authorization")
+    httprequest = HttpRequest()
+    header_token = httprequest.get_header("Authorization")
     print(header_token)
     return HttpResponse(200).custom(res)
