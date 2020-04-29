@@ -11,5 +11,5 @@ ns = api.namespace('sensor', description='Interagit avec les capteurs')
 class SensorCollection(Resource):
     # @ns.expect(sensor_input)
     # @ns.response(201, '{"success": "Produit ajouté avec succès", "extra":{"id":1}}')
-    def get(self, id):
+    def get(self):
         return get_list_of_product(request)
