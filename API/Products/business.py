@@ -8,12 +8,12 @@ import datetime
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
 
 
-def create_products(request):
+def create_products(request, id_user=None):
     if not request:
         abort(400)
 
-    id_user = 1
-    user_id = 1
+    if id_user is None:
+        id_user = 1
     try:
         datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
     except ValueError:
