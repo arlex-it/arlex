@@ -7,8 +7,7 @@ from API.Sensor.business import get_list_of_product
 ns = api.namespace('sensor', description='Interagit avec les capteurs')
 
 
-@ns.route('/<int:id>')
-@ns.doc(params={'id': 'id'})
+@ns.route('/')
 class SensorCollection(Resource):
     # @ns.expect(sensor_input)
     # @ns.response(201, '{"success": "Produit ajouté avec succès", "extra":{"id":1}}')
