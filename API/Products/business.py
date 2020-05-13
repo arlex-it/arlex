@@ -26,7 +26,10 @@ def create_products(request, id_user=None):
 
     if request.json['id_rfid'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
-
+    product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
+    if not "product" in product:
+        return HttpResponse(403).error(ErrorCode.UNK)
+    name = product['product']['product_name_fr']
     new_product = Product(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
@@ -36,6 +39,7 @@ def create_products(request, id_user=None):
         id_ean=request.json['id_ean'],
         position=request.json['position'],
         id_user=id_user,
+        product_name=name,
     )
 
     try:
