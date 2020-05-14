@@ -29,7 +29,10 @@ def create_products(request, id_user=None):
     product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
     if not "product" in product:
         return HttpResponse(403).error(ErrorCode.UNK)
-    name = product['product']['product_name_fr']
+
+    name = product['product']['product_name_fr'][:100]
+    name_gen = product['product']['generic_name_fr'][:100]
+
     new_product = Product(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
@@ -40,6 +43,7 @@ def create_products(request, id_user=None):
         position=request.json['position'],
         id_user=id_user,
         product_name=name,
+        product_name_gen=name_gen
     )
 
     try:

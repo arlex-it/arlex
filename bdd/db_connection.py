@@ -83,6 +83,8 @@ class Product(Base):
     position = Column(String(255), nullable=False)
     id_user = Column(Integer, nullable=False)
     product_name = Column(String(100), nullable=False)
+    product_name_gen = Column(String(100), nullable=False)
+
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:
     print('Connected to unit_test Database(', sys.argv, ')')
