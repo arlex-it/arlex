@@ -8,7 +8,7 @@ import datetime
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
 
 
-def create_products(request, id_user=None):
+def post_product(request, id_user=None):
     if not request:
         abort(400)
 
@@ -26,21 +26,34 @@ def create_products(request, id_user=None):
 
     if request.json['id_rfid'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
-    product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
-    if not "product" in product:
-        return HttpResponse(403).error(ErrorCode.UNK)
 
-    name = product['product']['product_name_fr'][:100]
-    name_gen = product['product']['generic_name_fr'][:100]
+
+    try:
+        created_product = create_product(request.json, id_user)
+    except Exception as e:
+        return HttpResponse(403).error(e)
+
+    return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
+
+def create_product(product, id_user):
+    print("PRODUCT" , product)
+    # TODO : APPELEZ LA FONCTION get_open_request_cache dans OPen food facts utilities
+    product_info = requests.get(urlopenfoodfact.format(product['id_ean'])).json()
+    print(product_info)
+    if not "product" in product_info:
+        raise Exception("Erreur sur lors de la creation du produit")
+
+    name = product_info['product']['product_name_fr'][:100]
+    name_gen = product_info['product']['generic_name_fr'][:100]
 
     new_product = Product(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
-        expiration_date=request.json['expiration_date'],
+        expiration_date=product['expiration_date'],
         status=0,
-        id_rfid=request.json['id_rfid'],
-        id_ean=request.json['id_ean'],
-        position=request.json['position'],
+        id_rfid=product['id_rfid'],
+        id_ean=product['id_ean'],
+        position=product['position'],
         id_user=id_user,
         product_name=name,
         product_name_gen=name_gen
@@ -53,10 +66,22 @@ def create_products(request, id_user=None):
     except Exception as e:
         session.rollback()
         session.flush()
-        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+        raise Exception("Erreur lors de la création du produit")
 
-    return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': new_product.id})
+    return new_product
 
+
+
+def post_products(list_ean, id_user):
+    product_added = []
+    for elem in list_ean:
+        try:
+            print("ELEMENT")
+            print(type(elem))
+            product_added.append(create_product(elem, id_user))
+        except Exception as e:
+            raise Exception(e)
+    return product_added
 
 def get_products(request, product_id):
     if not request:

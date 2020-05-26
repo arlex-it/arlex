@@ -36,8 +36,3 @@ class EanUtilities:
         ean_list = ean_list[:4]
         print("sorted limited:", ean_list)
         return ean_list
-
-import sys
-if __name__ == '__main__':
-    list = session.query(Product).filter(Product.id_user == 1).all()
-    EanUtilities().search_product(list, sys.argv[1])
