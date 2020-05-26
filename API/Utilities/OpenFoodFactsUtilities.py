@@ -4,6 +4,8 @@ import os.path
 import requests
 import hashlib
 
+urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
+
 class OpenFoodFactsUtilities:
     """
     Class for tools about OpenFoodFacts
@@ -26,3 +28,14 @@ class OpenFoodFactsUtilities:
             with open(file_path, 'w+') as f:
                 f.write(data)
         return data
+
+    def get_multi_products(self, ean_list):
+
+        products = []
+
+        for ean in ean_list:
+            products.append(self.get_open_request_cache(urlopenfoodfact.format(ean)))
+
+        return products
+
+
