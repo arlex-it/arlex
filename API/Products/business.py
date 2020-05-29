@@ -70,7 +70,40 @@ def create_product(product, id_user):
 
     return new_product
 
+def get_product_name_with_rfid(id_rfid):
+    """
+    return the product name with rfid
+    :param param:
+    :param name_colomn_to_search:
+    :return:
+    """
 
+    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    print("GETTTT ", product.product_name)
+    return product.product_name
+
+
+def link_product_to_user_with_id_rfid(id_rfid, id_user):
+    """
+    Link a product to with a user by id rfid
+    :param id_rfid:
+    :param id_user:
+    :return: True if the modification    is ok
+            False if not
+    """
+    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    info = {
+        "date_update": datetime.datetime.now(),
+        "id_user": id_user
+    }
+    try:
+        session.begin()
+        session.query(Product).filter(Product.id_rfid == id_rfid).update(info)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        raise e
 
 def post_products(list_ean, id_user):
     product_added = []
