@@ -32,19 +32,33 @@ class SensorBusiness():
         self.user_connected = users["id_user"]
 
     def get_list_of_product(self, request):
-        res = requests.get('http://35.210.200.125:5000/').json()
-
-        if len(res['product_list']) == 0:
-            state_res = 'Il n y a rien dans votre armoire'
-        else:
-            name_new_element = []
-            for element in res['product_list']:
-                name_new_element.append(get_product_name_with_rfid(element))
-            state_res = 'Dans votre armoire il y a : '
-            product = ", ".join(name_new_element)
-            state_res += product
+        old_products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        name_new_element = []
+        for element in old_products_list:
+            name_new_element.append(element.product_name)
+        state_res = 'Dans votre armoire il y a : '
+        product = ", ".join(name_new_element)
+        state_res += product
 
         return HttpResponse(200).custom({'state': state_res})
+
+
+    #def get_list_of_product(self, request):
+        # res = requests.get('http://35.210.200.125:5000/').json()
+        #
+        # if len(res['product_list']) == 0:
+        #     state_res = 'Il n y a rien dans votre armoire'
+        # else:
+        #     name_new_element = []
+        #     for element in res['product_list']:
+        #         name_new_element.append(get_product_name_with_rfid(element))
+        #     state_res = 'Dans votre armoire il y a : '
+        #     product = ", ".join(name_new_element)
+        #     state_res += product
+
+        #TODO : EN cas de nouveau produits gérer, ce cas
+
+        #return HttpResponse(200).custom({'state': state_res})
 
     def post_products(self, request):
 

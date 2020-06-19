@@ -27,21 +27,20 @@ def post_product(request, id_user=None):
     if request.json['id_rfid'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
 
-
     try:
         created_product = create_product(request.json, id_user)
     except Exception as e:
-        return HttpResponse(403).error(e)
+        return HttpResponse(407).error(ErrorCode.ID_RFID_NOK, e)
 
     return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
 
 def create_product(product, id_user):
-    print("PRODUCT" , product)
+
     # TODO : APPELEZ LA FONCTION get_open_request_cache dans OPen food facts utilities
     product_info = requests.get(urlopenfoodfact.format(product['id_ean'])).json()
-    print(product_info)
     if not "product" in product_info:
         raise Exception("Erreur sur lors de la creation du produit")
+
 
     name = product_info['product']['product_name_fr'][:100]
     name_gen = product_info['product']['generic_name_fr'][:100]
@@ -79,7 +78,6 @@ def get_product_name_with_rfid(id_rfid):
     """
 
     product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
-    print("GETTTT ", product.product_name)
     return product.product_name
 
 
@@ -109,8 +107,6 @@ def post_products(list_ean, id_user):
     product_added = []
     for elem in list_ean:
         try:
-            print("ELEMENT")
-            print(type(elem))
             product_added.append(create_product(elem, id_user))
         except Exception as e:
             raise Exception(e)
