@@ -54,15 +54,31 @@ class OAuthAuthenticationToken(object):
 			return False
 		return True
 
+
+	def token_has_scope(self, scope):
+		"""
+		:rtype: bool
+		"""
+		print("TOKEN HASSS")
+		print(self)
+		print(self._model.scopes)
+		print(scope)
+		print("OK")
+		if scope != self._model.scopes:
+			print("FAUX")
+			raise ValueError(f'Insufisent permission')
+		return True
+
 	def has_scopes(self, required_scopes=[]):
 		"""
 		:rtype: bool
 		"""
+		print("SCOPE", required_scopes)
 		if not required_scopes or len(required_scopes) <= 0:
 			return True
 
 		for scope in required_scopes:
-			if not self._model.has_scope(scope):
+			if not self.token_has_scope(scope):
 				return False
 
 		return True

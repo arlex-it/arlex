@@ -9,10 +9,9 @@ from API.User.business import check_password
 
 
 class OAuthRequestAbstract(View):
-    def create_authorization_code(self, application, user):
+    def create_authorization_code(self, application, user, scope):
         """
         Generate an authorization code for this application, entity, scope
-
         :param APIOAuthApplicationModel application: An oauth application model
         :param dict entity: Entity attached to this token
         :rtype: APIOAuthTokenModel
@@ -25,7 +24,7 @@ class OAuthRequestAbstract(View):
             id_user=user.id,
             expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
             is_enable=1,
-            scopes="user"
+            scopes=scope
         )
         try:
             session.begin()

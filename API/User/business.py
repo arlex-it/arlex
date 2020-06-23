@@ -7,6 +7,7 @@ from API.Utilities.auth import check_user_permission
 import datetime
 import re
 import bcrypt
+import uuid
 
 from bdd.db_connection import User, RefreshToken, AuthApplication, session, to_dict
 
@@ -136,7 +137,6 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    import uuid
     app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
     access_token = AccessToken(
         app_id=app_id,

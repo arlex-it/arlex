@@ -22,6 +22,7 @@ class PostAuthorization(OAuthRequestAbstract):
 
     def __build_redirect_uri(self, code):
         base_uri = request.form.get('redirect_uri')
+        print(code)
         args = {
             "code": code.token,
             "state": request.form.get('state')
@@ -50,9 +51,8 @@ class PostAuthorization(OAuthRequestAbstract):
 
         username = request.form.get('username')
         password = request.form.get('password')
-        print(username)
-        print(password)
         user = self.user_login(username=username, password=password)
+        print("USERRRRRR", user)
 
         if user is None:
             # TODO sign-in user
@@ -68,6 +68,7 @@ class PostAuthorization(OAuthRequestAbstract):
                                                  year=arrow.now().format('YYYY')
                                                  ), 200, headers)
         else:
-            code = self.create_authorization_code(app, user)
+            scope = request.values.get('scope')
+            code = self.create_authorization_code(app, user, "user")
             redirect_uri = self.__build_redirect_uri(code)
             return redirect(redirect_uri, code=302)

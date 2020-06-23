@@ -36,8 +36,6 @@ def check_user_permission(user_id):
         return False
     return True
 
-
-
 def public_authentication(scopes):
     """
     :rtype: bool
@@ -46,11 +44,11 @@ def public_authentication(scopes):
 
 
 def private_authentication(scopes, kwargs):
+    print("PRIVATE")
     request = HttpRequest()
     token = request.get_param('accessToken')
     timestamp = request.get_param('oauth_timestamp')
     header_token = request.get_header("Authorization")
-    print(timestamp)
 
     if header_token is None:
         header_token = request.get_header("X-Authorization")
@@ -71,21 +69,15 @@ def private_authentication(scopes, kwargs):
     if not helper.is_valid_token():
         raise Exception('Invalid access token')
 
-    if not helper.validate_user_access(kwargs):
-        raise Exception('Tentative de modification d\'un compte non correctement identifié')
     # TODO SCOPE
-    #if not helper.has_scopes(scopes):
-    #    raise Exception('Access token has insufficient scope')
-    # TODO CKECK ACCESS RESSOURCE
-    #if helper.access():
-
+    if not helper.has_scopes([scopes]):
+        raise Exception('Access token has insufficient scope')
     return helper.get_token_infos()
 
 
 def require_authentication(type_, scopes=[]):
     """
     Decorator for routes authentification.
-
     :param str type_: is it a private or a public route ?
     :param list scopes: scopes need to access this route
     """
