@@ -52,7 +52,6 @@ class PostAuthorization(OAuthRequestAbstract):
         username = request.form.get('username')
         password = request.form.get('password')
         user = self.user_login(username=username, password=password)
-        print("USERRRRRR", user)
 
         if user is None:
             # TODO sign-in user

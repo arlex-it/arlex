@@ -12,7 +12,7 @@ ns = api.namespace('test_vocale_assistant', description='Test if vocale assistan
 @ns.route('/')
 class TestVocalAssistantCollection(Resource):
     @ns.response(200, '{"res": True}')
-    @require_authentication('private', 'user')
+    @require_authentication('public')
     def get(self):
         """
         This is a test route

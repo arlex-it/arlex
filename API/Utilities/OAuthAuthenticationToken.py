@@ -59,13 +59,7 @@ class OAuthAuthenticationToken(object):
 		"""
 		:rtype: bool
 		"""
-		print("TOKEN HASSS")
-		print(self)
-		print(self._model.scopes)
-		print(scope)
-		print("OK")
 		if scope != self._model.scopes:
-			print("FAUX")
 			raise ValueError(f'Insufisent permission')
 		return True
 
@@ -73,7 +67,6 @@ class OAuthAuthenticationToken(object):
 		"""
 		:rtype: bool
 		"""
-		print("SCOPE", required_scopes)
 		if not required_scopes or len(required_scopes) <= 0:
 			return True
 

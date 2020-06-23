@@ -44,7 +44,6 @@ def public_authentication(scopes):
 
 
 def private_authentication(scopes, kwargs):
-    print("PRIVATE")
     request = HttpRequest()
     token = request.get_param('accessToken')
     timestamp = request.get_param('oauth_timestamp')
