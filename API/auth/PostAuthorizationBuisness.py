@@ -22,7 +22,6 @@ class PostAuthorization(OAuthRequestAbstract):
 
     def __build_redirect_uri(self, code):
         base_uri = request.form.get('redirect_uri')
-        print(code)
         args = {
             "code": code.token,
             "state": request.form.get('state')
