@@ -54,6 +54,15 @@ class OAuthAuthenticationToken(object):
 			return False
 		return True
 
+
+	def token_has_scope(self, scope):
+		"""
+		:rtype: bool
+		"""
+		if scope != self._model.scopes:
+			raise ValueError(f'Insufisent permission')
+		return True
+
 	def has_scopes(self, required_scopes=[]):
 		"""
 		:rtype: bool
@@ -62,7 +71,7 @@ class OAuthAuthenticationToken(object):
 			return True
 
 		for scope in required_scopes:
-			if not self._model.has_scope(scope):
+			if not self.token_has_scope(scope):
 				return False
 
 		return True
