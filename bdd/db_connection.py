@@ -15,7 +15,7 @@ def to_dict(model_instance, query_instance=None):
         return {c.name: str(getattr(model_instance, c.name)) for c in model_instance.__table__.columns}
     else:
         cols = query_instance.column_descriptions
-        return {cols[i]['name']: model_instance[i]  for i in range(len(cols))}
+        return {cols[i]['name']: model_instance[i] for i in range(len(cols))}
 
 
 class User(Base):
@@ -82,6 +82,9 @@ class Product(Base):
     id_ean = Column(Integer, nullable=False)
     position = Column(String(255), nullable=False)
     id_user = Column(Integer, nullable=False)
+    product_name = Column(String(100), nullable=False)
+    product_name_gen = Column(String(100), nullable=False)
+
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:
     print('Connected to unit_test Database(', sys.argv, ')')

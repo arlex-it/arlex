@@ -50,8 +50,6 @@ def private_authentication(scopes, kwargs):
     token = request.get_param('accessToken')
     timestamp = request.get_param('oauth_timestamp')
     header_token = request.get_header("Authorization")
-    print(timestamp)
-
     if header_token is None:
         header_token = request.get_header("X-Authorization")
 
@@ -70,9 +68,8 @@ def private_authentication(scopes, kwargs):
     helper = OAuthAuthenticationToken(token)
     if not helper.is_valid_token():
         raise Exception('Invalid access token')
-
-    if not helper.validate_user_access(kwargs):
-        raise Exception('Tentative de modification d\'un compte non correctement identifié')
+    #if not helper.validate_user_access(kwargs):
+    #    raise Exception('Tentative de modification d\'un compte non correctement identifié')
     # TODO SCOPE
     #if not helper.has_scopes(scopes):
     #    raise Exception('Access token has insufficient scope')
