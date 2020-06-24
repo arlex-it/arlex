@@ -26,6 +26,12 @@ def post_product(request, id_user=None):
 
     if request.json['id_rfid'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
+    product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
+    if not "product" in product:
+        return HttpResponse(403).error(ErrorCode.UNK)
+
+    name = product['product']['product_name_fr'][:100]
+    name_gen = product['product']['generic_name_fr'][:100]
 
     try:
         created_product = create_product(request.json, id_user)
