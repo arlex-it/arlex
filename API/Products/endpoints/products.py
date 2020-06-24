@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.Products.business import create_products, delete_products, get_products
+from API.Products.business import post_product, delete_products, get_products
 from API.Products.models import products_create
 
 ns = api.namespace('products', description='Routes des produits')
@@ -15,7 +15,7 @@ class ProductsCollection(Resource):
         """
         This is a test route
         """
-        return create_products(request)
+        return post_product(request)
 
 
 @ns.route('/<int:product_id>')

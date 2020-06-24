@@ -48,7 +48,7 @@ def private_authentication(scopes, kwargs):
     token = request.get_param('accessToken')
     timestamp = request.get_param('oauth_timestamp')
     header_token = request.get_header("Authorization")
-
+    
     if header_token is None:
         header_token = request.get_header("X-Authorization")
 

@@ -11,7 +11,9 @@ def get_product_model(param=None):
         "expiration_date": "2019-11-30",
         "id_rfid": 123,
         "id_ean": "3017620424403",
-        "position": "placard sous evier"
+        "position": "placard sous evier",
+        "product_name": "Un produit",
+        "product_name_gen": "Un produit generique :D",
     }
     if param:
         for key in param:
