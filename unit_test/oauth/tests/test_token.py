@@ -186,7 +186,7 @@ class OauthRouteDelete(unittest.TestCase):
             print("         >> invalid_" + bad + "_user_oauth")
             resp = requests.post(self.public_url + '/api/auth/authorize', data=form)
             if resp.status_code == 200:
-                it = resp.text.find("<title>Arlex inscription</title>")
+                it = resp.text.find("<title>S'inscrire à Arlex</title>")
                 self.assertNotEqual(it, -1)
             else:
                 self.assertNotEqual(200, resp.status_code)
