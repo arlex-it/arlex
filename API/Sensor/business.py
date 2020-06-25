@@ -61,7 +61,7 @@ class SensorBusiness():
         #return HttpResponse(200).custom({'state': state_res})
 
     def post_products(self, request):
-
+        #ip serveur benjamin
         res = requests.get('http://35.210.200.125:5000/').json()
 
         old_products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()

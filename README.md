@@ -5,6 +5,18 @@ Ici vous trouverez toutes les informations concernants les commandes et les conf
 
 Afin d'appeler les différentes routes chaques utilisateur doit disposer d'un Token.
 
+**Pour installer l'ensemble des dépendances:**
+--------------------------
+
+`pip3 install -r requirement.txt`
+
+
+**Pour lancer l'api:**
+--------------------------
+
+`python3 main.py`
+
+
 **Pour générer un token:**
 --------------------------
 
@@ -32,4 +44,18 @@ Afin d'appeler les différentes routes chaques utilisateur doit disposer d'un To
        "password": "password"
        }`
        
+**Pour faire un push sur le git:**
+--------------------------
+  
+  Il est obligatoire de faire une nouvelle branche pour chaque feature ou chaque coorection de bug ! 
+  
+  Pour créer une nouvelle branche : `git checkout -b <feature/nom_de_la_noubelle branche>`
+  
+  Ensuite pour commit: `git commit -am "DESCRIPTION PRECISE de votre commit"
+  
+  pour push : `git push origin <nom_de_votre_branche>
+  
+  Il faut ensuite créer une pull request. Une fois que trois review ont validé votre pull request et que travis valide les test, vous pouvez merge.
+  
+
     

@@ -19,15 +19,11 @@ $(document).ready(function() {
     }
 
     $('.form-signin').submit(function (event) {
-        console.log("test:");
-        // console.log($(this).serialize());
-        // console.log($(this).serializeArray());
         event.preventDefault();
 
 
         let $form = $(".form-signin");
         let data = getFormData($form);
-        console.log(data);
         let address = data['street'].trim();
         let matches = address.match('[0-9/-/ ]+');
         if (matches[0].trim() !== "") {
