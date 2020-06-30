@@ -29,7 +29,6 @@ class ProductRoutePost(unittest.TestCase):
         print(">>> test_product_bad")
         # try to create product with error
         needed_infos = ["expiration_date",
-                        "id_rfid",
                         "id_ean",
                         "position"]
 
@@ -47,15 +46,6 @@ class ProductRoutePost(unittest.TestCase):
         for key in fuzzing_data:
             print_arg(fuzzing_data[key])
             new_product = get_product_model({'expiration_date': fuzzing_data[key]})
-            resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
-            self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
-
-    def test_id_rfid_wrong_info(self):
-        print(">>> test_id_rfid_wrong_info")
-        fuzzing_data = get_fuzzing_data_by_input('id_rfid')
-        for key in fuzzing_data:
-            print_arg(fuzzing_data[key])
-            new_product = get_product_model({'id_rfid': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
 

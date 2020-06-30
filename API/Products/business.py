@@ -1,7 +1,7 @@
 import requests
 from flask import jsonify
 from flask_restplus import abort
-from bdd.db_connection import session, Product, to_dict
+from bdd.db_connection import session, Product, to_dict, IdArlex
 from API.Utilities.HttpResponse import *
 import datetime
 
@@ -24,21 +24,20 @@ def post_product(request, id_user=None):
             "message": "Input payload validation failed"
         })
 
-    if request.json['id_rfid'] < 0:
+    if request.json['id_arlex'] < 0:
         return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
     product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
     if not "product" in product:
         return HttpResponse(403).error(ErrorCode.UNK)
 
-    name = product['product']['product_name_fr'][:100]
-    name_gen = product['product']['generic_name_fr'][:100]
-
     try:
         created_product = create_product(request.json, id_user)
     except Exception as e:
-        return HttpResponse(407).error(ErrorCode.ID_RFID_NOK, e)
+        print(e)
+        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
+
 
 def create_product(product, id_user):
 
@@ -46,7 +45,6 @@ def create_product(product, id_user):
     product_info = requests.get(urlopenfoodfact.format(product['id_ean'])).json()
     if not "product" in product_info:
         raise Exception("Erreur sur lors de la creation du produit")
-
 
     name = product_info['product']['product_name_fr'][:100]
     name_gen = product_info['product']['generic_name_fr'][:100]
@@ -56,7 +54,6 @@ def create_product(product, id_user):
         date_update=datetime.datetime.now(),
         expiration_date=product['expiration_date'],
         status=0,
-        id_rfid=product['id_rfid'],
         id_ean=product['id_ean'],
         position=product['position'],
         id_user=id_user,
@@ -71,9 +68,27 @@ def create_product(product, id_user):
     except Exception as e:
         session.rollback()
         session.flush()
-        raise Exception("Erreur lors de la création du produit")
+        raise Exception(e)
+    id_rfid = product["id_arlex"]
+    id_arlex = {"id": id_rfid, 'product_id': new_product.id}
+    try:
+        session.begin()
+        session.query(IdArlex).filter(IdArlex.id == id_arlex["id"]).update(id_arlex)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        raise Exception(e)
+
+    id_user = 123
+    # link_product_to_user_with_id_rfid(id_rfid, id_user)
+    old_products_list = session.query(IdArlex).join(Product, Product.id == IdArlex.product_id).filter(
+        Product.id_user == id_user).all()
+    for i in old_products_list:
+        print(to_dict(i))
 
     return new_product
+
 
 def get_product_name_with_rfid(id_rfid):
     """
@@ -83,7 +98,7 @@ def get_product_name_with_rfid(id_rfid):
     :return:
     """
 
-    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
     return product.product_name
 
 
@@ -95,19 +110,21 @@ def link_product_to_user_with_id_rfid(id_rfid, id_user):
     :return: True if the modification    is ok
             False if not
     """
-    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    print("on link le user : ", id_user, " avec le porduit qui est sur le rfid = ", id_rfid)
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
     info = {
         "date_update": datetime.datetime.now(),
         "id_user": id_user
     }
     try:
         session.begin()
-        session.query(Product).filter(Product.id_rfid == id_rfid).update(info)
+        session.query(Product).filter(Product.id == product.id).update(info)
         session.commit()
     except Exception as e:
         session.rollback()
         session.flush()
         raise e
+
 
 def post_products(list_ean, id_user):
     product_added = []
@@ -117,6 +134,7 @@ def post_products(list_ean, id_user):
         except Exception as e:
             raise Exception(e)
     return product_added
+
 
 def get_products(request, product_id):
     if not request:

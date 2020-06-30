@@ -13,7 +13,6 @@ def get_model(param=None):
         'status': 0,
         'id_user': 1,
         "expiration_date": "2019-11-30",
-        "id_rfid": 123,
         "id_ean": "3017620424403",
         "position": "placard sous evier"
     }
@@ -37,8 +36,6 @@ def model_to_sql(model):
             new_object.status = model[key]
         if key is 'id_ean':
             new_object.id_ean = model[key]
-        if key is 'id_rfid':
-            new_object.id_rfid = model[key]
         if key is 'position':
             new_object.position = model[key]
         if key is 'id_user':
