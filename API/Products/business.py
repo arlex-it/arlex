@@ -80,13 +80,6 @@ def create_product(product, id_user):
         session.flush()
         raise Exception(e)
 
-    id_user = 123
-    # link_product_to_user_with_id_rfid(id_rfid, id_user)
-    old_products_list = session.query(IdArlex).join(Product, Product.id == IdArlex.product_id).filter(
-        Product.id_user == id_user).all()
-    for i in old_products_list:
-        print(to_dict(i))
-
     return new_product
 
 

@@ -9,7 +9,11 @@ def get_fuzzing_data_by_input(input_key):
         6: 10000000000000,
         7: '10'
     }
-    if input_key is 'id_ean' or input_key is 'position':
+    if input_key is 'id_arlex':
+        del fuzzing[4]
+        del fuzzing[5]
+        del fuzzing[6]
+    elif input_key is 'id_ean' or input_key is 'position':
         del fuzzing[0]
         del fuzzing[1]
         del fuzzing[2]
