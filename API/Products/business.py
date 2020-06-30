@@ -33,7 +33,6 @@ def post_product(request, id_user=None):
     try:
         created_product = create_product(request.json, id_user)
     except Exception as e:
-        print(e)
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
@@ -103,7 +102,6 @@ def link_product_to_user_with_id_rfid(id_rfid, id_user):
     :return: True if the modification    is ok
             False if not
     """
-    print("on link le user : ", id_user, " avec le porduit qui est sur le rfid = ", id_rfid)
     product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
     info = {
         "date_update": datetime.datetime.now(),
