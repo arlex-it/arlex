@@ -72,7 +72,6 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
   `date_update` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expiration_date` datetime NOT NULL,
   `status` tinyint(5) NOT NULL,
-  `id_rfid` int(11) NOT NULL,
   `id_ean` varchar(130) NOT NULL,
   `position` varchar(255) NOT NULL,
   `id_user` int(11) NOT NULL,
@@ -80,7 +79,6 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`product` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `idx_date_insert` (`date_insert`),
   KEY `idx_date_update` (`date_update`),
-  KEY `idx_id_rfid` (`id_rfid`),
   KEY `idx_id_ean` (`id_ean`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -112,6 +110,13 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`refresh_token` (
   `app_id` varchar(255) NOT NULL,
   `is_enable` int(4) NOT NULL,
   `access_token_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `arlex_db`.`id_arlex` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `product_id` int,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

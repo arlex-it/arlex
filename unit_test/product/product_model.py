@@ -9,7 +9,7 @@ def get_product_model(param=None):
         'status': 0,
         'id_user': 1,
         "expiration_date": "2019-11-30",
-        "id_rfid": 123,
+        "id_arlex": 999,
         "id_ean": "3017620424403",
         "position": "placard sous evier",
         "product_name": "Un produit",
@@ -35,7 +35,7 @@ def product_model_to_sql(product):
             new_product_object.status = product[key]
         if key is 'id_ean':
             new_product_object.id_ean = product[key]
-        if key is 'id_rfid':
+        if key is 'id_arlex':
             new_product_object.id_rfid = product[key]
         if key is 'position':
             new_product_object.position = product[key]

@@ -18,10 +18,12 @@ class ProductRoutePost(unittest.TestCase):
 
     def tearDown(self):
         self.sql.delete_all_product()
+        self.sql.delete_all_id_arlex()
 
     def test_create_product(self):
         print(">>> test_create_product")
         new_product = get_product_model()
+        self.sql.create_id_arlex(new_product['id_arlex'])
         resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
         self.assertEqual(201, resp.status_code)
 
@@ -29,7 +31,7 @@ class ProductRoutePost(unittest.TestCase):
         print(">>> test_product_bad")
         # try to create product with error
         needed_infos = ["expiration_date",
-                        "id_rfid",
+                        "id_arlex",
                         "id_ean",
                         "position"]
 
@@ -50,12 +52,12 @@ class ProductRoutePost(unittest.TestCase):
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
 
-    def test_id_rfid_wrong_info(self):
-        print(">>> test_id_rfid_wrong_info")
-        fuzzing_data = get_fuzzing_data_by_input('id_rfid')
+    def test_id_arlex_wrong_info(self):
+        print(">>> test_id_arlex_wrong_info")
+        fuzzing_data = get_fuzzing_data_by_input('id_arlex')
         for key in fuzzing_data:
             print_arg(fuzzing_data[key])
-            new_product = get_product_model({'id_rfid': fuzzing_data[key]})
+            new_product = get_product_model({'id_arlex': fuzzing_data[key]})
             resp = requests.post(self.public_url + '/api/products'.format(), json=new_product)
             self.assertTrue(resp.status_code == 400 or resp.status_code == 403, str(resp.status_code) + " != 400 | 403 \n\n#####" + resp.text)
 
