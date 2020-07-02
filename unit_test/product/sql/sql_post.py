@@ -13,6 +13,11 @@ class PostSql:
         self.session.commit()
         return product.id
 
+    def create_id_arlex(self, id):
+        with self.engine.connect() as con:
+            rs = con.execute("INSERT INTO `arlex_db`.`id_arlex`(`id`) VALUES('{}');".format(id))
+
+
     def get_product_by_id(self, id_product):
         with self.engine.connect() as con:
             rs = con.execute("SELECT * FROM product WHERE product.id = " + str(id_product))
@@ -34,3 +39,6 @@ class PostSql:
         with self.engine.connect() as con:
             rs = con.execute("DELETE FROM product")
 
+    def delete_all_id_arlex(self):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM id_arlex")

@@ -9,7 +9,7 @@ def get_fuzzing_data_by_input(input_key):
         6: 10000000000000,
         7: '10'
     }
-    if input_key is 'id_rfid':
+    if input_key is 'id_arlex':
         del fuzzing[4]
         del fuzzing[5]
         del fuzzing[6]

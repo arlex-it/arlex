@@ -78,7 +78,6 @@ class Product(Base):
     date_update = Column(DateTime, nullable=False)
     expiration_date = Column(DateTime, nullable=False)
     status = Column(Integer, nullable=False)
-    id_rfid = Column(Integer, nullable=False)
     id_ean = Column(Integer, nullable=False)
     position = Column(String(255), nullable=False)
     id_user = Column(Integer, nullable=False)
@@ -96,6 +95,12 @@ class Sensor(Base):
     type = Column(Integer, nullable=False)
     name = Column(String(255), nullable=False)
     sensorcol = Column(String(45), nullable=False)
+
+class IdArlex(Base):
+    __tablename__ = 'id_arlex'
+
+    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    product_id = Column(Integer, nullable=True)
 
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:
