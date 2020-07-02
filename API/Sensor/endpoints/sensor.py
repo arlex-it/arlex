@@ -17,3 +17,9 @@ class SensorCollection(Resource):
 
     def post(self):
         return SensorBusiness(HttpRequest().get_header("Authorization")).post_products(request)
+
+@ns.route('/update/<path:subpath>')
+class SensorCollection(Resource):
+    def put(self, subpath):
+        if subpath.lower() == "name".lower():
+            return SensorBusiness(HttpRequest().get_header("Authorization")).change_name(request)

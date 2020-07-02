@@ -85,6 +85,18 @@ class Product(Base):
     product_name = Column(String(100), nullable=False)
     product_name_gen = Column(String(100), nullable=False)
 
+class Sensor(Base):
+    __tablename__ = 'sensor'
+
+    id = Column(Integer, primary_key=True, unique=True)
+    date_insert = Column(DateTime, nullable=False)
+    date_update = Column(DateTime, nullable=False)
+    is_active = Column(Integer, nullable=False)
+    id_user = Column(Integer, nullable=False)
+    type = Column(Integer, nullable=False)
+    name = Column(String(255), nullable=False)
+    sensorcol = Column(String(45), nullable=False)
+
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:
     print('Connected to unit_test Database(', sys.argv, ')')
