@@ -18,6 +18,13 @@ class SensorCollection(Resource):
     def post(self):
         return SensorBusiness(HttpRequest().get_header("Authorization")).post_products(request)
 
+
+@ns.route('/product/')
+class ProductSensorCollection(Resource):
+    def get(self):
+        return SensorBusiness(HttpRequest().get_header("Authorization")).get_product_position(request)
+
+
 @ns.route('/update/<path:subpath>')
 class SensorCollection(Resource):
     def put(self, subpath):

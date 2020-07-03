@@ -8,7 +8,7 @@ class EanUtilities:
 
     def search_product(self, product_list, asked):
         ean_list = []
-        best = ["", "", "", 0]
+        best = {'product_name': "", 'product_name_gen': "", 'id_ean': "", 'similarity': 0, 'id': 0}
         for product in product_list:
             name = product.product_name.lower().split(',')[0]
             similarity = calc_similarity(name, asked.lower())
@@ -17,21 +17,24 @@ class EanUtilities:
             similarity_gen = calc_similarity(name, asked.lower())
 
             similarity = similarity_gen if similarity_gen > similarity else similarity
-            ean = [product.product_name, product.product_name_gen, product.id_ean, similarity]
-            if ean[3] > best[3]:
-                best = ean
+            ean = {'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id}
+
             print(ean)
-            if ean[3] >= 0.25:
-                ean_list.append([product.product_name, product.product_name_gen, product.id_ean, similarity])
+            if ean['similarity'] >= 0.25:
+                ean_list.append({'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id})
+                if ean['similarity'] > best['similarity']:
+                    best = ean
         # print("\n\n\nle plus gros est : ", best)
         almost = []
         for ean in ean_list:
-            if ean != best and ean[3] >= best[3] - best[3]/5:
+            if ean != best and ean['similarity'] >= best['similarity'] - best['similarity']/5:
                 almost.append(ean)
         # print("Il y a ", almost, "\nqui est peut etre bon egalement")
+        if best == {'product_name': "", 'product_name_gen': "", 'id_ean': "", 'similarity': 0, 'id': 0}:
+            return ean_list
         ean_list = [best] + almost
         # print("non sortedf: ", ean_list)
-        ean_list.sort(key = lambda x: x[3], reverse=True)
+        ean_list.sort(key = lambda x: x['similarity'], reverse=True)
         # print("sorted :", ean_list)
         ean_list = ean_list[:4]
         print("sorted limited:", ean_list)

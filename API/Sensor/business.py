@@ -120,3 +120,18 @@ class SensorBusiness():
             return HttpResponse(404).custom({"state": "{}. Veuillez réessayer. (Erreur détaillée : {})".format(ErrorCode.DB_ERROR, e.args)})
 
         return HttpResponse(202).custom({"state": f"Le nouveau nom du capteur: {old_name}, est maintenant: {new_name}"})
+
+    def get_product_position(self, request):
+        product_name = request.args.get('product_name')
+        sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+        # TODO = Appeler les capteurs pour qu'ils mettent à jour la position des produits
+        # TODO = Appeler les capteurs pour qu'ils mettent à jour la position des produits
+        # TODO = Appeler les capteurs pour qu'ils mettent à jour la position des produits
+
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)
+        if len(ean_list) == 0:
+            return HttpResponse(403).custom({'state': f'Nous n\'avons pas trouvé de produit correspondant à votre recherche: {product_name}.'})
+        first = ean_list[0]
+        product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == first['id']][0]]
+        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position}'})
