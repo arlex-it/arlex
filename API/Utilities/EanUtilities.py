@@ -1,21 +1,21 @@
+from API.Utilities.Levenshtein import calc_similarity
 from bdd.db_connection import session, Product
-from difflib import SequenceMatcher
 
 
 class EanUtilities:
     def __init__(self):
         pass
 
-    def calc_similarity(self, name, asked):
-        name = name.split(',')[0]
-        return SequenceMatcher(None, name, asked).ratio()
-
     def search_product(self, product_list, asked):
         ean_list = []
         best = ["", "", "", 0]
         for product in product_list:
-            similarity = self.calc_similarity(product.product_name.lower(), asked.lower())
-            similarity_gen = self.calc_similarity(product.product_name_gen.lower(), asked.lower())
+            name = product.product_name.lower().split(',')[0]
+            similarity = calc_similarity(name, asked.lower())
+
+            name = product.product_name_gen.lower().split(',')[0]
+            similarity_gen = calc_similarity(name, asked.lower())
+
             similarity = similarity_gen if similarity_gen > similarity else similarity
             ean = [product.product_name, product.product_name_gen, product.id_ean, similarity]
             if ean[3] > best[3]:
