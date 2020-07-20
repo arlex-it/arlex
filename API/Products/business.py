@@ -6,6 +6,7 @@ from API.Utilities.HttpResponse import *
 import datetime
 
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
+NO_REF_ERROR = -1
 
 
 def post_product(request, id_user=None):
@@ -35,6 +36,9 @@ def post_product(request, id_user=None):
     except Exception as e:
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
+    if created_product == NO_REF_ERROR:
+        return HttpResponse(501).error(ErrorCode.NO_REF)
+
     return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
 
 
@@ -45,8 +49,14 @@ def create_product(product, id_user):
     if not "product" in product_info:
         raise Exception("Erreur sur lors de la creation du produit")
 
-    name = product_info['product']['product_name_fr'][:100]
-    name_gen = product_info['product']['generic_name_fr'][:100]
+    if 'product_name_fr' in product_info['product'] and 'generic_name_fr' in product_info['product']:
+        name = product_info['product']['product_name_fr'][:100]
+        name_gen = product_info['product']['generic_name_fr'][:100]
+    elif 'product_name' in product_info['product'] and 'generic_name' in product_info['product']:
+        name = product_info['product']['product_name'][:100]
+        name_gen = product_info['product']['generic_name'][:100]
+    else:
+        return NO_REF_ERROR
 
     new_product = Product(
         date_insert=datetime.datetime.now(),
