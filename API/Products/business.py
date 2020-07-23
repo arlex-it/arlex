@@ -1,9 +1,17 @@
+import re
+import json
 import requests
-from flask import jsonify
+from googletrans import Translator
+
 from flask_restplus import abort
-from bdd.db_connection import session, Product, to_dict, IdArlex
+
+from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
+from API.Utilities.EanUtilities import EanUtilities
+from bdd.db_connection import session, Product, to_dict, IdArlex, AccessToken
 from API.Utilities.HttpResponse import *
 import datetime
+
+translator = Translator()
 
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
 
@@ -167,3 +175,42 @@ def delete_products(request, product_id):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
     return HttpResponse(202).success(SuccessCode.PRODUCT_DELETED)
+
+
+class ProductIngredients:
+    def __init__(self, header_token=None):
+        if not header_token:
+            print("no token")
+            raise Exception("Token undefined")
+
+        reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
+        result = reg.findall(header_token)
+
+        if not result:
+            raise Exception("Token undefined")
+
+        token = result[0]
+
+        user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        users = to_dict(user_connected)
+        self.user_connected = users["id_user"]
+
+    def get_product_ingredients(self, product_name):
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)[0]
+        product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
+
+        if type(product) is str:
+            product = json.loads(product)
+
+        if "product" not in product:
+            return HttpResponse(200).custom({'state': 'Il semblerait qu\'il y ai un problème avec ce produit. Veuillez réessayer.'})
+
+        if 'ingredients_text_fr' in product['product'] and len(product['product']['ingredients_text_fr']) != 0:
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
+
+        elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
+            translation = translator.translate(product["prodduct"]["ingredients_text"], src="en", dest="fr")
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
+
+        return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})
