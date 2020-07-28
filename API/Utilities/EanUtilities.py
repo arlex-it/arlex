@@ -20,7 +20,7 @@ class EanUtilities:
             ean = {'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id}
 
             print(ean)
-            if ean['similarity'] >= 0.25:
+            if ean['similarity'] >= 0.30:
                 ean_list.append({'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id})
                 if ean['similarity'] > best['similarity']:
                     best = ean

@@ -197,7 +197,15 @@ class ProductIngredients:
 
     def get_product_ingredients(self, product_name):
         products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
-        ean_list = EanUtilities().search_product(products_list, product_name)[0]
+        ean_list = EanUtilities().search_product(products_list, product_name)
+
+        if len(ean_list) == 0:
+            return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
+
+        ean_list = ean_list[0]
+
+        print("list : ")
+        print(ean_list)
         product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
 
         if type(product) is str:
