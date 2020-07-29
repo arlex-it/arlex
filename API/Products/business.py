@@ -195,7 +195,10 @@ class ProductAllergenes():
 
     def get_product_allergenes(self, product_name):
         products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
-        ean_list = EanUtilities().search_product(products_list, product_name)[0]
+        ean_list = EanUtilities().search_product(products_list, product_name)
+        if not ean_list:
+            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé de produit enregistré sur votre compte.'})
+        ean_list = ean_list[0]
         product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])
         if type(product) is str:
             product = json.loads(product)
