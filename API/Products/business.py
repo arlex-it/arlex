@@ -216,7 +216,7 @@ class ProductIngredients:
             return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
 
         elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
-            translation = translator.translate(product["prodduct"]["ingredients_text"], src="en", dest="fr")
+            translation = translator.translate(product["product"]["ingredients_text"], src="en", dest="fr")
             return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
 
         return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})
