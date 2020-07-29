@@ -204,8 +204,6 @@ class ProductIngredients:
 
         ean_list = ean_list[0]
 
-        print("list : ")
-        print(ean_list)
         product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
 
         if type(product) is str:
