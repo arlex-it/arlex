@@ -1,7 +1,8 @@
 import json
-
-import requests
 import re
+import json
+import requests
+from googletrans import Translator
 from flask import jsonify
 from flask_restplus import abort
 
@@ -11,7 +12,10 @@ from bdd.db_connection import session, Product, to_dict, IdArlex, AccessToken
 from API.Utilities.HttpResponse import *
 import datetime
 
+translator = Translator()
+
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
+NO_REF_ERROR = -1
 
 
 def post_product(request, id_user=None):
@@ -41,6 +45,9 @@ def post_product(request, id_user=None):
     except Exception as e:
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
+    if created_product == NO_REF_ERROR:
+        return HttpResponse(501).error(ErrorCode.NO_REF)
+
     return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
 
 
@@ -51,8 +58,14 @@ def create_product(product, id_user):
     if not "product" in product_info:
         raise Exception("Erreur sur lors de la creation du produit")
 
-    name = product_info['product']['product_name_fr'][:100]
-    name_gen = product_info['product']['generic_name_fr'][:100]
+    if 'product_name_fr' in product_info['product'] and 'generic_name_fr' in product_info['product']:
+        name = product_info['product']['product_name_fr'][:100]
+        name_gen = product_info['product']['generic_name_fr'][:100]
+    elif 'product_name' in product_info['product'] and 'generic_name' in product_info['product']:
+        name = product_info['product']['product_name'][:100]
+        name_gen = product_info['product']['generic_name'][:100]
+    else:
+        return NO_REF_ERROR
 
     new_product = Product(
         date_insert=datetime.datetime.now(),
@@ -174,8 +187,23 @@ def delete_products(request, product_id):
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
     return HttpResponse(202).success(SuccessCode.PRODUCT_DELETED)
 
-
 class ProductAllergenes():
+      def get_product_allergenes(self, product_name):
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)
+        if not ean_list:
+            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé de produit enregistré sur votre compte.'})
+        ean_list = ean_list[0]
+        product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])
+        if type(product) is str:
+            product = json.loads(product)
+        if 'allergens_from_ingredients' not in product['product'] or ('allergens_hierarchy' in product['product'] and len(product['product']['allergens_hierarchy']) == 0):
+            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé d\'allergène.'})
+        elif 'allergens_from_ingredients' not in product['product']:
+            return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les allergènes.'})
+        return HttpResponse(200).custom({'state': f"Les allergènes de ce produit sont {product['product']['allergens_from_ingredients']}"})
+
+class ProductIngredients:
     def __init__(self, header_token=None):
         if not header_token:
             print("no token")
@@ -193,17 +221,28 @@ class ProductAllergenes():
         users = to_dict(user_connected)
         self.user_connected = users["id_user"]
 
-    def get_product_allergenes(self, product_name):
+    def get_product_ingredients(self, product_name):
         products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
         ean_list = EanUtilities().search_product(products_list, product_name)
-        if not ean_list:
-            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé de produit enregistré sur votre compte.'})
+
+        if len(ean_list) == 0:
+            return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
+
         ean_list = ean_list[0]
-        product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])
+
+        product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
+
         if type(product) is str:
             product = json.loads(product)
-        if 'allergens_from_ingredients' not in product['product'] or ('allergens_hierarchy' in product['product'] and len(product['product']['allergens_hierarchy']) == 0):
-            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé d\'allergène.'})
-        elif 'allergens_from_ingredients' not in product['product']:
-            return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les allergènes.'})
-        return HttpResponse(200).custom({'state': f"Les allergènes de ce produit sont {product['product']['allergens_from_ingredients']}"})
+
+        if "product" not in product:
+            return HttpResponse(200).custom({'state': 'Il semblerait qu\'il y ai un problème avec ce produit. Veuillez réessayer.'})
+
+        if 'ingredients_text_fr' in product['product'] and len(product['product']['ingredients_text_fr']) != 0:
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
+
+        elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
+            translation = translator.translate(product["product"]["ingredients_text"], src="en", dest="fr")
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
+
+        return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})

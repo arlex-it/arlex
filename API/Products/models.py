@@ -10,3 +10,5 @@ products_create = api.model('Product create', {
 
 product_update_header = api.parser()
 product_update_header.add_argument('Authorization', type=str, help="Bearer Token", location='headers', required=True)
+product_authorization_header = api.parser()
+product_authorization_header.add_argument('Authorization', type=str, help="Bearer Token", location='headers', required=True)

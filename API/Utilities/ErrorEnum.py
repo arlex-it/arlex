@@ -17,3 +17,4 @@ class ErrorCode(Enum):
     CITY_NOK = "Ville non valide."
     REGION_NOK = "Région non valide."
     ID_RFID_NOK = "Id_RFID non valide."
+    NO_REF = "Le produit n'est pas référencé."
