@@ -5,7 +5,7 @@ from API.Products.business import post_product, delete_products, get_products, P
 from API.Products.models import products_create, product_authorization_header, product_update_header
 from API.Utilities.HttpRequest import HttpRequest
 
-ns = api.namespace('products', description='Routes des produits')
+ns = api.namespace('products', description='Routes des produits.')
 
 
 @ns.route('/')
