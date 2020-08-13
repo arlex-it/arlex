@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.Products.business import post_product, delete_products, get_products, ProductIngredients, ProductAllergenes
+from API.Products.business import post_product, delete_products, get_products, ProductIngredients
 from API.Products.models import products_create, product_authorization_header, product_update_header
 from API.Utilities.HttpRequest import HttpRequest
 
@@ -39,12 +39,6 @@ class UpdateProductCollection(Resource):
         """
         return get_products(request, product_id)
 
-@ns.route('/allergenes/<string:product_name>')
-@ns.doc(params={'product_name': 'Product Name'})
-class ProductAllergenesCollection(Resource):
-    @ns.expect(product_update_header)
-    def get(self, product_name):
-        return ProductAllergenes(HttpRequest().get_header("Authorization")).get_product_allergenes(product_name)
 
 @ns.route('/ingredients/<string:product_name>')
 @ns.doc(params={'product_name': 'Product Name'})
