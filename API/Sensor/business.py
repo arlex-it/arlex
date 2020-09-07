@@ -78,10 +78,12 @@ class SensorBusiness():
 
         name_new_element = []
         for element in new_elements:
-            link_product_to_user_with_id_rfid(element, self.user_connected)
-            name_new_element.append(get_product_name_with_rfid(element))
+            if link_product_to_user_with_id_rfid(element, self.user_connected) != -1:
+                name_new_element.append(get_product_name_with_rfid(element))
 
         name_to_return = ', '.join(name_new_element)
+        if not name_to_return:
+            return HttpResponse(200).custom({'state': "Je n'ai pas trouvé le produit."})
         return HttpResponse(200).custom({'state': f'Vous avez ajouté: {name_to_return}'})
 
     def change_name(self, request):
@@ -102,7 +104,7 @@ class SensorBusiness():
                 sensor = s
 
         if sensor is None:
-            return HttpResponse(403).custom({"state": f"Le capteur: {old_name}, n'a pas été trouvé. Veuillez réessayer."})
+            return HttpResponse(200).custom({"state": f"Le capteur: {old_name}, n'a pas été trouvé. Veuillez réessayer."})
         old_name = sensor.name
         id_sensor = sensor.id
         new_infos = {

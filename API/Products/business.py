@@ -122,6 +122,8 @@ def link_product_to_user_with_id_rfid(id_rfid, id_user):
             False if not
     """
     product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
+    if product is None:
+        return -1
     info = {
         "date_update": datetime.datetime.now(),
         "id_user": id_user
