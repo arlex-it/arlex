@@ -1,8 +1,9 @@
+import json
 import re
 import json
 import requests
 from googletrans import Translator
-
+from flask import jsonify
 from flask_restplus import abort
 
 from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities

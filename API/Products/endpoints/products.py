@@ -2,10 +2,10 @@ from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
 from API.Products.business import post_product, delete_products, get_products, ProductIngredients
-from API.Products.models import products_create, product_authorization_header
+from API.Products.models import products_create, product_authorization_header, product_update_header
 from API.Utilities.HttpRequest import HttpRequest
 
-ns = api.namespace('products', description='Routes des produits')
+ns = api.namespace('products', description='Routes des produits.')
 
 
 @ns.route('/')

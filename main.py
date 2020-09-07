@@ -15,6 +15,7 @@ import bdd.db_connection
 from API.auth.endpoints.auth import ns as auth
 from API.Token.endpoints.token import ns as token
 from API.Sensor.endpoints.sensor import ns as sensor
+from API.Allergen.endpoints.allergen import ns as allergen
 # templates import marker
 
 app = Flask(__name__, static_folder="API/static", template_folder="API/templates/")
@@ -42,6 +43,7 @@ def initialize_app(flask_app):
 	api.add_namespace(token)
 	api.add_namespace(test_vocale_assistant)
 	api.add_namespace(sensor)
+	api.add_namespace(allergen)
 	# templates namespace marker
 	flask_app.register_blueprint(blueprint)
 

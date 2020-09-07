@@ -8,5 +8,7 @@ products_create = api.model('Product create', {
     'position': fields.String(example='placard sous evier', description='Endroit où est le produit', required=True),
 })
 
+product_update_header = api.parser()
+product_update_header.add_argument('Authorization', type=str, help="Bearer Token", location='headers', required=True)
 product_authorization_header = api.parser()
 product_authorization_header.add_argument('Authorization', type=str, help="Bearer Token", location='headers', required=True)

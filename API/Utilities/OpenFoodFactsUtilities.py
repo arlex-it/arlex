@@ -25,7 +25,8 @@ class OpenFoodFactsUtilities:
                 data = f.readline()
         else:
             data = requests.get(url).text
-            with open(file_path, 'w+') as f:
+            import io
+            with io.open(file_path, "w+", encoding="utf-8") as f:
                 f.write(data)
         return data
 
