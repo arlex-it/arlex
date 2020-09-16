@@ -8,4 +8,6 @@ class SuccessCode(Enum):
     USER_DELETED = "Utilisateur supprimé avec succès."
     PRODUCT_CREATED = "Produit ajouté avec succès"
     PRODUCT_DELETED = "Produit supprimé avec succès"
+    SENSOR_LINKED = "Sensor lié avec succès"
+    SENSOR_NAME_UPDATED = "Nom du sensor modifié avec succès"
 
