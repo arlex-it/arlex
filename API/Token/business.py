@@ -1,7 +1,9 @@
 import datetime
+import json
 import uuid
 
 import arrow
+import requests
 
 from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
@@ -18,6 +20,8 @@ class PostToken(OAuthRequestAbstract):
         self.application_secret = self.__request.get_param('client_secret')
         self.grant_type = self.__request.get_param('grant_type')
         self.app_id = self.__request.get_param('app_id')
+        self.intent = self.__request.get_param('intent')
+        self.jwt_token = self.__request.get_param('assertion')
 
     def get_user(self, user_id):
         """
@@ -240,10 +244,29 @@ class PostToken(OAuthRequestAbstract):
     def dispatch_request(self, request):
         token = None
         refresh_token = None
+        if self.intent == 'get':
+            return HttpResponse(401).error(ErrorCode.USER_NOT_FOUND)
+        if self.intent == "create":
+            import jwt
+            from jwt.algorithms import RSAAlgorithm
+
+            keys = requests.get('https://www.googleapis.com/oauth2/v3/certs').json()
+            jwt_header = jwt.get_unverified_header(self.jwt_token)
+            if keys['keys'][0]['kid'] == jwt_header['kid']:
+                key_json = json.dumps(keys['keys'][0])
+            else:
+                key_json = json.dumps(keys['keys'][1])
+            public_key = RSAAlgorithm.from_jwk(key_json)
+            user_data = jwt.decode(self.jwt_token, public_key, audience='12151855473-09qt5cef2ge0fmkj29vrqo44oqqkarvh.apps.googleusercontent.com', algorithms='RS256')
+            print(user_data)
+            if user_data['iss'] != 'https://accounts.google.com':
+                return HttpResponse(500).error(ErrorCode.UNK)
+            #TODO voir pour faire choisir la method d'auth
+            #TODO mettre data dans db
+            return HttpResponse(200).custom('ok')
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':
-
             (token, refresh_token) = self.grant_refresh_token()
         elif self.grant_type == 'password':
             (token, refresh_token) = self.grant_password()
