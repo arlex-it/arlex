@@ -5,10 +5,11 @@ import uuid
 import arrow
 import requests
 
+from API.User.business import create_user
 from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
-from API.Utilities.HttpResponse import HttpResponse, ErrorCode
+from API.Utilities.HttpResponse import HttpResponse, ErrorCode, SuccessCode
 from bdd.db_connection import AccessToken, session, User, RefreshToken, to_dict
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
 
@@ -250,20 +251,48 @@ class PostToken(OAuthRequestAbstract):
             import jwt
             from jwt.algorithms import RSAAlgorithm
 
+            # get google keys for jwt
             keys = requests.get('https://www.googleapis.com/oauth2/v3/certs').json()
+            # get kid to know which key to use
             jwt_header = jwt.get_unverified_header(self.jwt_token)
             if keys['keys'][0]['kid'] == jwt_header['kid']:
                 key_json = json.dumps(keys['keys'][0])
             else:
                 key_json = json.dumps(keys['keys'][1])
+            # get public key and then decode jwt data to get user informations
             public_key = RSAAlgorithm.from_jwk(key_json)
             user_data = jwt.decode(self.jwt_token, public_key, audience='12151855473-09qt5cef2ge0fmkj29vrqo44oqqkarvh.apps.googleusercontent.com', algorithms='RS256')
-            print(user_data)
+            # check user information validity
             if user_data['iss'] != 'https://accounts.google.com':
                 return HttpResponse(500).error(ErrorCode.UNK)
-            #TODO voir pour faire choisir la method d'auth
-            #TODO mettre data dans db
-            return HttpResponse(200).custom('ok')
+            elif not user_data['email_verified']:
+                return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+            # TODO voir pour faire choisir la method d'auth
+            # TODO voir si le compte user créé par l'assistant permet aussi de se connecter normalement
+            json_data = {
+                'gender': 0,
+                'lastname': 'lastname',
+                'firstname': user_data['name'],
+                'mail': user_data['email'],
+                'password': 'password',
+                'country': 'France',
+                'town': 'Lille',
+                'street': 'rue voltaire',
+                'street_number': '1',
+                'region': 'Hauts de france',
+                'postal_code': '59000',
+            }
+            res = create_user(json_data)
+            # modify object to respond to google
+            if res['error'] is None:
+                del res['error']
+                del res['id']
+                res['token_type'] = 'Bearer'
+                res['access_token'] = res['access_token']
+                res['refresh_token'] = res['refresh_token']
+                return HttpResponse(200).custom(res)
+            else:
+                return HttpResponse(500).error(ErrorCode.UNK)
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':
