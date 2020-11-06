@@ -48,6 +48,7 @@ class PostAuthorization(OAuthRequestAbstract):
         if app.project_id != request.form['redirect_uri'].rsplit('/', 1)[-1]:
             return HttpResponse(403).error(ErrorCode.BAD_TOKEN)
 
+        print(request.values)
         username = request.form.get('username')
         password = request.form.get('password')
         user = self.user_login(username=username, password=password)
