@@ -126,6 +126,9 @@ class SensorBusiness():
     def get_product_position(self, request):
         product_name = request.args.get('product_name')
         sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+
+        import requests
+        data = requests.get('https://b76b9f2ad0d5.ngrok.io/')
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
@@ -136,4 +139,4 @@ class SensorBusiness():
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé de produit correspondant à votre recherche: {product_name}.'})
         first = ean_list[0]
         product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == first['id']][0]]
-        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position}'})
+        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position} ------ {data}'})
