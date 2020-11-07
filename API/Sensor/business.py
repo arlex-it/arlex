@@ -193,3 +193,21 @@ class SensorBusiness:
             session.flush()
             return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
         return HttpResponse(201).success(SuccessCode.SENSOR_NAME_UPDATED, {})
+
+    # renvoie la liste de tous les capteurs
+    def get_list_name(self, request):
+        if not request:
+            abort(400)
+        sensor_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+        #sensor_list = session.query(Sensor).all()
+        if not sensor_list or len(sensor_list) == 0:
+            return HttpResponse(500).error(ErrorCode.SENSOR_NDETECTED)
+
+        res = 'Voici la liste des endroits où je peux trouver des produits :'
+        for x in sensor_list:
+            sensor = to_dict(x)
+            if len(res) > 61:
+                res += ','
+            res += ' ' + sensor['name']
+        print(res)
+        return HttpResponse(201).custom({'state': res})

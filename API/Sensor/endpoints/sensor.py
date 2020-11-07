@@ -42,3 +42,9 @@ class LinkSensorCollection(Resource):
 class LinkSensorCollection(Resource):
     def post(self, id_sensor, name):
         return SensorBusiness(HttpRequest().get_header("Authorization")).name_sensor(request, id_sensor, name)
+
+
+@ns.route('/list/name')
+class SensorCollection(Resource):
+    def get(self):
+        return SensorBusiness(HttpRequest().get_header("Authorization")).get_list_name(request)
