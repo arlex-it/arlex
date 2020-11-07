@@ -9,3 +9,5 @@ pymysql
 arrow
 numpy
 googletrans
+PyJWT
+cryptography

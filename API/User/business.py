@@ -16,6 +16,7 @@ regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
 regex_postal = '^\d{2}[ ]?\d{3}$'
 regex_address = '^[a-zA-ZÀ-ú0-9 ]*$'
 
+
 def get_hashed_password(plain_text_password):
     return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt(12))
 
@@ -96,36 +97,41 @@ def delete_user(request, user_id):
     return HttpResponse(202).success(SuccessCode.USER_DELETED)
 
 
-def create_user(request):
-    if not request:
-        abort(400)
-
-    verification = check_user_infos(request.json)
+def create_user(user_data):
+    response_obj = {
+        'error': None,
+        'id': None,
+        'access_token': None,
+        'refresh_token': None,
+        'expires_in': None
+    }
+    verification = check_user_infos(user_data)
     if verification is not None:
-        return HttpResponse(403).error(verification)
-
-    existing = session.query(User).filter(User.mail == request.json['mail']).first()
+        response_obj['error'] = verification
+        return response_obj
+    existing = session.query(User).filter(User.mail == user_data['mail']).first()
 
     if existing:
-        return HttpResponse(403).error(ErrorCode.MAIL_USED)
+        response_obj['error'] = ErrorCode.MAIL_USED
+        return response_obj
 
-    hashed = get_hashed_password(request.json['password'])
+    hashed = get_hashed_password(user_data['password'])
     new_user = User(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
         is_active=1,
         status=0,
-        gender=request.json['gender'],
-        lastname=request.json['lastname'],
-        firstname=request.json['firstname'],
-        mail=request.json['mail'],
+        gender=user_data['gender'],
+        lastname=user_data['lastname'],
+        firstname=user_data['firstname'],
+        mail=user_data['mail'],
         password=hashed,
-        country=request.json['country'],
-        town=request.json['town'],
-        street=request.json['street'],
-        street_number=request.json['street_number'],
-        region=request.json['region'],
-        postal_code=request.json['postal_code']
+        country=user_data['country'],
+        town=user_data['town'],
+        street=user_data['street'],
+        street_number=user_data['street_number'],
+        region=user_data['region'],
+        postal_code=user_data['postal_code']
     )
 
     try:
@@ -135,7 +141,8 @@ def create_user(request):
     except Exception as e:
         session.rollback()
         session.flush()
-        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
 
     app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
     access_token = AccessToken(
@@ -156,7 +163,8 @@ def create_user(request):
     except Exception as e:
         session.rollback()
         session.flush()
-        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
 
     refresh_token = RefreshToken(
         app_id=app_id,
@@ -172,9 +180,15 @@ def create_user(request):
     except Exception as e:
         session.rollback()
         session.flush()
-        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token, 'refresh_token': refresh_token.token})
+    response_obj['id'] = new_user.id
+    response_obj['access_token'] = access_token.token
+    response_obj['refresh_token'] = refresh_token.token
+    response_obj['expires_in'] = round(arrow.get(access_token.expiration_date).float_timestamp -
+                                       arrow.now().float_timestamp)
+    return response_obj
 
 
 def update_user(request, user_id):

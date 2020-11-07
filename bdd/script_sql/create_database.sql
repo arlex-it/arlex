@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `arlex_db`.`sensor` (
   `id_user` int(11) NOT NULL,
   `type` tinyint(5) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `sensorcol` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `idx_date_insert` (`date_insert`),

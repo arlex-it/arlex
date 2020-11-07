@@ -5,6 +5,7 @@ class ErrorCode(Enum):
     UNK = "Une erreur est survenue."
     DB_ERROR = "Erreur avec la base de donnée."
     USER_NFIND = "Utilisateur non trouvé."
+    USER_NOT_FOUND = "user_not_found"
     MAIL_NOK = "Addresse email non valide."
     MAIL_USED = "Addresse email déjà en utilisation."
     PRODUCT_NFIND = "Produit non trouvé"

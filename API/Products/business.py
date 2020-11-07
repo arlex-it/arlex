@@ -91,7 +91,7 @@ def create_product(product, id_user):
     id_arlex = {"id": id_rfid, 'product_id': new_product.id}
     try:
         session.begin()
-        session.query(IdArlex).filter(IdArlex.id == id_arlex["id"]).update(id_arlex)
+        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["id"]).update(id_arlex)
         session.commit()
     except Exception as e:
         session.rollback()
@@ -109,7 +109,7 @@ def get_product_name_with_rfid(id_rfid):
     :return:
     """
 
-    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_rfid).first()
     return product.product_name
 
 
@@ -121,7 +121,7 @@ def link_product_to_user_with_id_rfid(id_rfid, id_user):
     :return: True if the modification    is ok
             False if not
     """
-    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.id == id_rfid).first()
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_rfid).first()
     if product is None:
         return -1
     info = {
