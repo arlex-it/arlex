@@ -1,6 +1,6 @@
 from flask import jsonify
 from flask_restplus import abort
-from bdd.db_connection import session, IdArlex
+from bdd.db_connection import session, IdArlex, to_dict
 from API.Utilities.HttpResponse import *
 
 
@@ -20,4 +20,4 @@ def post_id_arlex(request):
         session.rollback()
         session.flush()
         raise Exception(e)
-    return HttpResponse(201).custom({'id_arlex': new_id_arlex})
+    return HttpResponse(201).custom({'id_arlex': to_dict(new_id_arlex)})

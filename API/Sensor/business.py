@@ -128,6 +128,9 @@ class SensorBusiness:
     def get_product_position(self, request):
         product_name = request.args.get('product_name')
         sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+
+        import requests
+        data = requests.get('https://b76b9f2ad0d5.ngrok.io/')
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits

@@ -34,8 +34,8 @@ def post_product(request, id_user=None):
             "message": "Input payload validation failed"
         })
 
-    if request.json['id_arlex'] < 0:
-        return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
+    # if request.json['id_arlex'] < 0:
+    #     return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
     product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
     if not "product" in product:
         return HttpResponse(403).error(ErrorCode.UNK)
@@ -43,6 +43,7 @@ def post_product(request, id_user=None):
     try:
         created_product = create_product(request.json, id_user)
     except Exception as e:
+        print('error :', e)
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     if created_product == NO_REF_ERROR:
@@ -88,10 +89,10 @@ def create_product(product, id_user):
         session.flush()
         raise Exception(e)
     id_rfid = product["id_arlex"]
-    id_arlex = {"id": id_rfid, 'product_id': new_product.id}
+    id_arlex = {"patch_id": id_rfid, 'product_id': new_product.id}
     try:
         session.begin()
-        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["id"]).update(id_arlex)
+        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["patch_id"]).update(id_arlex)
         session.commit()
     except Exception as e:
         session.rollback()
