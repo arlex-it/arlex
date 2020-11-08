@@ -201,7 +201,7 @@ class SensorBusiness:
     def get_list_name(self, request):
         if not request:
             abort(400)
-        sensor_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+        sensor_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected, Sensor.is_active).all()
         #sensor_list = session.query(Sensor).all()
         if not sensor_list or len(sensor_list) == 0:
             return HttpResponse(500).error(ErrorCode.SENSOR_NDETECTED)
