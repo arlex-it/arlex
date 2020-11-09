@@ -10,7 +10,6 @@ $(document).ready(function() {
     const client_id = data['client_id'];
     const redirect_uri = data['redirect_uri'];
 
-    console.log(`/api/auth/authorize?state=${state}&client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}`);
     function getFormData($form){
         var unindexed_array = $form.serializeArray();
         var indexed_array = {};
