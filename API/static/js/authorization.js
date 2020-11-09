@@ -46,7 +46,6 @@ $(document).ready(function() {
                 const client_id = data['client_id'];
                 const redirect_uri = data['redirect_uri'];
                 window.location.replace(`/api/auth/authorize?state=${state}&client_id=${client_id}&response_type=${response_type}&redirect_uri=${redirect_uri}`);
-                alert(JSON.stringify(res));
             },
             error: function(data){
                 alert(JSON.stringify(data['responseJSON']));
