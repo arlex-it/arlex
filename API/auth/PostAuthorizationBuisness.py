@@ -53,9 +53,7 @@ class PostAuthorization(OAuthRequestAbstract):
         user = self.user_login(username=username, password=password)
 
         if user is None:
-            # TODO sign-in user
             page = 'signin.html'
-            # TODO how to redirect after signin ? In signin.html ?
             headers = {'Content-Type': 'text/html'}
             return make_response(render_template(page,
                                                  client_id=request.values.get('client_id'),

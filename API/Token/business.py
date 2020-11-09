@@ -50,6 +50,9 @@ class PostToken(OAuthRequestAbstract):
         return resp
 
     def grant_authorization_code(self):
+        """
+        make last authorization_code invalid and create a new one
+        """
         validator = HttpRequestValidator()
         validator.throw_on_error(False)
         validator.add_param('code', True)
@@ -81,7 +84,7 @@ class PostToken(OAuthRequestAbstract):
 
         access_token = AccessToken(
             app_id=self.application_id,
-            type='Bearer',
+            type='bearer',
             token=uuid.uuid4().hex[:35],
             date_insert=datetime.datetime.now(),
             id_user=user.id,
@@ -116,6 +119,10 @@ class PostToken(OAuthRequestAbstract):
         return access_token, refresh_token
 
     def grant_password(self):
+        # TODO verifier les deux fonctions + continuer apres fichier EanUtilities
+        """
+        Create access and refresh token
+        """
         validator = HttpRequestValidator()
         validator.throw_on_error(True)
         validator.add_param('username', True)
@@ -189,6 +196,7 @@ class PostToken(OAuthRequestAbstract):
             if str(refresh_token.app_id) != str(self.application_id):
                 raise Exception('Code does not match your app_id.')
 
+            # invalidate old refresh token
             old_token = session.query(AccessToken).filter(
                 AccessToken.id == refresh_token.access_token_id).first()
             info = {
@@ -245,6 +253,7 @@ class PostToken(OAuthRequestAbstract):
     def dispatch_request(self, request):
         token = None
         refresh_token = None
+        # self.intent is used for google signin with vocal assistant
         if self.intent == 'get':
             return HttpResponse(401).error(ErrorCode.USER_NOT_FOUND)
         if self.intent == "create":
@@ -293,6 +302,8 @@ class PostToken(OAuthRequestAbstract):
                 return HttpResponse(200).custom(res)
             else:
                 return HttpResponse(500).error(ErrorCode.UNK)
+
+        # deliver token data regarding what is needed
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':

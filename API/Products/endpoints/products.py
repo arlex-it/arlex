@@ -14,7 +14,7 @@ class ProductsCollection(Resource):
     @ns.response(201, '{"success": "Produit ajouté avec succès", "extra":{"id":1}}')
     def post(self):
         """
-        This is a test route
+        Route to add a product
         """
         return post_product(request)
 
@@ -45,4 +45,7 @@ class UpdateProductCollection(Resource):
 class ProductIngredientsCollection(Resource):
     @ns.expect(product_authorization_header)
     def get(self, product_name):
+        """
+        Route to get product's ingredients
+        """
         return ProductIngredients(HttpRequest().get_header("Authorization")).get_product_ingredients(product_name)
