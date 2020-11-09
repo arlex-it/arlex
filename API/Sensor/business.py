@@ -63,7 +63,10 @@ class SensorBusiness():
 
     def post_products(self, request):
         #ip serveur benjamin
-        res = requests.get('http://35.210.200.125:5000/').json()
+        # res = requests.get('http://35.210.200.125:5000/').json()
+
+        url_capteur_augustin = 'https://415771d98c1c.ngrok.io/'
+        res = requests.get(url_capteur_augustin).json()
 
         old_products_list = session.query(IdArlex).join(Product, Product.id == IdArlex.product_id).filter(
             Product.id_user == self.user_connected).all()
@@ -71,7 +74,8 @@ class SensorBusiness():
         id_rfid_list = [id_rfid.id for id_rfid in old_products_list]
 
         converted_list = [str(i) for i in id_rfid_list]
-        res_list = [str(i) for i in res["product_list"]]
+        # res_list = [str(i) for i in res["product_list"]]
+        res_list = [str(i) for i in res["Product"]]
         new_elements = [item for item in res_list if item not in converted_list]
         if len(new_elements) == 0:
             return HttpResponse(200).custom({'state': "J'ai déjà enregistrer tout les produits dans votre armoire."})
@@ -125,10 +129,41 @@ class SensorBusiness():
 
     def get_product_position(self, request):
         product_name = request.args.get('product_name')
-        sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+        # TODO Decommenter cette ligne pour le futur
+        # sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
+        sensor = session.query(Sensor).filter(Sensor.id_user == self.user_connected).first()
 
+        if sensor is None:
+            return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé vos capteurs.'})
         import requests
-        data = requests.get('https://b76b9f2ad0d5.ngrok.io/')
+        url_capteur_augustin = 'https://415771d98c1c.ngrok.io/'
+        data = requests.get(url_capteur_augustin).json()
+
+        info = {
+            "status": 2
+        }
+        try:
+            session.begin()
+            session.query(Product).filter(Product.position == sensor.name).update(info)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            session.flush()
+            raise e
+        info = {
+            "status": 1,
+            "position": sensor.name
+        }
+
+        for id_patch in data['Product']:
+            try:
+                session.begin()
+                session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                session.flush()
+                raise e
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
@@ -139,4 +174,7 @@ class SensorBusiness():
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé de produit correspondant à votre recherche: {product_name}.'})
         first = ean_list[0]
         product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == first['id']][0]]
-        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position} ------ {data}'})
+        add = ''
+        if product.status == 2:
+            add = ' Le produit peut ne plus se trouver à cet endroit.'
+        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position}.{add}'})
