@@ -16,6 +16,7 @@ regex_name = '^[a-zA-ZÀ-ú\-\s]*$'
 regex_postal = '^\d{2}[ ]?\d{3}$'
 regex_address = '^[a-zA-ZÀ-ú0-9 ]*$'
 
+
 def get_hashed_password(plain_text_password):
     return bcrypt.hashpw(plain_text_password.encode('utf-8'), bcrypt.gensalt(12))
 
@@ -81,6 +82,35 @@ def delete_user(request, user_id):
             'error': 'Action interdite: Tentative d\'action sur un compte non identifié'
         }
         return HttpResponse(403).custom(error)
+
+    # disable all accesstokens related to the account
+    access_tokens = session.query(AccessToken).filter(AccessToken.id_user == user_id).all()
+    for token in access_tokens:
+        try:
+            session.begin()
+            session.query(AccessToken).filter(AccessToken.id == token.id).update({
+                'is_enable': False
+            })
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            session.flush()
+            return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+
+    # disable all refresh tokens related to the account
+    refresh_tokens = session.query(RefreshToken) \
+        .join(AccessToken, RefreshToken.access_token_id == AccessToken.id).filter(AccessToken.id_user == user_id).all()
+    for token in refresh_tokens:
+        try:
+            session.begin()
+            session.query(RefreshToken).filter(RefreshToken.id == token.id).update({
+                'is_enable': False
+            })
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            session.flush()
+            return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     user = session.query(User).filter(User.id == user_id).first()
     if not user:
@@ -174,7 +204,8 @@ def create_user(request):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token, 'refresh_token': refresh_token.token})
+    return HttpResponse(201).success(SuccessCode.USER_CREATED, {'id': new_user.id, 'access_token': access_token.token,
+                                                                'refresh_token': refresh_token.token})
 
 
 def update_user(request, user_id):
