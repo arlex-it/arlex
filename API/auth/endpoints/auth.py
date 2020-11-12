@@ -20,7 +20,7 @@ class authCollection(Resource):
         get_auth = GetAuthorization()
         return get_auth.dispatch_request(request)
 
-    @ns.expect(post_auth_model)
+    # @ns.expect(post_auth_model)
     def post(self):
         """
         Route to authorize registered user or redirect to create account

@@ -38,7 +38,6 @@ class PostAuthorization(OAuthRequestAbstract):
         validator.add_param('client_id', location=HttpRequestValidator.Location.query)
         validator.add_param('redirect_uri', location=HttpRequestValidator.Location.query)
         app = self.get_app_with_client_id(client_id=request.values.get('client_id'))
-
         response_type = request.values.get('response_type')
         if response_type != 'code':
             raise Exception('Unsupported response_type')

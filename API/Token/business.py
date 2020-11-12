@@ -255,6 +255,7 @@ class PostToken(OAuthRequestAbstract):
         refresh_token = None
         # self.intent is used for google signin with vocal assistant
         if self.intent == 'get':
+            # TODO vérifier que user existe
             return HttpResponse(401).error(ErrorCode.USER_NOT_FOUND)
         if self.intent == "create":
             import jwt
@@ -277,7 +278,6 @@ class PostToken(OAuthRequestAbstract):
             elif not user_data['email_verified']:
                 return HttpResponse(403).error(ErrorCode.MAIL_NOK)
             # TODO voir pour faire choisir la method d'auth
-            # TODO voir si le compte user créé par l'assistant permet aussi de se connecter normalement
             json_data = {
                 'gender': 0,
                 'lastname': 'lastname',
