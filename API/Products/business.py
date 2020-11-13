@@ -18,12 +18,10 @@ urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
 NO_REF_ERROR = -1
 
 
-def post_product(request, id_user=None):
+def post_product(request):
     if not request:
         abort(400)
 
-    if id_user is None:
-        id_user = 1
     try:
         datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
     except ValueError:
@@ -41,7 +39,9 @@ def post_product(request, id_user=None):
         return HttpResponse(403).error(ErrorCode.UNK)
 
     try:
-        created_product = create_product(request.json, id_user)
+        # id_user set to -1, the link between the user and the product will be done after receiving it
+        # (the link is done by the vocal assistant and the sensors)
+        created_product = create_product(request.json, -1)
     except Exception as e:
         print('error :', e)
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)

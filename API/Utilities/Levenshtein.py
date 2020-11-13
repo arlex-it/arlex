@@ -3,6 +3,9 @@ from difflib import SequenceMatcher
 
 
 def levenshtein_distance(str_one, str_two):
+    """
+    Calculate the similarity between two strings
+    """
     size = [len(str_one), len(str_two)]
     matrix = np.zeros((size[0], size[1]))
 
