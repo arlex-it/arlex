@@ -20,7 +20,7 @@ class UserCollection(Resource):
         """
         if not request:
             abort(400)
-        res = create_user(request.json())
+        res = create_user(request.json)
         if res['error'] is None:
             del res['error']
             del res['expires_in']
