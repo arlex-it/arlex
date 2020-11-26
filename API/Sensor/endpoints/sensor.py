@@ -30,3 +30,21 @@ class SensorCollection(Resource):
     def put(self, subpath):
         if subpath.lower() == "name".lower():
             return SensorBusiness(HttpRequest().get_header("Authorization")).change_name(request)
+
+
+@ns.route('/link_sensor/<int:id_sensor>/<int:id_user>')
+class LinkSensorCollection(Resource):
+    def post(self, id_sensor, id_user):
+        return SensorBusiness(HttpRequest().get_header("Authorization")).link_sensor_user(request, id_sensor,
+                                                                                          id_user)
+
+@ns.route('/link_sensor/<int:id_sensor>/<string:name>')
+class LinkSensorCollection(Resource):
+    def post(self, id_sensor, name):
+        return SensorBusiness(HttpRequest().get_header("Authorization")).name_sensor(request, id_sensor, name)
+
+
+@ns.route('/list/name')
+class SensorCollection(Resource):
+    def get(self):
+        return SensorBusiness(HttpRequest().get_header("Authorization")).get_list_name(request)
