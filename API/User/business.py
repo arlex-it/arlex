@@ -97,45 +97,98 @@ def delete_user(request, user_id):
     return HttpResponse(202).success(SuccessCode.USER_DELETED)
 
 
-def create_user(request):
-    # response_obj = {
-    #     'error': None,
-    #     'id': None,
-    #     'access_token': None,
-    #     'refresh_token': None,
-    #     'expires_in': None
-    # }
-    # verification = check_user_infos(user_data)
-    # if verification is not None:
-    #     response_obj['error'] = verification
-    #     return response_obj
-    # existing = session.query(User).filter(User.mail == user_data['mail']).first()
-    if not request:
-        abort(400)
-
-    verification = check_user_infos(request.json)
+def create_user(user_data):
+    response_obj = {
+        'error': None,
+        'id': None,
+        'access_token': None,
+        'refresh_token': None,
+        'expires_in': None
+    }
+    verification = check_user_infos(user_data)
     if verification is not None:
-        return HttpResponse(403).error(verification)
+        response_obj['error'] = verification
+        return response_obj
+    existing = session.query(User).filter(User.mail == user_data['mail']).first()
 
-    existing = session.query(User).filter(User.mail == request.json['mail']).first()
     if existing:
-        # response_obj['error'] = ErrorCode.MAIL_USED
-        # return response_obj
-        return HttpResponse(403).error(ErrorCode.MAIL_USED)
+        response_obj['error'] = ErrorCode.MAIL_USED
+        return response_obj
 
-    hashed = get_hashed_password(request.json['password'])
-    # hashed = get_hashed_password(user_data['password'])
+    hashed = get_hashed_password(user_data['password'])
     new_user = User(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
         is_active=1,
         status=0,
-        # gender=user_data['gender'],
-        # lastname=user_data['lastname'],
-        # firstname=user_data['firstname'],
-        # mail=user_data['mail'],
-        gender=request.json['gender'],
-        lastname=request.json['lastname'],
+        gender=user_data['gender'],
+        lastname=user_data['lastname'],
+        firstname=user_data['firstname'],
+        mail=user_data['mail'],
+        password=hashed,
+        country=user_data['country'],
+        town=user_data['town'],
+        street=user_data['street'],
+        street_number=user_data['street_number'],
+        region=user_data['region'],
+        postal_code=user_data['postal_code']
+    )
+
+    try:
+        session.begin()
+        session.add(new_user)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
+
+    app_id = session.query(AuthApplication).filter(AuthApplication.project_id == "arlex-ccevqe").first().id
+    access_token = AccessToken(
+        app_id=app_id,
+        type='bearer',
+        token=uuid.uuid4().hex[:35],
+        date_insert=datetime.datetime.now(),
+        id_user=new_user.id,
+        expiration_date=datetime.datetime.now() + datetime.timedelta(weeks=2),
+        is_enable=1,
+        scopes="user"
+    )
+
+    try:
+        session.begin()
+        session.add(access_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
+
+    refresh_token = RefreshToken(
+        app_id=app_id,
+        date_insert=datetime.datetime.now(),
+        token=uuid.uuid4().hex[:35],
+        is_enable=True,
+        access_token_id=access_token.id,
+    )
+    try:
+        session.begin()
+        session.add(refresh_token)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        response_obj['error'] = ErrorCode.DB_ERROR
+        return response_obj
+
+    response_obj['id'] = new_user.id
+    response_obj['access_token'] = access_token.token
+    response_obj['refresh_token'] = refresh_token.token
+    response_obj['expires_in'] = round(arrow.get(access_token.expiration_date).float_timestamp -
+                                       arrow.now().float_timestamp)
+    return response_obj
         firstname=request.json['firstname'],
         mail=request.json['mail'],
         password=hashed,
