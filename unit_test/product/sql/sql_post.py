@@ -15,7 +15,7 @@ class PostSql:
 
     def create_id_arlex(self, id):
         with self.engine.connect() as con:
-            rs = con.execute("INSERT INTO `arlex_db`.`id_arlex`(`id`) VALUES('{}');".format(id))
+            rs = con.execute("INSERT INTO `arlex_db`.`id_arlex`(`patch_id`) VALUES('{}');".format(id))
 
 
     def get_product_by_id(self, id_product):
