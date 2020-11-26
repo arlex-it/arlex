@@ -9,10 +9,10 @@ ns = api.namespace('open_request_cache', description='Abstract cache for any ope
 
 @ns.route('/')
 class OpenRequestCacheCollection(Resource):
-    @ns.response(200, '{"res": True}')
+    @ns.response(200, '{product_data}')
+    @ns.expect(open_request_cache_input)
     def get(self):
         """
-        This route will cache the result of a request
-        and use the cache when there is one regardless of the result of the request.
+        This route will cache the result of a request and use the cache when there is one regardless of the result of the request.
         """
         return get_open_request_cache(request)

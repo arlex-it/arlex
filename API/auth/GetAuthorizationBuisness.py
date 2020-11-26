@@ -27,6 +27,7 @@ class GetAuthorization(OAuthRequestAbstract):
         if response_type != 'code':
             raise Exception('Unsupported response_type')
 
+        # redirect to login page
         page = 'authorize.html'
         headers = {'Content-Type': 'text/html'}
         return make_response(render_template(page,

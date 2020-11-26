@@ -11,10 +11,10 @@ ns = api.namespace('token', description='mange token')
 @ns.route('/')
 class TokenCollection(Resource):
     @ns.expect(token_param)
-    @ns.response(200, '{"res": True}')
+    @ns.response(200, '{token data}')
     def post(self):
         """
-        This is a test route
+        Route to handle tokens
         """
         post_token = PostToken()
         return post_token.dispatch_request(request)
