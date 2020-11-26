@@ -17,6 +17,8 @@ from API.Utilities.SuccesEnum import *
 
 import requests
 
+import requests
+
 
 class SensorBusiness():
     url_capteur_augustin = 'https://415771d98c1c.ngrok.io/'
