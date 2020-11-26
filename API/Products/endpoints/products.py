@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 from Ressources.swagger_api import api
-from API.Products.business import post_product, delete_products, get_products, ProductIngredients
+from API.Products.business import post_product, delete_products, get_products, ProductIngredients, ProductExpiration
 from API.Products.models import products_create, product_authorization_header, product_update_header
 from API.Utilities.HttpRequest import HttpRequest
 
@@ -49,3 +49,14 @@ class ProductIngredientsCollection(Resource):
         Route to get product's ingredients
         """
         return ProductIngredients(HttpRequest().get_header("Authorization")).get_product_ingredients(product_name)
+
+
+@ns.route('/expiration_date/<string:product_name>')
+@ns.doc(params={'product_name': 'Product Name'})
+class ProductExpirationCollection(Resource):
+    @ns.expect(product_authorization_header)
+    def get(self, product_name):
+        """
+        Route to get product's ingredients
+        """
+        return ProductExpiration(HttpRequest().get_header("Authorization")).get_product_expiration(product_name)

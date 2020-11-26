@@ -8,7 +8,7 @@ Afin d'appeler les différentes routes chaques utilisateur doit disposer d'un To
 **Pour installer l'ensemble des dépendances:**
 --------------------------
 
-`pip3 install -r requirement.txt`
+`pip3 install -r requirements.txt`
 
 
 **Pour lancer l'api:**

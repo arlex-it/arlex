@@ -9,7 +9,7 @@ def get_product_model(param=None):
         'status': 0,
         'id_user': 1,
         "expiration_date": "2019-11-30",
-        "id_arlex": 999,
+        "id_arlex": "BLA-OKA-PAD",
         "id_ean": "3017620424403",
         "position": "placard sous evier",
         "product_name": "Un produit",
