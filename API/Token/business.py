@@ -21,8 +21,8 @@ class PostToken(OAuthRequestAbstract):
         self.application_secret = self.__request.get_param('client_secret')
         self.grant_type = self.__request.get_param('grant_type')
         self.app_id = self.__request.get_param('app_id')
-        # self.intent = self.__request.get_param('intent')
-        # self.jwt_token = self.__request.get_param('assertion')
+        self.intent = self.__request.get_param('intent')
+        self.jwt_token = self.__request.get_param('assertion')
 
     def get_user(self, user_id):
         """
