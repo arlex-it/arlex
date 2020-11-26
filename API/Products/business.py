@@ -44,6 +44,7 @@ def post_product(request):
         # (the link is done by the vocal assistant and the sensors)
         created_product = create_product(request.json, -1)
     except Exception as e:
+        print('error :', e)
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
     if created_product == NO_REF_ERROR:
