@@ -8,7 +8,6 @@ import datetime
 import re
 import bcrypt
 import uuid
-
 from bdd.db_connection import User, RefreshToken, AuthApplication, session, to_dict
 
 regex_mail = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
