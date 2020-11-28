@@ -22,6 +22,8 @@ class ProductAllergenes:
         token = result[0]
 
         user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        if not user_connected:
+            raise Exception("Wrong token")
         users = to_dict(user_connected)
         self.user_connected = users["id_user"]
 
