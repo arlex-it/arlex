@@ -143,33 +143,37 @@ class SensorBusiness():
         if sensor is None:
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé vos capteurs.'})
 
-        data = requests.get(self.url_capteur_augustin).json()
-
-        info = {
-            "status": 2
-        }
         try:
-            session.begin()
-            session.query(Product).filter(Product.position == sensor.name).update(info)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            session.flush()
-            raise e
-        info = {
-            "status": 1,
-            "position": sensor.name
-        }
+            data = requests.get(self.url_capteur_augustin)
+            data = data.json()
 
-        for id_patch in data['Product']:
+            info = {
+                "status": 2
+            }
             try:
                 session.begin()
-                session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                session.query(Product).filter(Product.position == sensor.name).update(info)
                 session.commit()
             except Exception as e:
                 session.rollback()
                 session.flush()
                 raise e
+            info = {
+                "status": 1,
+                "position": sensor.name
+            }
+
+            for id_patch in data['Product']:
+                try:
+                    session.begin()
+                    session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                    session.commit()
+                except Exception as e:
+                    session.rollback()
+                    session.flush()
+                    raise e
+        except Exception as e:
+            print("Cannot refresh product position")
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
         # TODO = Appeler les capteurs pour qu'ils mettent à jour la position (et le status) des produits
