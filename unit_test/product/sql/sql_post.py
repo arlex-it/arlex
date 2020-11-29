@@ -1,4 +1,4 @@
-from unit_test.product.product_model import product_model_to_sql
+from unit_test.product.product_model import product_model_to_sql, user_model_to_sql
 
 
 class PostSql:
