@@ -3,7 +3,7 @@ import json
 
 from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
 from API.Utilities.EanUtilities import EanUtilities
-from bdd.db_connection import session, Product, to_dict, IdArlex, AccessToken
+from bdd.db_connection import session, Product, to_dict, AccessToken
 from API.Utilities.HttpResponse import *
 
 
@@ -21,6 +21,8 @@ class ProductAllergenes:
         token = result[0]
 
         user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        if not user_connected:
+            raise Exception("Wrong token")
         users = to_dict(user_connected)
         self.user_connected = users["id_user"]
 

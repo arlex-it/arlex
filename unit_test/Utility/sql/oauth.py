@@ -34,3 +34,7 @@ class UtilityOauthSQL:
         token['id_user'] = id_user
         self.create_access_token(token_data=token)
         return token
+
+    def delete_default_access_token(self, id_user):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM access_token WHERE id_user = " + str(id_user))

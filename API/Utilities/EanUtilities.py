@@ -1,5 +1,4 @@
 from API.Utilities.Levenshtein import calc_similarity
-from bdd.db_connection import session, Product
 
 
 class EanUtilities:
@@ -25,28 +24,19 @@ class EanUtilities:
             similarity = similarity_gen if similarity_gen > similarity else similarity
             ean = {'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id}
 
-            print(ean)
-            if ean['similarity'] >= 0.30:
+            if ean['similarity'] >= 0.40:
                 ean_list.append({'product_name': product.product_name, 'product_name_gen': product.product_name_gen, 'id_ean': product.id_ean, 'similarity': similarity, 'id': product.id})
                 if ean['similarity'] > best['similarity']:
                     best = ean
-        # print("\n\n\nle plus gros est : ", best)
+        # get potential result
         almost = []
         for ean in ean_list:
             if ean != best and ean['similarity'] >= best['similarity'] - best['similarity']/5:
                 almost.append(ean)
-        # print("Il y a ", almost, "\nqui est peut etre bon egalement")
         if best == {'product_name': "", 'product_name_gen': "", 'id_ean': "", 'similarity': 0, 'id': 0}:
             return ean_list
         ean_list = [best] + almost
-        # print("non sortedf: ", ean_list)
+        # sort from best result to worse
         ean_list.sort(key = lambda x: x['similarity'], reverse=True)
-        # print("sorted :", ean_list)
         ean_list = ean_list[:4]
-        print("sorted limited:", ean_list)
         return ean_list
-
-#import sys
-#if __name__ == '__main__':
-#    list = session.query(Product).filter(Product.id_user == 1).all()
-#    EanUtilities().search_product(list, sys.argv[1])

@@ -7,15 +7,11 @@ from flask_restplus import abort
 
 from API.Utilities.EanUtilities import EanUtilities
 from API.Utilities.HttpResponse import HttpResponse
-from API.Products.business import post_products, link_product_to_user_with_id_rfid, get_product_name_with_rfid
+from API.Products.business import link_product_to_user_with_id_rfid, get_product_name_with_rfid
 from API.Utilities.Levenshtein import calc_similarity
 from bdd.db_connection import session, AccessToken, Product, to_dict, IdArlex, Sensor
-from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
-from API.Products.business import post_product
 from API.Utilities.ErrorEnum import *
 from API.Utilities.SuccesEnum import *
-
-import requests
 
 
 class SensorBusiness():
@@ -48,26 +44,7 @@ class SensorBusiness():
 
         return HttpResponse(200).custom({'state': state_res})
 
-    # def get_list_of_product(self, request):
-    # res = requests.get('http://35.210.200.125:5000/').json()
-    #
-    # if len(res['product_list']) == 0:
-    #     state_res = 'Il n y a rien dans votre armoire'
-    # else:
-    #     name_new_element = []
-    #     for element in res['product_list']:
-    #         name_new_element.append(get_product_name_with_rfid(element))
-    #     state_res = 'Dans votre armoire il y a : '
-    #     product = ", ".join(name_new_element)
-    #     state_res += product
-
-    # TODO : EN cas de nouveau produits gérer, ce cas
-
-    # return HttpResponse(200).custom({'state': state_res})
-
     def post_products(self, request):
-        #ip serveur benjamin
-        # res = requests.get('http://35.210.200.125:5000/').json()
 
         res = requests.get(self.url_capteur_augustin).json()
 
@@ -77,11 +54,11 @@ class SensorBusiness():
         id_rfid_list = [id_rfid.id for id_rfid in old_products_list]
 
         converted_list = [str(i) for i in id_rfid_list]
-        # res_list = [str(i) for i in res["product_list"]]
+
         res_list = [str(i) for i in res["Product"]]
         new_elements = [item for item in res_list if item not in converted_list]
         if len(new_elements) == 0:
-            return HttpResponse(200).custom({'state': "J'ai déjà enregistrer tout les produits dans votre armoire."})
+            return HttpResponse(200).custom({'state': "J'ai déjà enregistré tout les produits dans votre armoire."})
 
         name_new_element = []
         for element in new_elements:
@@ -114,7 +91,7 @@ class SensorBusiness():
             return HttpResponse(200).custom(
                 {"state": f"Le capteur: {old_name}, n'a pas été trouvé. Veuillez réessayer."})
         old_name = sensor.name
-        id_sensor = sensor.id
+
         new_infos = {
             'name': new_name,
             'date_update': datetime.datetime.now()
@@ -122,7 +99,7 @@ class SensorBusiness():
 
         try:
             session.begin()
-            session.query(Sensor).filter(Sensor.id == id_sensor).update(new_infos)
+            session.query(Sensor).filter(Sensor.id == sensor.id).update(new_infos)
             session.commit()
         except Exception as e:
             session.rollback()
@@ -141,33 +118,37 @@ class SensorBusiness():
         if sensor is None:
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé vos capteurs.'})
 
-        data = requests.get(self.url_capteur_augustin).json()
-
-        info = {
-            "status": 2
-        }
         try:
-            session.begin()
-            session.query(Product).filter(Product.position == sensor.name).update(info)
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            session.flush()
-            raise e
-        info = {
-            "status": 1,
-            "position": sensor.name
-        }
+            data = requests.get(self.url_capteur_augustin)
+            data = data.json()
 
-        for id_patch in data['Product']:
+            info = {
+                "status": 2
+            }
             try:
                 session.begin()
-                session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                session.query(Product).filter(Product.position == sensor.name).update(info)
                 session.commit()
             except Exception as e:
                 session.rollback()
                 session.flush()
                 raise e
+            info = {
+                "status": 1,
+                "position": sensor.name
+            }
+
+            for id_patch in data['Product']:
+                try:
+                    session.begin()
+                    session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                    session.commit()
+                except Exception as e:
+                    session.rollback()
+                    session.flush()
+                    raise e
+        except Exception as e:
+            print(f"Cannot refresh product position. {e.args}")
 
         products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
         ean_list = EanUtilities().search_product(products_list, product_name)
@@ -176,7 +157,11 @@ class SensorBusiness():
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé de produit correspondant à votre recherche: {product_name}.'})
 
         first = ean_list[0]
-        product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == first['id']][0]]
+        product = None
+        for elem in products_list:
+            if elem.__dict__['id'] == first['id']:
+                product = elem
+                break
         add = ''
         if product.status == 2:
             add = ' Le produit peut ne plus se trouver à cet endroit.'
@@ -249,5 +234,4 @@ class SensorBusiness():
             if len(res) > 61:
                 res += ','
             res += ' ' + sensor['name']
-        print(res)
         return HttpResponse(201).custom({'state': res})
