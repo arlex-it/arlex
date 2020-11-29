@@ -111,6 +111,9 @@ class SensorBusiness():
 
     def get_product_position(self, request):
         product_name = request.args.get('product_name')
+        if product_name is None:
+            return HttpResponse(200).custom({'state': f'Nous n\'avons pas pu récupérer le nom du produit demandé.'})
+
         # TODO Decommenter cette ligne quand on aura plusieurs capteurs
         # sensors_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
         sensor = session.query(Sensor).filter(Sensor.id_user == self.user_connected).first()

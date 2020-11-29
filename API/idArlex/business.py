@@ -7,7 +7,9 @@ from API.Utilities.HttpResponse import *
 def post_id_arlex(request):
     if not request:
         abort(400)
-
+    existing = session.query(IdArlex).filter(IdArlex.patch_id == request.json['patch_id']).first()
+    if existing:
+        return HttpResponse(403).error(ErrorCode.PATCH_ID_USED)
     new_id_arlex = IdArlex(
         patch_id=request.json['patch_id']
     )
