@@ -15,7 +15,16 @@ class ProductsRouteGet(unittest.TestCase):
     public_url = "http://localhost:5000"
     s.close()
 
+    user_id = 0
+    sensor_id = 0
+
+    def setUp(self):
+        self.user_id = self.sql.create_user(user=get_user_model())
+        self.sensor_id = self.sql.create_sensor(sensor=get_sensor_model({'id_user': self.user_id}))
+
     def tearDown(self):
+        self.sql.delete_user_by_id(self.user_id)
+        self.sql.delete_sensor_by_id(self.sensor_id)
         self.sql.delete_all_product()
 
     def test_get_product(self):
@@ -36,6 +45,7 @@ class ProductsRouteGet(unittest.TestCase):
 
     def test_get_product_ingredients(self):
         print(">>> test_get_product_ingredients")
+        token = self.oauth_sql.create_default_access_token(id_user=self.user_id)
         new_product = get_product_model()
         product_name = self.sql.create_product_with_name(product=new_product)
         resp = requests.get(self.public_url + '/api/products/ingredients/{}'.format(product_name),
