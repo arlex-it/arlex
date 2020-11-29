@@ -1,5 +1,5 @@
 import unittest
-from unit_test.product.product_model import get_product_model
+from unit_test.product.product_model import get_product_model, get_user_model
 from unit_test.init_unit_test import UnitTestInit
 from unit_test.product.sql.sql_post import *
 import requests

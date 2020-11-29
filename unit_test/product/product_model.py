@@ -79,3 +79,25 @@ def user_model_to_sql(user):
             new_user_object.postal_code = user[key]
 
     return new_user_object
+
+def get_user_model(param=None):
+    user = {'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            'is_active': 0,
+            'status': 0,
+            'gender': 0,
+            'lastname': 'Doe',
+            'firstname': 'John',
+            'mail': 'john@doe.com',
+            'password': 'password',
+            'country': 'France',
+            'town': 'Lille',
+            'street': 'rue nationale',
+            'street_number': '13',
+            'region': 'Hauts de france',
+            'postal_code': '59000'}
+    if param:
+        for key in param:
+            if key in user:
+                user[key] = param[key]
+    return user
