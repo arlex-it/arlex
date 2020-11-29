@@ -7,6 +7,12 @@ class PostSql:
         self.engine = engine
         self.session = session
 
+    def create_user(self, user):
+        user = user_model_to_sql(user)
+        self.session.add(user)
+        self.session.commit()
+        return user.id
+
     def create_product(self, product):
         product = product_model_to_sql(product)
         self.session.add(product)

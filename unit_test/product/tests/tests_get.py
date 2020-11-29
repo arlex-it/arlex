@@ -16,15 +16,12 @@ class ProductsRouteGet(unittest.TestCase):
     s.close()
 
     user_id = 0
-    sensor_id = 0
 
     def setUp(self):
         self.user_id = self.sql.create_user(user=get_user_model())
-        self.sensor_id = self.sql.create_sensor(sensor=get_sensor_model({'id_user': self.user_id}))
 
     def tearDown(self):
         self.sql.delete_user_by_id(self.user_id)
-        self.sql.delete_sensor_by_id(self.sensor_id)
         self.sql.delete_all_product()
 
     def test_get_product(self):
