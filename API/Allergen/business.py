@@ -10,7 +10,6 @@ from API.Utilities.HttpResponse import *
 class ProductAllergenes:
     def __init__(self, header_token=None):
         if not header_token:
-            print("no token")
             raise Exception("Token undefined")
 
         reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
