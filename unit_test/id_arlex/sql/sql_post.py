@@ -1,4 +1,3 @@
-from unit_test.allergen.allergen_model import *
 
 
 class PostSql:

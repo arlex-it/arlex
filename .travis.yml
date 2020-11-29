@@ -40,4 +40,13 @@ script:
     # Test token
     - python unit_test/oauth/tests/test_token.py
 
+    # Test allergen
+    - python unit_test/allergen/tests/tests_post.py
+
+    # Test id_arlex
+    - python unit_test/id_arlex/tests/tests_post.py
+
+    # Test product_position
+    - python unit_test/product_position/tests/tests_get.py
+
     - kill $APP_PID
