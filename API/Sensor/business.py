@@ -72,6 +72,9 @@ class SensorBusiness():
 
     def change_name(self, request):
         data = request.json
+        if not data or not data["old_name"] or not data["new_name"]:
+            return HttpResponse(400).custom(
+                {"state": "Il manque des informations pour renommer le capteur"})
         old_name = data["old_name"]
         new_name = data["new_name"]
 

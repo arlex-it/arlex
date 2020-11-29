@@ -9,7 +9,7 @@ import socket
 import json
 
 
-class AllergenRouteDelete(unittest.TestCase):
+class AllergenRouteGet(unittest.TestCase):
     unit_test_init = UnitTestInit()
     engine, session = unit_test_init.connect_to_db()
     sql = PostSql(engine=engine, session=session)
