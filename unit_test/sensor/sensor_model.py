@@ -70,7 +70,6 @@ def get_sensor_model(param=None):
         'id_user': 1,
         'type': 0,
         'name': 'cuisine',
-        'sensorcol': '0'
     }
     if param:
         for key in param:
@@ -94,7 +93,5 @@ def sensor_model_to_sql(sensor):
             new_sensor_object.type = sensor[key]
         if key is 'name':
             new_sensor_object.name = sensor[key]
-        if key is 'sensorcol':
-            new_sensor_object.sensorcol = sensor[key]
 
     return new_sensor_object
