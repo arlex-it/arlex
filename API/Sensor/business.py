@@ -189,7 +189,6 @@ class SensorBusiness():
             id_user=id_user,
             type=False,
             name=False,
-            sensorcol=False
         )
         try:
             session.begin()

@@ -94,7 +94,6 @@ class Sensor(Base):
     id_user = Column(Integer, nullable=False)
     type = Column(Integer, nullable=False)
     name = Column(String(255), nullable=False)
-    sensorcol = Column(String(45), nullable=False)
 
 class IdArlex(Base):
     __tablename__ = 'id_arlex'
