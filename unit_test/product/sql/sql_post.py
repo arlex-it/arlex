@@ -13,10 +13,15 @@ class PostSql:
         self.session.commit()
         return product.id
 
+    def create_product_with_name(self, product):
+        product = product_model_to_sql(product)
+        self.session.add(product)
+        self.session.commit()
+        return product.product_name
+
     def create_id_arlex(self, id):
         with self.engine.connect() as con:
             rs = con.execute("INSERT INTO `arlex_db`.`id_arlex`(`patch_id`) VALUES('{}');".format(id))
-
 
     def get_product_by_id(self, id_product):
         with self.engine.connect() as con:

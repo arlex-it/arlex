@@ -34,5 +34,14 @@ class ProductsRouteGet(unittest.TestCase):
         resp = requests.get(self.public_url + '/api/products/{}'.format(1000))
         self.assertEqual(resp.status_code, 403)
 
+    def test_get_product_ingredients(self):
+        print(">>> test_get_product_ingredients")
+        new_product = get_product_model()
+        product_name = self.sql.create_product_with_name(product=new_product)
+        resp = requests.get(self.public_url + '/api/products/ingredients/{}'.format(product_name),
+                            headers={'Authorization': 'Bearer ' + token['token']})
+        self.assertEqual(resp.status_code, 200)
+
+
 if __name__ == '__main__':
     unittest.main()
