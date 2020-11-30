@@ -18,4 +18,8 @@ class ErrorCode(Enum):
     CITY_NOK = "Ville non valide."
     REGION_NOK = "Région non valide."
     ID_RFID_NOK = "Id_RFID non valide."
+    PATCH_ID_USED = "L'id du patch est déjà enregistré."
     NO_REF = "Le produit n'est pas référencé."
+    SENSOR_NFIND = "Sensor non trouvé"
+    SENSOR_EXISTS = "Sensor déjà existant"
+    SENSOR_NDETECTED = "Je n'ai pas trouvé vos étagères, merci de bien vouloir contacter le support"

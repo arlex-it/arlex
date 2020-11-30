@@ -76,7 +76,7 @@ class Product(Base):
     id = Column(Integer, primary_key=True, unique=True)
     date_insert = Column(DateTime, nullable=False)
     date_update = Column(DateTime, nullable=False)
-    expiration_date = Column(DateTime, nullable=False)
+    expiration_date = Column(DateTime, nullable=True)
     status = Column(Integer, nullable=False)
     id_ean = Column(Integer, nullable=False)
     position = Column(String(255), nullable=False)
@@ -94,14 +94,13 @@ class Sensor(Base):
     id_user = Column(Integer, nullable=False)
     type = Column(Integer, nullable=False)
     name = Column(String(255), nullable=False)
-    sensorcol = Column(String(45), nullable=False)
 
 class IdArlex(Base):
     __tablename__ = 'id_arlex'
 
     id = Column(Integer, primary_key=True, unique=True, nullable=False)
     product_id = Column(Integer, nullable=True)
-    patch_id = Column(String(100), nullable=False)
+    patch_id = Column(String(255), nullable=False, unique=True)
 
 
 if len(sys.argv) == 2 and sys.argv[1] == 'unit_test' or 'main.py' not in sys.argv[0]:

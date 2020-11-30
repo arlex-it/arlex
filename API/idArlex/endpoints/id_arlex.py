@@ -10,9 +10,13 @@ ns = api.namespace('id_arlex', description='')
 @ns.route('/')
 class idArlexCollection(Resource):
     @ns.expect(id_arlex_input)
-    @ns.response(200, '{"res": True}')
+    @ns.response(200, '''"id_arlex": {
+    "id": "1",
+    "patch_id": "15151-AZDAZD-515451",
+    "product_id": "None"
+  }''')
     def post(self):
         """
-        This is a test route
+        Route to create id arlex
         """
         return post_id_arlex(request)

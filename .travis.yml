@@ -14,6 +14,9 @@ script:
     - mysql -u root < bdd/script_sql/create_database.sql
     - mysql -u root < bdd/script_sql/22_04_2020.sql
     - mysql -u root < bdd/script_sql/12_05_2020.sql
+    - mysql -u root < bdd/script_sql/id_arlex.sql
+    - mysql -u root < bdd/script_sql/08_11_2020.sql
+    - mysql -u root < bdd/script_sql/13_11_2020.sql
 
     # export project to pythonpath for module importation
     - export PYTHONPATH=$PYTHONPATH:$PWD
@@ -36,5 +39,17 @@ script:
 
     # Test token
     - python unit_test/oauth/tests/test_token.py
+
+    # Test id_arlex
+    - python unit_test/id_arlex/tests/tests_post.py
+
+    # Test product_position
+    - python unit_test/product_position/tests/tests_get.py
+
+    # Test allergen
+    - python unit_test/allergen/tests/tests_get.py
+
+    # Test sensor
+    - python unit_test/sensor/tests/tests_put.py
 
     - kill $APP_PID

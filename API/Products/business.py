@@ -1,9 +1,7 @@
-import json
 import re
 import json
 import requests
 from googletrans import Translator
-from flask import jsonify
 from flask_restplus import abort
 
 from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
@@ -23,7 +21,10 @@ def post_product(request):
         abort(400)
 
     try:
-        datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
+        if request.json['expiration_date'] is not None:
+            datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
+        else:
+            request.json['expiration_date'] = None
     except ValueError:
         return HttpResponse(400).custom({
             "errors": {
@@ -32,8 +33,6 @@ def post_product(request):
             "message": "Input payload validation failed"
         })
 
-    if request.json['id_arlex'] < 0:
-        return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
     product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
     if not "product" in product:
         return HttpResponse(403).error(ErrorCode.UNK)
@@ -88,10 +87,10 @@ def create_product(product, id_user):
         session.flush()
         raise Exception(e)
     id_rfid = product["id_arlex"]
-    id_arlex = {"id": id_rfid, 'product_id': new_product.id}
+    id_arlex = {"patch_id": id_rfid, 'product_id': new_product.id}
     try:
         session.begin()
-        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["id"]).update(id_arlex)
+        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["patch_id"]).update(id_arlex)
         session.commit()
     except Exception as e:
         session.rollback()
@@ -193,7 +192,6 @@ def delete_products(request, product_id):
 class ProductIngredients:
     def __init__(self, header_token=None):
         if not header_token:
-            print("no token")
             raise Exception("Token undefined")
 
         reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
@@ -233,3 +231,37 @@ class ProductIngredients:
             return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
 
         return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})
+
+
+class ProductExpiration:
+    def __init__(self, header_token=None):
+        if not header_token:
+            raise Exception("Token undefined")
+
+        reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
+        result = reg.findall(header_token)
+
+        if not result:
+            raise Exception("Token undefined")
+
+        token = result[0]
+
+        user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        users = to_dict(user_connected)
+        self.user_connected = users["id_user"]
+
+    def get_product_expiration(self, product_name):
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)
+
+        if len(ean_list) == 0:
+            return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
+
+        ean_list = ean_list[0]
+
+        product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == ean_list['id']][0]]
+
+        if product.expiration_date:
+            return HttpResponse(200).custom({'state': f'La date de péremption de votre produit, {product_name}, est le {product.expiration_date}.'})
+
+        return HttpResponse(200).custom({'state': f'Votre produit, {product_name}, ne possède pas de date de péremption.'})

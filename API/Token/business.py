@@ -119,7 +119,6 @@ class PostToken(OAuthRequestAbstract):
         return access_token, refresh_token
 
     def grant_password(self):
-        # TODO verifier les deux fonctions + continuer apres fichier EanUtilities
         """
         Create access and refresh token
         """
@@ -130,6 +129,7 @@ class PostToken(OAuthRequestAbstract):
 
         if validator.verify():
 
+            # verify combo username password
             username = self.__request.get_param('username')
             username = username.lower()
             user = session.query(User).filter(User.mail == username).first()
@@ -139,6 +139,7 @@ class PostToken(OAuthRequestAbstract):
                 password = self.__request.get_param('password')
 
                 if PasswordUtilities.check_password(password, current_pw):
+                    # create new access and refresh token
                     scope = "user"
                     access_token = AccessToken(
                         app_id=self.application_id,
@@ -186,6 +187,7 @@ class PostToken(OAuthRequestAbstract):
         validator.add_param('refresh_token', True)
 
         if validator.verify():
+            # check refresh token validity
             refresh_token = session.query(RefreshToken).filter(RefreshToken.token == self.__request.get_param('refresh_token')).first()
             if not refresh_token:
                 raise Exception('Refresh token not found.')
@@ -196,7 +198,7 @@ class PostToken(OAuthRequestAbstract):
             if str(refresh_token.app_id) != str(self.application_id):
                 raise Exception('Code does not match your app_id.')
 
-            # invalidate old refresh token
+            # invalidate old refresh token and create new access and refresh token
             old_token = session.query(AccessToken).filter(
                 AccessToken.id == refresh_token.access_token_id).first()
             info = {
@@ -286,7 +288,6 @@ class PostToken(OAuthRequestAbstract):
     def dispatch_request(self, request):
         token = None
         refresh_token = None
-        # self.intent is used for google signin with vocal assistant
         if self.intent == 'get':
             user_data = self.get_user_data_google_auth()
             user_found = session.query(User).filter(User.mail == user_data['email']).first()
@@ -334,8 +335,6 @@ class PostToken(OAuthRequestAbstract):
                 return HttpResponse(200).custom(res)
             else:
                 return HttpResponse(500).error(ErrorCode.UNK)
-
-        # deliver token data regarding what is needed
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':
