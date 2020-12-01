@@ -114,7 +114,7 @@ def get_product_name_with_rfid(id_rfid):
 
 def link_product_to_user_with_id_rfid(id_rfid, id_user):
     """
-    Link a product to with a user by id rfid
+    Link a product with a user by id rfid
     :param id_rfid:
     :param id_user:
     :return: True if the modification    is ok
