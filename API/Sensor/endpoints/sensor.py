@@ -38,7 +38,7 @@ class ProductSensorCollection(Resource):
 
 
 @ns.route('/update/<path:subpath>')
-class SensorCollection(Resource):
+class SensorUpdateCollection(Resource):
     @ns.expect(sensor_rename)
     @ns.response(200, "{'state': 'Le nouveau nom du capteur: old_name, est maintenant: new_name'}")
     def put(self, subpath):
@@ -72,7 +72,7 @@ class LinkSensorCollection(Resource):
 
 
 @ns.route('/list/name')
-class SensorCollection(Resource):
+class SensorListNameCollection(Resource):
     @ns.expect(sensor_list)
     @ns.response(201, "{'state': 'Voici la liste des endroits où je peux trouver des produits : sensor1, sensor2'}")
     def get(self):
