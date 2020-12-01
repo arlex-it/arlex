@@ -66,7 +66,7 @@ def get_product_model(param=None):
     product = {
         'date_insert': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'date_update': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        'status': 0,
+        'status': 1,
         'id_user': 1,
         "expiration_date": "2019-11-30",
         "id_arlex": "BLA-OKA-PAD",
