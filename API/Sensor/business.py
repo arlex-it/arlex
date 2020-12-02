@@ -248,10 +248,12 @@ class SensorBusiness():
         """
         if not request:
             abort(400)
+        print("coucou")
         sensor_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected, Sensor.is_active).all()
         #sensor_list = session.query(Sensor).all()
         if not sensor_list or len(sensor_list) == 0:
-            return HttpResponse(500).error(ErrorCode.SENSOR_NDETECTED)
+            print("toto")
+            return HttpResponse(202).custom({'state': "Je n'ai pas trouvé vos étagères, merci de bien vouloir contacter le support ou le service d'achat"})
 
         res = 'Voici la liste des endroits où je peux trouver des produits :'
         for x in sensor_list:
