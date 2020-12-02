@@ -1,44 +1,54 @@
+import re
+import json
 import requests
-from flask import jsonify
+from googletrans import Translator
 from flask_restplus import abort
-from bdd.db_connection import session, Product, to_dict
+
+from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
+from API.Utilities.EanUtilities import EanUtilities
+from bdd.db_connection import session, Product, to_dict, IdArlex, AccessToken
 from API.Utilities.HttpResponse import *
 import datetime
 
+translator = Translator()
+
 urlopenfoodfact = 'https://world.openfoodfacts.org/api/v0/product/{}.json'
+NO_REF_ERROR = -1
 
 
-def post_product(request, id_user=None):
-    if not request:
-        abort(400)
+def post_product(request):
+        if not request:
+            abort(400)
 
-    if id_user is None:
-        id_user = 1
-    try:
-        datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
-    except ValueError:
-        return HttpResponse(400).custom({
-            "errors": {
-                "expiration_date": "'{}' is not of type 'date'".format(request.json['expiration_date'])
-            },
-            "message": "Input payload validation failed"
-        })
+        try:
+            if request.json['expiration_date'] is not None:
+                datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
+            else:
+                request.json['expiration_date'] = None
+        except ValueError:
+            return HttpResponse(400).custom({
+                "errors": {
+                    "expiration_date": "'{}' is not of type 'date'".format(request.json['expiration_date'])
+                },
+                "message": "Input payload validation failed"
+            })
 
-    if request.json['id_rfid'] < 0:
-        return HttpResponse(403).error(ErrorCode.ID_RFID_NOK)
-    product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
-    if not "product" in product:
-        return HttpResponse(403).error(ErrorCode.UNK)
+        product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
+        if not "product" in product:
+            return HttpResponse(403).error(ErrorCode.UNK)
 
-    name = product['product']['product_name_fr'][:100]
-    name_gen = product['product']['generic_name_fr'][:100]
+        try:
+            # id_user set to -1, the link between the user and the product will be done after receiving it
+            # (the link is done by the vocal assistant and the sensors)
+            created_product = create_product(request.json, -1)
+        except Exception as e:
+            return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    try:
-        created_product = create_product(request.json, id_user)
-    except Exception as e:
-        return HttpResponse(407).error(ErrorCode.ID_RFID_NOK, e)
+        if created_product == NO_REF_ERROR:
+            return HttpResponse(501).error(ErrorCode.NO_REF)
 
-    return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
+        return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
+
 
 def create_product(product, id_user):
 
@@ -47,16 +57,20 @@ def create_product(product, id_user):
     if not "product" in product_info:
         raise Exception("Erreur sur lors de la creation du produit")
 
-
-    name = product_info['product']['product_name_fr'][:100]
-    name_gen = product_info['product']['generic_name_fr'][:100]
+    if 'product_name_fr' in product_info['product'] and 'generic_name_fr' in product_info['product']:
+        name = product_info['product']['product_name_fr'][:100]
+        name_gen = product_info['product']['generic_name_fr'][:100]
+    elif 'product_name' in product_info['product'] and 'generic_name' in product_info['product']:
+        name = product_info['product']['product_name'][:100]
+        name_gen = product_info['product']['generic_name'][:100]
+    else:
+        return NO_REF_ERROR
 
     new_product = Product(
         date_insert=datetime.datetime.now(),
         date_update=datetime.datetime.now(),
         expiration_date=product['expiration_date'],
         status=0,
-        id_rfid=product['id_rfid'],
         id_ean=product['id_ean'],
         position=product['position'],
         id_user=id_user,
@@ -71,9 +85,20 @@ def create_product(product, id_user):
     except Exception as e:
         session.rollback()
         session.flush()
-        raise Exception("Erreur lors de la création du produit")
+        raise Exception(e)
+    id_rfid = product["id_arlex"]
+    id_arlex = {"patch_id": id_rfid, 'product_id': new_product.id}
+    try:
+        session.begin()
+        session.query(IdArlex).filter(IdArlex.patch_id == id_arlex["patch_id"]).update(id_arlex)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        session.flush()
+        raise Exception(e)
 
     return new_product
+
 
 def get_product_name_with_rfid(id_rfid):
     """
@@ -83,31 +108,34 @@ def get_product_name_with_rfid(id_rfid):
     :return:
     """
 
-    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_rfid).first()
     return product.product_name
 
 
 def link_product_to_user_with_id_rfid(id_rfid, id_user):
     """
-    Link a product to with a user by id rfid
+    Link a product with a user by id rfid
     :param id_rfid:
     :param id_user:
     :return: True if the modification    is ok
             False if not
     """
-    product = session.query(Product).filter(Product.id_rfid == id_rfid).first()
+    product = session.query(Product).join(IdArlex, Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_rfid).first()
+    if product is None:
+        return -1
     info = {
         "date_update": datetime.datetime.now(),
         "id_user": id_user
     }
     try:
         session.begin()
-        session.query(Product).filter(Product.id_rfid == id_rfid).update(info)
+        session.query(Product).filter(Product.id == product.id).update(info)
         session.commit()
     except Exception as e:
         session.rollback()
         session.flush()
         raise e
+
 
 def post_products(list_ean, id_user):
     product_added = []
@@ -117,6 +145,7 @@ def post_products(list_ean, id_user):
         except Exception as e:
             raise Exception(e)
     return product_added
+
 
 def get_products(request, product_id):
     if not request:
@@ -158,3 +187,81 @@ def delete_products(request, product_id):
         session.flush()
         return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
     return HttpResponse(202).success(SuccessCode.PRODUCT_DELETED)
+
+
+class ProductIngredients:
+    def __init__(self, header_token=None):
+        if not header_token:
+            raise Exception("Token undefined")
+
+        reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
+        result = reg.findall(header_token)
+
+        if not result:
+            raise Exception("Token undefined")
+
+        token = result[0]
+
+        user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        users = to_dict(user_connected)
+        self.user_connected = users["id_user"]
+
+    def get_product_ingredients(self, product_name):
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)
+
+        if len(ean_list) == 0:
+            return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
+
+        ean_list = ean_list[0]
+
+        product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
+
+        if type(product) is str:
+            product = json.loads(product)
+
+        if "product" not in product:
+            return HttpResponse(200).custom({'state': 'Il semblerait qu\'il y ai un problème avec ce produit. Veuillez réessayer.'})
+
+        if 'ingredients_text_fr' in product['product'] and len(product['product']['ingredients_text_fr']) != 0:
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
+
+        elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
+            translation = translator.translate(product["product"]["ingredients_text"], src="en", dest="fr")
+            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
+
+        return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})
+
+
+class ProductExpiration:
+    def __init__(self, header_token=None):
+        if not header_token:
+            raise Exception("Token undefined")
+
+        reg = re.compile('Bearer ([A-Za-z0-9-=]+)')
+        result = reg.findall(header_token)
+
+        if not result:
+            raise Exception("Token undefined")
+
+        token = result[0]
+
+        user_connected = session.query(AccessToken).filter(AccessToken.token == token).first()
+        users = to_dict(user_connected)
+        self.user_connected = users["id_user"]
+
+    def get_product_expiration(self, product_name):
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        ean_list = EanUtilities().search_product(products_list, product_name)
+
+        if len(ean_list) == 0:
+            return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
+
+        ean_list = ean_list[0]
+
+        product = products_list[[i for i, _ in enumerate(products_list) if _.__dict__['id'] == ean_list['id']][0]]
+
+        if product.expiration_date:
+            return HttpResponse(200).custom({'state': f'La date de péremption de votre produit, {product_name}, est le {product.expiration_date}.'})
+
+        return HttpResponse(200).custom({'state': f'Votre produit, {product_name}, ne possède pas de date de péremption.'})

@@ -1,4 +1,4 @@
-from unit_test.product.product_model import product_model_to_sql
+from unit_test.product.product_model import product_model_to_sql, user_model_to_sql
 
 
 class PostSql:
@@ -7,11 +7,31 @@ class PostSql:
         self.engine = engine
         self.session = session
 
+    def create_user(self, user):
+        user = user_model_to_sql(user)
+        self.session.add(user)
+        self.session.commit()
+        return user.id
+
+    def delete_user_by_id(self, id_user):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM user WHERE user.id = " + str(id_user))
+
     def create_product(self, product):
         product = product_model_to_sql(product)
         self.session.add(product)
         self.session.commit()
         return product.id
+
+    def create_product_with_name(self, product):
+        product = product_model_to_sql(product)
+        self.session.add(product)
+        self.session.commit()
+        return product.product_name
+
+    def create_id_arlex(self, id):
+        with self.engine.connect() as con:
+            rs = con.execute("INSERT INTO `arlex_db`.`id_arlex`(`patch_id`) VALUES('{}');".format(id))
 
     def get_product_by_id(self, id_product):
         with self.engine.connect() as con:
@@ -34,3 +54,6 @@ class PostSql:
         with self.engine.connect() as con:
             rs = con.execute("DELETE FROM product")
 
+    def delete_all_id_arlex(self):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM id_arlex")

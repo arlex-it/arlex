@@ -1,12 +1,15 @@
 import datetime
+import json
 import uuid
 
 import arrow
+import requests
 
+from API.User.business import create_user
 from API.Utilities.HttpRequest import HttpRequest
 from API.Utilities.PasswordUtilities import PasswordUtilities
 from API.Utilities.HttpRequestValidator import HttpRequestValidator
-from API.Utilities.HttpResponse import HttpResponse, ErrorCode
+from API.Utilities.HttpResponse import HttpResponse, ErrorCode, SuccessCode
 from bdd.db_connection import AccessToken, session, User, RefreshToken, to_dict
 from API.auth.OAuthRequestAbstract import OAuthRequestAbstract
 
@@ -18,6 +21,8 @@ class PostToken(OAuthRequestAbstract):
         self.application_secret = self.__request.get_param('client_secret')
         self.grant_type = self.__request.get_param('grant_type')
         self.app_id = self.__request.get_param('app_id')
+        self.intent = self.__request.get_param('intent')
+        self.jwt_token = self.__request.get_param('assertion')
 
     def get_user(self, user_id):
         """
@@ -45,6 +50,9 @@ class PostToken(OAuthRequestAbstract):
         return resp
 
     def grant_authorization_code(self):
+        """
+        make last authorization_code invalid and create a new one
+        """
         validator = HttpRequestValidator()
         validator.throw_on_error(False)
         validator.add_param('code', True)
@@ -76,7 +84,7 @@ class PostToken(OAuthRequestAbstract):
 
         access_token = AccessToken(
             app_id=self.application_id,
-            type='Bearer',
+            type='bearer',
             token=uuid.uuid4().hex[:35],
             date_insert=datetime.datetime.now(),
             id_user=user.id,
@@ -111,6 +119,9 @@ class PostToken(OAuthRequestAbstract):
         return access_token, refresh_token
 
     def grant_password(self):
+        """
+        Create access and refresh token
+        """
         validator = HttpRequestValidator()
         validator.throw_on_error(True)
         validator.add_param('username', True)
@@ -118,6 +129,7 @@ class PostToken(OAuthRequestAbstract):
 
         if validator.verify():
 
+            # verify combo username password
             username = self.__request.get_param('username')
             username = username.lower()
             user = session.query(User).filter(User.mail == username).first()
@@ -127,6 +139,7 @@ class PostToken(OAuthRequestAbstract):
                 password = self.__request.get_param('password')
 
                 if PasswordUtilities.check_password(password, current_pw):
+                    # create new access and refresh token
                     scope = "user"
                     access_token = AccessToken(
                         app_id=self.application_id,
@@ -174,6 +187,7 @@ class PostToken(OAuthRequestAbstract):
         validator.add_param('refresh_token', True)
 
         if validator.verify():
+            # check refresh token validity
             refresh_token = session.query(RefreshToken).filter(RefreshToken.token == self.__request.get_param('refresh_token')).first()
             if not refresh_token:
                 raise Exception('Refresh token not found.')
@@ -184,6 +198,7 @@ class PostToken(OAuthRequestAbstract):
             if str(refresh_token.app_id) != str(self.application_id):
                 raise Exception('Code does not match your app_id.')
 
+            # invalidate old refresh token and create new access and refresh token
             old_token = session.query(AccessToken).filter(
                 AccessToken.id == refresh_token.access_token_id).first()
             info = {
@@ -237,13 +252,92 @@ class PostToken(OAuthRequestAbstract):
 
             return access_token, refresh_token
 
+    def get_user_data_google_auth(self):
+        """
+            decode google jwt token and extract its user data
+        """
+        import jwt
+        from jwt.algorithms import RSAAlgorithm
+        # get google keys for jwt
+        keys = requests.get('https://www.googleapis.com/oauth2/v3/certs').json()
+        # get kid to know which key to use
+        jwt_header = jwt.get_unverified_header(self.jwt_token)
+        if keys['keys'][0]['kid'] == jwt_header['kid']:
+            key_json = json.dumps(keys['keys'][0])
+        else:
+            key_json = json.dumps(keys['keys'][1])
+        # get public key and then decode jwt data to get user informations
+        public_key = RSAAlgorithm.from_jwk(key_json)
+        return jwt.decode(self.jwt_token, public_key,
+                               audience='12151855473-09qt5cef2ge0fmkj29vrqo44oqqkarvh.apps.googleusercontent.com',
+                               algorithms='RS256')
+
+    @staticmethod
+    def get_user_token_infos(user_found):
+        """
+            get current access and refresh token and when they expire
+        """
+        access_token = session.query(AccessToken) \
+            .filter(AccessToken.id_user == user_found.id and AccessToken.is_enable == 1).first()
+        refresh_token = session.query(RefreshToken) \
+            .filter(RefreshToken.access_token_id == access_token.id and RefreshToken.is_enable == 1).first()
+        expires_in = round(arrow.get(
+            access_token.expiration_date).float_timestamp - arrow.now().float_timestamp)
+        return access_token, refresh_token, expires_in
+
     def dispatch_request(self, request):
         token = None
         refresh_token = None
+        if self.intent == 'get':
+            user_data = self.get_user_data_google_auth()
+            user_found = session.query(User).filter(User.mail == user_data['email']).first()
+            if not user_found:
+                return HttpResponse(401).error(ErrorCode.USER_NOT_FOUND)
+            access_token, refresh_token, expires_in = self.get_user_token_infos(user_found)
+            res = {
+                'token_type': "Bearer",
+                'access_token': access_token.token,
+                'refresh_token': refresh_token.token,
+                'expires_in': expires_in,
+            }
+            return HttpResponse(200).custom(res)
+
+        if self.intent == "create":
+            user_data = user_data = self.get_user_data_google_auth()
+            # check user information validity
+            if user_data['iss'] != 'https://accounts.google.com':
+                return HttpResponse(500).error(ErrorCode.UNK)
+            elif not user_data['email_verified']:
+                return HttpResponse(403).error(ErrorCode.MAIL_NOK)
+            # TODO voir pour faire choisir la method d'auth
+
+            json_data = {
+                'gender': 0,
+                'lastname': 'lastname',
+                'firstname': user_data['name'],
+                'mail': user_data['email'],
+                'password': PasswordUtilities.generate_password(),
+                'country': 'France',
+                'town': 'Lille',
+                'street': 'rue voltaire',
+                'street_number': '1',
+                'region': 'Hauts de france',
+                'postal_code': '59000',
+            }
+            res = create_user(json_data)
+            # modify object to respond to google
+            if res['error'] is None:
+                del res['error']
+                del res['id']
+                res['token_type'] = 'Bearer'
+                res['access_token'] = res['access_token']
+                res['refresh_token'] = res['refresh_token']
+                return HttpResponse(200).custom(res)
+            else:
+                return HttpResponse(500).error(ErrorCode.UNK)
         if self.grant_type == 'authorization_code':
             (token, refresh_token) = self.grant_authorization_code()
         elif self.grant_type == 'refresh_token':
-
             (token, refresh_token) = self.grant_refresh_token()
         elif self.grant_type == 'password':
             (token, refresh_token) = self.grant_password()
