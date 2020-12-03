@@ -4,7 +4,7 @@ import requests
 from googletrans import Translator
 from flask_restplus import abort
 
-from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
+from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities, OFFProduct
 from API.Utilities.EanUtilities import EanUtilities
 from bdd.db_connection import session, Product, to_dict, IdArlex, AccessToken
 from API.Utilities.HttpResponse import *
@@ -58,7 +58,7 @@ def create_product(product, id_user):
         raise Exception("Erreur sur lors de la creation du produit")
 
     if 'product_name_fr' in product_info['product'] and 'generic_name_fr' in product_info['product']:
-        name = product_info['product']['product_name_fr'][:100]
+        name = product_info['product']['product_name_fr'][:100] # we can add custome name here
         name_gen = product_info['product']['generic_name_fr'][:100]
     elif 'product_name' in product_info['product'] and 'generic_name' in product_info['product']:
         name = product_info['product']['product_name'][:100]
@@ -214,21 +214,25 @@ class ProductIngredients:
             return HttpResponse(200).custom({'state': 'Nous ne trouvons pas de produit correspondant à votre recherche parmis vos produits.'})
 
         ean_list = ean_list[0]
+        try:
+            off = OFFProduct(ean_list['id_ean'])
+            off.get_openfoodfacts_data()
+            return HttpResponse(200).custom({'state': 'Voici la liste des ingrédients de votre produit : ' + off.get_ingredients()})
+        except:
+            product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
 
-        product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
+            if type(product) is str:
+                product = json.loads(product)
 
-        if type(product) is str:
-            product = json.loads(product)
+            if "product" not in product:
+                return HttpResponse(200).custom({'state': 'Il semblerait qu\'il y ai un problème avec ce produit. Veuillez réessayer.'})
 
-        if "product" not in product:
-            return HttpResponse(200).custom({'state': 'Il semblerait qu\'il y ai un problème avec ce produit. Veuillez réessayer.'})
+            if 'ingredients_text_fr' in product['product'] and len(product['product']['ingredients_text_fr']) != 0:
+                return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
 
-        if 'ingredients_text_fr' in product['product'] and len(product['product']['ingredients_text_fr']) != 0:
-            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {product["product"]["ingredients_text_fr"]}'})
-
-        elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
-            translation = translator.translate(product["product"]["ingredients_text"], src="en", dest="fr")
-            return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
+            elif 'ingredients_text' in product['product'] and len(product['product']['ingredients_text']) != 0:
+                translation = translator.translate(product["product"]["ingredients_text"], src="en", dest="fr")
+                return HttpResponse(200).custom({'state': f'Voici la liste des ingrédients de votre produit : {translation}'})
 
         return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les ingrédients du produit.'})
 
