@@ -28,14 +28,6 @@ class ProductPositionGet(unittest.TestCase):
         self.sql.delete_user_by_id(self.user_id)
         self.sql.delete_sensor_by_id(self.sensor_id)
 
-    def test_get_product_position(self):
-        print('>>> test_get_product_position')
-        token = self.oauth_sql.create_default_access_token(id_user=self.user_id)
-        resp = requests.get(self.public_url + '/api/sensor/product?product_name=Nutella', headers={'Authorization': 'Bearer ' + token['token']})
-        self.oauth_sql.delete_default_access_token(self.user_id)
-        self.assertEqual(json.loads(resp.text)['state'], 'Nous avons trouvé: Nutella, dans: placard sous evier.')
-        self.assertEqual(200, resp.status_code)
-
     def test_get_product_position_no_product_name(self):
         print('>>> test_get_product_position_no_product_name')
         token = self.oauth_sql.create_default_access_token(id_user=self.user_id)
@@ -57,6 +49,7 @@ class ProductPositionGet(unittest.TestCase):
         token = self.oauth_sql.create_default_access_token(id_user=self.user_id)
         resp = requests.get(self.public_url + '/api/sensor/product?product_name=Nutola', headers={'Authorization': 'Bearer ' + token['token']})
         self.oauth_sql.delete_default_access_token(self.user_id)
+        self.assertEqual(json.loads(resp.text)['state'], 'Nous n\'avons pas trouvé de produit correspondant à votre recherche: Nutola.')
         self.assertEqual(200, resp.status_code)
 
     def test_get_product_position_product_not_associated(self):
