@@ -37,6 +37,8 @@ class ProductAllergenes:
         try:
             off = OFFProduct(ean_list['id_ean'])
             off.get_openfoodfacts_data()
+            if not off.has_allergens:
+                return HttpResponse(200).custom({'state': "Nous n'avons pas trouvé l'allergènes pour ce produit."})
             return HttpResponse(200).custom({'state': 'Les allergènes de ce produit sont ' + off.get_allergens()})
         except:
             product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])

@@ -53,8 +53,10 @@ class OFFProduct:
         self.name_languages = []
         self.ingredients = []
         self.ingredients_languages = []
+        self.has_ingredients = True
         self.allergens = []
         self.allergens_languages = []
+        self.has_allergens = True
         self.languages = []
         self.translator = Translator()
 
@@ -107,6 +109,9 @@ class OFFProduct:
                 self.ingredients_languages.append(None)
         except:
             pass
+        if all([len(x) == 0 for x in self.ingredients]):
+            self.has_ingredients = False
+            self.ingredients = ['aucun ingrédient']
 
     def parse_allergenes(self):
         try:
@@ -120,6 +125,7 @@ class OFFProduct:
         except:
             pass
         if all([len(x) == 0 for x in self.allergens]):
+            self.has_allergens = False
             self.allergens = ['aucun allergène']
 
     def set_explicit_none(self):

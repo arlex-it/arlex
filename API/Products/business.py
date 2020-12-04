@@ -217,6 +217,8 @@ class ProductIngredients:
         try:
             off = OFFProduct(ean_list['id_ean'])
             off.get_openfoodfacts_data()
+            if not off.has_ingredients:
+                return HttpResponse(200).custom({'state': "Nous n'avons pas trouvé d'ingrédients pour ce produit."})
             return HttpResponse(200).custom({'state': 'Voici la liste des ingrédients de votre produit : ' + off.get_ingredients()})
         except:
             product = OpenFoodFactsUtilities().get_open_request_cache(urlopenfoodfact.format(ean_list['id_ean']))
