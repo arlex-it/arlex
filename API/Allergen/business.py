@@ -1,7 +1,7 @@
 import re
 import json
 
-from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities
+from API.Utilities.OpenFoodFactsUtilities import OpenFoodFactsUtilities, OFFProduct
 from API.Utilities.EanUtilities import EanUtilities
 from bdd.db_connection import session, Product, to_dict, AccessToken
 from API.Utilities.HttpResponse import *
@@ -34,13 +34,20 @@ class ProductAllergenes:
             return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé de produit enregistré sur votre compte.'})
         # get best result of products found and get product's infos via openfoodfacts
         ean_list = ean_list[0]
-        product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])
-        if type(product) is str:
-            product = json.loads(product)
-        if 'allergens_from_ingredients' not in product['product'] or ('allergens_hierarchy' in product['product'] and len(product['product']['allergens_hierarchy']) == 0):
-            # no allergen found
-            return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé d\'allergène.'})
-        elif 'allergens_from_ingredients' not in product['product']:
-            # don't know if there is allergen
-            return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les allergènes.'})
-        return HttpResponse(200).custom({'state': f"Les allergènes de ce produit sont {product['product']['allergens_from_ingredients']}"})
+        try:
+            off = OFFProduct(ean_list['id_ean'])
+            off.get_openfoodfacts_data()
+            if not off.has_allergens:
+                return HttpResponse(200).custom({'state': "Nous n'avons pas trouvé l'allergènes pour ce produit."})
+            return HttpResponse(200).custom({'state': 'Les allergènes de ce produit sont ' + off.get_allergens()})
+        except:
+            product = OpenFoodFactsUtilities().get_open_request_cache('https://world.openfoodfacts.org/api/v0/product/' + ean_list['id_ean'])
+            if type(product) is str:
+                product = json.loads(product)
+            if 'allergens_from_ingredients' not in product['product'] or ('allergens_hierarchy' in product['product'] and len(product['product']['allergens_hierarchy']) == 0):
+                # no allergen found
+                return HttpResponse(200).custom({'state': 'Nous n\'avons pas trouvé d\'allergène.'})
+            elif 'allergens_from_ingredients' not in product['product']:
+                # don't know if there is allergen
+                return HttpResponse(200).custom({'state': 'Nous n\'avons pas pu déterminer les allergènes.'})
+            return HttpResponse(200).custom({'state': f"Les allergènes de ce produit sont {product['product']['allergens_from_ingredients']}"})

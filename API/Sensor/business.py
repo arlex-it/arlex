@@ -15,7 +15,7 @@ from API.Utilities.SuccesEnum import *
 
 
 class SensorBusiness():
-    url_capteur_augustin = 'https://415771d98c1c.ngrok.io/'
+    url_capteur_augustin = 'https://13c6bd343ab1.ngrok.io/'
 
     def __init__(self, header_token=None):
         if not header_token:
