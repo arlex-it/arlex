@@ -45,21 +45,28 @@ class SensorBusiness():
         return HttpResponse(200).custom({'state': state_res})
 
     def post_products(self, request):
-
+        """
+        Link new products to a users
+        """
         res = requests.get(self.url_capteur_augustin).json()
 
         old_products_list = session.query(IdArlex).join(Product, Product.id == IdArlex.product_id).filter(
             Product.id_user == self.user_connected).all()
 
+        # get all id_rfid of user's products
         id_rfid_list = [id_rfid.id for id_rfid in old_products_list]
 
+        # convert id_rfid in str
         converted_list = [str(i) for i in id_rfid_list]
 
+        # get all products that are found by the sensor
         res_list = [str(i) for i in res["Product"]]
+        # check if there are new products
         new_elements = [item for item in res_list if item not in converted_list]
         if len(new_elements) == 0:
             return HttpResponse(200).custom({'state': "J'ai déjà enregistré tout les produits dans votre armoire."})
 
+        # link all new products to a user and link id_rfid to id_arlex
         name_new_element = []
         for element in new_elements:
             if link_product_to_user_with_id_rfid(element, self.user_connected) != -1:
@@ -71,6 +78,9 @@ class SensorBusiness():
         return HttpResponse(200).custom({'state': f'Vous avez ajouté: {name_to_return}'})
 
     def change_name(self, request):
+        """
+        Rename a sensor
+        """
         data = request.json
         if not data or not data["old_name"] or not data["new_name"]:
             return HttpResponse(400).custom(
@@ -81,6 +91,7 @@ class SensorBusiness():
         sensors = session.query(Sensor).filter(Sensor.id_user == self.user_connected).all()
         best_score = -1
         sensor = None
+        # find sensor by calculating  its similarity with sensors in database
         for s in sensors:
             if s.name.lower() == old_name.lower():
                 sensor = s
@@ -128,6 +139,7 @@ class SensorBusiness():
             data = requests.get(self.url_capteur_augustin)
             data = data.json()
 
+            # set all products that were at this position to status 2
             info = {
                 "status": 2
             }
@@ -139,15 +151,19 @@ class SensorBusiness():
                 session.rollback()
                 session.flush()
                 raise e
+
             info = {
                 "status": 1,
                 "position": sensor.name
             }
-
+            # set all products found by the sensor to status 1 and set the position
             for id_patch in data['Product']:
                 try:
                     session.begin()
-                    session.query(Product).filter(Product.id == IdArlex.product_id).filter(IdArlex.patch_id == id_patch).update(info, synchronize_session="fetch")
+                    session.query(Product)\
+                        .filter(Product.id == IdArlex.product_id)\
+                        .filter(IdArlex.patch_id == id_patch)\
+                        .update(info, synchronize_session="fetch")
                     session.commit()
                 except Exception as e:
                     session.rollback()
@@ -156,25 +172,25 @@ class SensorBusiness():
         except Exception as e:
             print(f"Cannot refresh product position. {e.args}")
 
-        products_list = session.query(Product).filter(Product.id_user == self.user_connected).all()
+        # get all products found by the sensor
+        products_list = session.query(Product).filter(Product.id_user == self.user_connected, Product.status == 1).all()
         ean_list = EanUtilities().search_product(products_list, product_name)
 
         if len(ean_list) == 0:
             return HttpResponse(200).custom({'state': f'Nous n\'avons pas trouvé de produit correspondant à votre recherche: {product_name}.'})
 
+        # get product with best similarity
         first = ean_list[0]
-        product = None
-        for elem in products_list:
-            if elem.__dict__['id'] == first['id']:
-                product = elem
-                break
-        add = ''
-        if product.status == 2:
-            add = ' Le produit peut ne plus se trouver à cet endroit.'
-        return HttpResponse(200).custom({'state': f'Nous avons trouvé: {product.product_name}, dans: {product.position}.{add}'})
+        product = session.query(Product).filter(Product.id == first['id']).first()
+        product = to_dict(product)
+        return HttpResponse(200).custom({'state': f"Nous avons trouvé: {product['product_name']}, dans: {product['position']}."})
 
-    # lie un sensor à un user uniquement s'il n'existe déjà pas
     def link_sensor_user(self, request, id_sensor, id_user):
+        """
+        Link a sensor to a user only if this sensor does not exist
+        :param id_sensor:
+        :param id_user:
+        """
         if not request:
             abort(400)
         elif id_sensor <= 0 or id_user <= 0:
@@ -203,8 +219,10 @@ class SensorBusiness():
             return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
         return HttpResponse(201).success(SuccessCode.SENSOR_LINKED, {})
 
-    # permet de (re)nommer un sensor s'il est déjà lié à un utilisateur
     def name_sensor(self, request, id_sensor, name):
+        """
+        Name a sensor if it is already link to a user
+        """
         if not request:
             abort(400)
         elif id_sensor <= 0 or len(name) == 0:
@@ -224,14 +242,16 @@ class SensorBusiness():
             return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
         return HttpResponse(201).success(SuccessCode.SENSOR_NAME_UPDATED, {})
 
-    # renvoie la liste de tous les capteurs
     def get_list_name(self, request):
+        """
+        List all user's sensors
+        """
         if not request:
             abort(400)
         sensor_list = session.query(Sensor).filter(Sensor.id_user == self.user_connected, Sensor.is_active).all()
         #sensor_list = session.query(Sensor).all()
         if not sensor_list or len(sensor_list) == 0:
-            return HttpResponse(500).error(ErrorCode.SENSOR_NDETECTED)
+            return HttpResponse(202).custom({'state': "Je n'ai pas trouvé vos étagères, merci de bien vouloir contacter le support ou le service d'achat"})
 
         res = 'Voici la liste des endroits où je peux trouver des produits :'
         for x in sensor_list:

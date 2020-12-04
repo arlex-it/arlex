@@ -17,37 +17,37 @@ NO_REF_ERROR = -1
 
 
 def post_product(request):
-    if not request:
-        abort(400)
+        if not request:
+            abort(400)
 
-    try:
-        if request.json['expiration_date'] is not None:
-            datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
-        else:
-            request.json['expiration_date'] = None
-    except ValueError:
-        return HttpResponse(400).custom({
-            "errors": {
-                "expiration_date": "'{}' is not of type 'date'".format(request.json['expiration_date'])
-            },
-            "message": "Input payload validation failed"
-        })
+        try:
+            if request.json['expiration_date'] is not None:
+                datetime.datetime.strptime(request.json['expiration_date'], "%Y-%m-%d")
+            else:
+                request.json['expiration_date'] = None
+        except ValueError:
+            return HttpResponse(400).custom({
+                "errors": {
+                    "expiration_date": "'{}' is not of type 'date'".format(request.json['expiration_date'])
+                },
+                "message": "Input payload validation failed"
+            })
 
-    product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
-    if not "product" in product:
-        return HttpResponse(403).error(ErrorCode.UNK)
+        product = requests.get(urlopenfoodfact.format(request.json['id_ean'])).json()
+        if not "product" in product:
+            return HttpResponse(403).error(ErrorCode.UNK)
 
-    try:
-        # id_user set to -1, the link between the user and the product will be done after receiving it
-        # (the link is done by the vocal assistant and the sensors)
-        created_product = create_product(request.json, -1)
-    except Exception as e:
-        return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
+        try:
+            # id_user set to -1, the link between the user and the product will be done after receiving it
+            # (the link is done by the vocal assistant and the sensors)
+            created_product = create_product(request.json, -1)
+        except Exception as e:
+            return HttpResponse(500).error(ErrorCode.DB_ERROR, e)
 
-    if created_product == NO_REF_ERROR:
-        return HttpResponse(501).error(ErrorCode.NO_REF)
+        if created_product == NO_REF_ERROR:
+            return HttpResponse(501).error(ErrorCode.NO_REF)
 
-    return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
+        return HttpResponse(201).success(SuccessCode.PRODUCT_CREATED, {'id': created_product.id})
 
 
 def create_product(product, id_user):
@@ -114,7 +114,7 @@ def get_product_name_with_rfid(id_rfid):
 
 def link_product_to_user_with_id_rfid(id_rfid, id_user):
     """
-    Link a product to with a user by id rfid
+    Link a product with a user by id rfid
     :param id_rfid:
     :param id_user:
     :return: True if the modification    is ok

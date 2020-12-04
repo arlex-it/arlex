@@ -13,6 +13,10 @@ class PostSql:
         self.session.commit()
         return user.id
 
+    def delete_user_by_id(self, id_user):
+        with self.engine.connect() as con:
+            rs = con.execute("DELETE FROM user WHERE user.id = " + str(id_user))
+
     def create_product(self, product):
         product = product_model_to_sql(product)
         self.session.add(product)

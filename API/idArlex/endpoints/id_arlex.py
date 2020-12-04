@@ -8,7 +8,7 @@ ns = api.namespace('id_arlex', description='')
 
 
 @ns.route('/')
-class idArlexCollection(Resource):
+class IdArlexCollection(Resource):
     @ns.expect(id_arlex_input)
     @ns.response(200, '''"id_arlex": {
     "id": "1",

@@ -4,6 +4,7 @@ from unit_test.init_unit_test import UnitTestInit
 from unit_test.product.sql.sql_post import *
 import requests
 import socket
+from unit_test.Utility.sql.oauth import UtilityOauthSQL
 
 
 class ProductsRouteGet(unittest.TestCase):
@@ -14,6 +15,7 @@ class ProductsRouteGet(unittest.TestCase):
     s.connect(("8.8.8.8", 80))
     public_url = "http://localhost:5000"
     s.close()
+    oauth_sql = UtilityOauthSQL(engine=engine, session=session)
 
     user_id = 0
 

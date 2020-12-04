@@ -14,7 +14,7 @@ class ProductsCollection(Resource):
     @ns.response(201, '{"success": "Produit ajouté avec succès", "extra":{"id":1}}')
     def post(self):
         """
-        Route to add a product
+        Add product in database
         """
         return post_product(request)
 
